@@ -468,14 +468,12 @@ function openPanel()
     if isOpen then return end
     isOpen = true
     MainFrame.Visible = true
-    MainFrame.Size = UDim2.new(0, 0, 0, 0)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     applyPanelSize()
-    local ts = MainFrame.Size
-    local tp = MainFrame.Position
+    local targetSize = MainFrame.Size
+    local targetPos = MainFrame.Position
     MainFrame.Size = UDim2.new(0, 0, 0, 0)
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = ts, Position = tp}):Play()
+    TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = targetSize, Position = targetPos}):Play()
 end
 
 function closePanel()
