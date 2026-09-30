@@ -1,32 +1,22 @@
 local Players = game:GetService("Players")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
-local Lighting = game:GetService("Lighting")
-local UserInputService = game:GetService("UserInputService")
 
 local function showError(msg)
     local sg = Instance.new("ScreenGui")
-    sg.Name = "ErrorGui"
     sg.ResetOnSpawn = false
     sg.DisplayOrder = 999999
     sg.Parent = PlayerGui
     local f = Instance.new("Frame")
-    f.Size = UDim2.new(0, 600, 0, 300)
-    f.Position = UDim2.new(0.5, -300, 0.5, -150)
+    f.Size = UDim2.new(0, 600, 0, 400)
+    f.Position = UDim2.new(0.5, -300, 0.5, -200)
     f.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
     f.BorderSizePixel = 0
-    f.ZIndex = 9999
     f.Parent = sg
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, 10)
-    c.Parent = f
     local t = Instance.new("TextBox")
     t.Size = UDim2.new(1, -20, 1, -60)
     t.Position = UDim2.new(0, 10, 0, 10)
-    t.Text = "❌ 脚本报错：\n\n" .. tostring(msg)
+    t.Text = "❌ 报错：\n\n" .. tostring(msg)
     t.TextColor3 = Color3.fromRGB(255, 255, 255)
-    t.Font = Enum.Font.GothamBold
     t.TextSize = 14
     t.TextWrapped = true
     t.BackgroundTransparency = 1
@@ -34,26 +24,21 @@ local function showError(msg)
     t.TextYAlignment = Enum.TextYAlignment.Top
     t.ClearTextOnFocus = false
     t.TextEditable = true
-    t.ZIndex = 10000
     t.Parent = f
     local b = Instance.new("TextButton")
     b.Size = UDim2.new(0, 100, 0, 34)
     b.Position = UDim2.new(0.5, -50, 1, -44)
     b.Text = "关闭"
     b.TextColor3 = Color3.fromRGB(255, 255, 255)
-    b.Font = Enum.Font.GothamBold
     b.TextSize = 14
     b.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-    b.BorderSizePixel = 0
-    b.ZIndex = 10000
     b.Parent = f
-    local bc = Instance.new("UICorner")
-    bc.CornerRadius = UDim.new(0, 6)
-    bc.Parent = b
     b.MouseButton1Click:Connect(function() sg:Destroy() end)
 end
 
 local ok, err = pcall(function()
+
+-- 这里下面接着放你原来的第1段内容（从 local RunService 开始）
 
 local function getGlobalExecCount()
     if getgenv and getgenv().GlobalExecCount then return getgenv().GlobalExecCount end
