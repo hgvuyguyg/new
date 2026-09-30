@@ -5,6 +5,56 @@ local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local UserInputService = game:GetService("UserInputService")
 
+local function showError(msg)
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "ErrorGui"
+    sg.ResetOnSpawn = false
+    sg.DisplayOrder = 999999
+    sg.Parent = PlayerGui
+    local f = Instance.new("Frame")
+    f.Size = UDim2.new(0, 600, 0, 300)
+    f.Position = UDim2.new(0.5, -300, 0.5, -150)
+    f.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    f.BorderSizePixel = 0
+    f.ZIndex = 9999
+    f.Parent = sg
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 10)
+    c.Parent = f
+    local t = Instance.new("TextBox")
+    t.Size = UDim2.new(1, -20, 1, -60)
+    t.Position = UDim2.new(0, 10, 0, 10)
+    t.Text = "❌ 脚本报错：\n\n" .. tostring(msg)
+    t.TextColor3 = Color3.fromRGB(255, 255, 255)
+    t.Font = Enum.Font.GothamBold
+    t.TextSize = 14
+    t.TextWrapped = true
+    t.BackgroundTransparency = 1
+    t.TextXAlignment = Enum.TextXAlignment.Left
+    t.TextYAlignment = Enum.TextYAlignment.Top
+    t.ClearTextOnFocus = false
+    t.TextEditable = true
+    t.ZIndex = 10000
+    t.Parent = f
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 100, 0, 34)
+    b.Position = UDim2.new(0.5, -50, 1, -44)
+    b.Text = "关闭"
+    b.TextColor3 = Color3.fromRGB(255, 255, 255)
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 14
+    b.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+    b.BorderSizePixel = 0
+    b.ZIndex = 10000
+    b.Parent = f
+    local bc = Instance.new("UICorner")
+    bc.CornerRadius = UDim.new(0, 6)
+    bc.Parent = b
+    b.MouseButton1Click:Connect(function() sg:Destroy() end)
+end
+
+local ok, err = pcall(function()
+
 local function getGlobalExecCount()
     if getgenv and getgenv().GlobalExecCount then return getgenv().GlobalExecCount end
     local s, r = pcall(function()
@@ -486,6 +536,9 @@ end
 
 OpenBtn.MouseButton1Click:Connect(function() if isOpen then closePanel() else openPanel() end end)
 HideButton.MouseButton1Click:Connect(function() if isOpen then closePanel() else openPanel() end end)
+
+end)
+if not ok then showError(err) end
 local function createButtonCard(parent, name, desc, icon, url)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(1, -16, 0, 46); Card.Position = UDim2.new(0, 8, 0, 0)
@@ -1475,7 +1528,7 @@ pageContents["服务器"] = { type = "buttons", items = {
     {name = "钓鱼换取垃圾", desc = "点击执行", icon = "🐡", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/钓鱼垃圾"},
     {name = "新手间接式", desc = "点击执行", icon = "🤨", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/新手间接式"},
     {name = "烤或死", desc = "点击执行", icon = "🍖", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/烤活死"},
-    {name = "加一跳跃", desc = "点击执行", icon = "🦘", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/加一跳跃逃脱"},
+    {name = "加一跳跃", desc = "点击执行", icon = "🦘", url = "https://raw.githubusercontent.com/hgvuyguyj/jjjjjjjjj/main/加一跳跃逃脱"},
     {name = "挖掘以逃脱", desc = "点击执行", icon = "🎃", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/挖掘逃出监狱"},
     {name = "飞行世界", desc = "点击执行", icon = "✈️", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/飞行世界"},
     {name = "空乘模拟器", desc = "点击执行", icon = "🛫", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/空乘模拟机"},
@@ -1886,7 +1939,6 @@ local function createSettingsCard(parent, item)
                 OpenBtn.BackgroundColor3 = c.openBtnBg
                 InfoBox.BackgroundColor3 = c.infoBoxBg
                 InfoLabel.TextColor3 = c.infoBoxText
-                InfoLabel.Text = c.versionPrefix .. "黑脚本 V2.0"
                 AdminBadge.BackgroundColor3 = c.adminBadgeBg
                 AdminText.TextColor3 = c.adminBadgeText
                 AdminText.Text = c.adminText
@@ -1976,4 +2028,5 @@ end)
 contentPages["公告"].Visible = true
 selectNav(navButtons[1].button, "公告")
 
-print("黑脚本·管理员版 V2.0 国庆版已加载完成")
+end)
+if not ok then showError(err) end
