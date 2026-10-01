@@ -1,0 +1,348 @@
+--============================================================
+-- 灾难之岛 · 精简版 v2.1
+--============================================================
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local RS = game:GetService("ReplicatedStorage")
+
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+if not WindUI then warn("WindUI 加载失败") return end
+
+local Window = WindUI:CreateWindow({
+    Title = "灾难之岛",
+    Icon = "solar:cloud-storm-bold",
+    Size = UDim2.fromOffset(420, 380),
+    ToggleKey = Enum.KeyCode.RightShift,
+    Theme = "Dark",
+    Transparent = true,
+})
+
+--============================================================
+-- 屏幕顶部灾害提示
+--============================================================
+local function getParent()
+    if gethui then local ok, h = pcall(gethui); if ok and h then return h end end
+    return game:GetService("CoreGui")
+end
+
+local hudGui = Instance.new("ScreenGui")
+hudGui.Name = "DisasterHUD"
+hudGui.ResetOnSpawn = false
+hudGui.DisplayOrder = 9999
+hudGui.Parent = getParent()
+
+local hudFrame = Instance.new("Frame")
+hudFrame.Size = UDim2.new(0, 500, 0, 50)
+hudFrame.Position = UDim2.new(0.5, -250, 0, 20)
+hudFrame.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+hudFrame.BackgroundTransparency = 0.2
+hudFrame.BorderSizePixel = 0
+hudFrame.Visible = false
+hudFrame.Parent = hudGui
+Instance.new("UICorner", hudFrame).CornerRadius = UDim.new(0, 10)
+local hudStroke = Instance.new("UIStroke", hudFrame)
+hudStroke.Thickness = 2
+hudStroke.Color = Color3.fromRGB(255, 200, 100)
+
+local hudLabel = Instance.new("TextLabel")
+hudLabel.Size = UDim2.new(1, -20, 1, 0)
+hudLabel.Position = UDim2.new(0, 10, 0, 0)
+hudLabel.BackgroundTransparency = 1
+hudLabel.Text = "当前无灾害"
+hudLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+hudLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+hudLabel.TextStrokeTransparency = 0
+hudLabel.TextSize = 22
+hudLabel.Font = Enum.Font.GothamBold
+hudLabel.Parent = hudFrame
+
+--============================================================
+-- 灾害中文映射
+--============================================================
+local DISASTER_CN = {
+    Tornado = "龙卷风",
+    LightningStorm = "雷暴",
+    Earthquake = "地震",
+    Sandstorm = "沙尘暴",
+    AcidRain = "酸雨",
+    MeteorShower = "流星雨",
+    FlashFlood = "山洪",
+    Tsunami = "海啸",
+    Fire = "火灾",
+    Rain = "下雨",
+    Snow = "下雪",
+    Thunderstorm = "雷阵雨",
+    Volcano = "火山",
+    HeavyRain = "暴雨",
+}
+
+--============================================================
+-- 读取灾害
+--============================================================
+local function readWeather()
+    local states = RS:FindFirstChild("States")
+    if not states then return {} end
+
+    local result = {}
+    
+    local weather = states:FindFirstChild("Weather")
+    if weather then
+        local function gb(n)
+            local v = weather:FindFirstChild(n)
+            if v and v:IsA("BoolValue") then return v.Value end
+            return false
+        end
+        if gb("IsRaining") then table.insert(result, "下雨") end
+        if gb("IsSnowing") then table.insert(result, "下雪") end
+        if gb("IsSandstorm") then table.insert(result, "沙尘暴") end
+        if gb("IsAcidRain") then table.insert(result, "酸雨") end
+    end
+
+    local eq = states:FindFirstChild("Earthquake")
+    if eq and eq:IsA("BoolValue") and eq.Value then
+        table.insert(result, "地震")
+    end
+
+    local queue = states:FindFirstChild("Queue")
+    if queue then
+        local d = queue:FindFirstChild("Disasters")
+        if d then
+            for _, c in ipairs(d:GetChildren()) do
+                if (c:IsA("IntValue") or c:IsA("NumberValue")) and c.Value > 0 then
+                    local cn = DISASTER_CN[c.Name] or c.Name
+                    table.insert(result, string.format("%s x%d", cn, c.Value))
+                end
+            end
+        end
+    end
+
+    return result
+end
+
+--============================================================
+-- 更新 HUD
+--============================================================
+local hudEnabled = false
+
+local function updateHUD()
+    if not hudEnabled then
+        hudFrame.Visible = false
+        return
+    end
+    local list = readWeather()
+    if #list == 0 then
+        hudFrame.Visible = true
+        hudFrame.BackgroundColor3 = Color3.fromRGB(40, 120, 60)
+        hudLabel.Text = "当前无灾害"
+    else
+        hudFrame.Visible = true
+        hudFrame.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+        hudLabel.Text = "当前灾害: " .. table.concat(list, " / ")
+    end
+end
+
+--============================================================
+-- 菜单页 1: 公告
+--============================================================
+local AnnouncementTab = Window:Tab({ Title = "公告", Icon = "solar:info-circle-bold" })
+
+AnnouncementTab:Paragraph({
+    Title = "黑脚本--灾难之岛 脚本",
+    Desc = "版本号: v2.1\n\n功能:\n• 透视灾害\n• 自动躲避\n• 传送灾难点\n• 移速调整\n• 玩家透视"
+})
+
+--============================================================
+-- 菜单页 2: 主要功能
+--============================================================
+local MainTab = Window:Tab({ Title = "主要功能", Icon = "solar:star-bold" })
+
+MainTab:Toggle({
+    Title = "透视灾害",
+    Value = false,
+    Callback = function(v)
+        hudEnabled = v
+        if v then
+            updateHUD()
+            task.spawn(function()
+                while hudEnabled and Window do
+                    updateHUD()
+                    task.wait(1)
+                end
+            end)
+        else
+            hudFrame.Visible = false
+        end
+    end,
+})
+
+MainTab:Toggle({
+    Title = "自动躲避",
+    Value = false,
+    Callback = function(v)
+        if v then
+            task.spawn(function()
+                while Window do
+                    local list = readWeather()
+                    if #list > 0 then
+                        local char = LP.Character
+                        if char then
+                            local hrp = char:FindFirstChild("HumanoidRootPart")
+                            if hrp then
+                                hrp.CFrame = CFrame.new(hrp.Position + Vector3.new(0, 10000, 0))
+                                hrp.AssemblyLinearVelocity = Vector3.zero
+                            end
+                        end
+                    end
+                    task.wait(2)
+                end
+            end)
+        end
+    end,
+})
+
+MainTab:Button({
+    Title = "传送灾难点",
+    Callback = function()
+        local char = LP.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+        hrp.CFrame = CFrame.new(Vector3.new(97, 23, -27))
+        hrp.AssemblyLinearVelocity = Vector3.zero
+        WindUI:Notify({Title = "传送", Content = "已传送到灾难点", Duration = 2})
+    end,
+})
+
+MainTab:Divider()
+
+-- 移速滑块
+MainTab:Slider({
+    Title = "移速调整",
+    Value = {Min = 16, Max = 300, Default = 16},
+    Step = 1,
+    Callback = function(v)
+        local char = LP.Character
+        if char then
+            local h = char:FindFirstChildOfClass("Humanoid")
+            if h then h.WalkSpeed = v end
+        end
+    end,
+})
+
+-- 玩家透视开关
+local playerESPEnabled = false
+local playerESP = {}
+
+local function createPlayerESP(plr)
+    if not plr.Character then return end
+    local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    if playerESP[plr] then return end
+
+    local hl = Instance.new("Highlight")
+    hl.Adornee = plr.Character
+    hl.FillColor = Color3.fromRGB(0, 200, 255)
+    hl.FillTransparency = 0.5
+    hl.OutlineColor = Color3.fromRGB(0, 255, 255)
+    hl.OutlineTransparency = 0
+    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    hl.Parent = game:GetService("CoreGui")
+
+    local bb = Instance.new("BillboardGui")
+    bb.Adornee = hrp
+    bb.Size = UDim2.new(0, 200, 0, 40)
+    bb.StudsOffset = Vector3.new(0, 3, 0)
+    bb.AlwaysOnTop = true
+    bb.MaxDistance = 5000
+    bb.Parent = game:GetService("CoreGui")
+
+    local textLbl = Instance.new("TextLabel")
+    textLbl.Size = UDim2.new(1, 0, 1, 0)
+    textLbl.BackgroundTransparency = 1
+    textLbl.Text = plr.Name
+    textLbl.TextColor3 = Color3.fromRGB(0, 255, 255)
+    textLbl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    textLbl.TextStrokeTransparency = 0
+    textLbl.TextSize = 16
+    textLbl.Font = Enum.Font.GothamBold
+    textLbl.Parent = bb
+
+    playerESP[plr] = {hl = hl, bb = bb, textLbl = textLbl}
+end
+
+local function clearPlayerESP()
+    for plr, data in pairs(playerESP) do
+        if data.hl then data.hl:Destroy() end
+        if data.bb then data.bb:Destroy() end
+    end
+    playerESP = {}
+end
+
+local function updatePlayerESP()
+    local myHrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+    if not myHrp then return end
+    local myPos = myHrp.Position
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LP and plr.Character then
+            createPlayerESP(plr)
+            local data = playerESP[plr]
+            if data and data.textLbl then
+                local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local d = math.floor((hrp.Position - myPos).Magnitude)
+                    data.textLbl.Text = string.format("%s\n[%d m]", plr.Name, d)
+                end
+            end
+        end
+    end
+
+    -- 清理已离开的
+    for plr, data in pairs(playerESP) do
+        if not plr.Character or not plr.Character.Parent then
+            data.hl:Destroy()
+            data.bb:Destroy()
+            playerESP[plr] = nil
+        end
+    end
+end
+
+MainTab:Toggle({
+    Title = "玩家透视",
+    Value = false,
+    Callback = function(v)
+        playerESPEnabled = v
+        if v then
+            task.spawn(function()
+                while playerESPEnabled and Window do
+                    pcall(updatePlayerESP)
+                    task.wait(1)
+                end
+            end)
+        else
+            clearPlayerESP()
+        end
+    end,
+})
+
+--============================================================
+-- 菜单页 3: 设置
+--============================================================
+local SettingsTab = Window:Tab({ Title = "设置", Icon = "solar:settings-bold" })
+
+SettingsTab:Toggle({
+    Title = "显示帧率",
+    Value = false,
+    Callback = function(v) print("帧率:", v) end,
+})
+
+SettingsTab:Toggle({
+    Title = "启用功能",
+    Value = false,
+    Callback = function(v) print("总开关:", v) end,
+})
+
+--============================================================
+-- 启动
+--============================================================
+WindUI:Notify({Title = "灾难之岛", Content = "脚本已加载 (v2.1)", Duration = 3})
