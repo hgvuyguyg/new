@@ -2,6 +2,7 @@
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local TextService      = game:GetService("TextService")
 
 local player    = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -118,13 +119,18 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
+--=================== Panel（带 Tab + 缩放手柄） ===================
 local function createPanel(parent, cfg)
+    cfg = cfg or {}
     local W, H = cfg.w or 360, cfg.h or 260
     local X, Y = cfg.x or 0, cfg.y or 0
     local RADIUS = cfg.radius or 12
     local Z = cfg.zIndex or 4
     local hasTitle = cfg.title ~= nil
     local TITLE_H = hasTitle and (cfg.titleHeight or 34) or 0
+    local tabNames = cfg.tabs
+    local hasTabs = type(tabNames) == "table" and #tabNames > 0
+    local TAB_H = hasTabs and (cfg.tabHeight or 36) or 0
 
     local shadow = nil
     if cfg.shadow ~= false then
@@ -175,14 +181,16 @@ local function createPanel(parent, cfg)
             font = FONT_MED, zIndex = Z + 2,
         })
 
-        local line = Instance.new("Frame")
-        line.BackgroundColor3 = cfg.borderColor or Theme.BORDER
-        line.BorderSizePixel = 0
-        line.AnchorPoint = Vector2.new(0, 1)
-        line.Position = UDim2.new(0, 0, 1, 0)
-        line.Size = UDim2.new(1, 0, 0, 1)
-        line.ZIndex = Z + 2
-        line.Parent = titleBar
+        if not hasTabs then
+            local line = Instance.new("Frame")
+            line.BackgroundColor3 = cfg.borderColor or Theme.BORDER
+            line.BorderSizePixel = 0
+            line.AnchorPoint = Vector2.new(0, 1)
+            line.Position = UDim2.new(0, 0, 1, 0)
+            line.Size = UDim2.new(1, 0, 0, 1)
+            line.ZIndex = Z + 2
+            line.Parent = titleBar
+        end
     end
 
     if cfg.onClose then
@@ -196,7 +204,7 @@ local function createPanel(parent, cfg)
         closeBtn.Font = FONT_MED
         closeBtn.AutoButtonColor = false
         closeBtn.AnchorPoint = Vector2.new(1, 0.5)
-        closeBtn.Position = UDim2.new(1, -8, 0, TITLE_H / 2)
+        closeBtn.Position = UDim2.new(1, -8, 0, (hasTitle and TITLE_H or 0) / 2)
         closeBtn.Size = UDim2.new(0, 24, 0, 24)
         closeBtn.ZIndex = Z + 3
         corner(closeBtn, 6)
@@ -264,17 +272,261 @@ local function createPanel(parent, cfg)
         end)
     end
 
-    local body = Instance.new("Frame")
-    body.BackgroundTransparency = 1
-    body.Position = UDim2.new(0, 0, 0, TITLE_H)
-    body.Size = UDim2.new(1, 0, 1, -TITLE_H)
-    body.ZIndex = Z + 1
-    body.Parent = panel
+    local tabBar = nil
+    local pageContainer = nil
+    local pages = {}
+    local tabButtons = {}
+    local tabHl = nil
+    local currentTab = 1
+
+    local function selectTab(index, animate)
+        if not hasTabs then return end
+        if index < 1 or index > #pages then return end
+        if currentTab == index and animate ~= false then return end
+        local prev = pages[currentTab]
+        local nxt = pages[index]
+        currentTab = index
+
+        if tabButtons[index] and tabHl then
+            local btn = tabButtons[index]
+            tw(tabHl, animate and EASE or EASE_NONE, {
+                Position = UDim2.new(0, btn.Position.X.Offset, 1, -2),
+                Size = UDim2.new(0, btn.Size.X.Offset, 0, 2),
+            })
+        end
+
+        for i, b in ipairs(tabButtons) do
+            local target = (i == index) and Theme.PRIMARY_DK or Theme.TEXT_MUTED
+            tw(b, animate and EASE or EASE_NONE, { TextColor3 = target })
+        end
+
+        if animate == false then
+            for i, p in ipairs(pages) do
+                p.Visible = (i == index)
+                p.GroupTransparency = (i == index) and 0 or 1
+                p.Position = UDim2.new(0, 0, 0, 0)
+            end
+            return
+        end
+        if prev and prev ~= nxt then
+            local closing = prev
+            tw(closing, EASE, {
+                GroupTransparency = 1,
+                Position = UDim2.new(0, -6, 0, 0),
+            })
+            task.delay(0.24, function()
+                if closing ~= pages[currentTab] then
+                    closing.Visible = false
+                    closing.Position = UDim2.new(0, 0, 0, 0)
+                end
+            end)
+        end
+        if nxt then
+            nxt.Position = UDim2.new(0, 6, 0, 0)
+            nxt.GroupTransparency = 1
+            nxt.Visible = true
+            tw(nxt, EASE, {
+                GroupTransparency = 0,
+                Position = UDim2.new(0, 0, 0, 0),
+            })
+        end
+    end
+
+    if hasTabs then
+        tabBar = Instance.new("Frame")
+        tabBar.BackgroundColor3 = cfg.bgColor or Theme.WHITE
+        tabBar.BorderSizePixel = 0
+        tabBar.Position = UDim2.new(0, 0, 0, TITLE_H)
+        tabBar.Size = UDim2.new(1, 0, 0, TAB_H)
+        tabBar.ZIndex = Z + 1
+        tabBar.Parent = panel
+
+        local bottomLine = Instance.new("Frame")
+        bottomLine.BackgroundColor3 = cfg.borderColor or Theme.BORDER
+        bottomLine.BorderSizePixel = 0
+        bottomLine.AnchorPoint = Vector2.new(0, 1)
+        bottomLine.Position = UDim2.new(0, 0, 1, 0)
+        bottomLine.Size = UDim2.new(1, 0, 0, 1)
+        bottomLine.ZIndex = Z + 2
+        bottomLine.Parent = tabBar
+
+        tabHl = Instance.new("Frame")
+        tabHl.BackgroundColor3 = Theme.PRIMARY
+        tabHl.BorderSizePixel = 0
+        tabHl.Position = UDim2.new(0, 0, 1, -2)
+        tabHl.Size = UDim2.new(0, 0, 0, 2)
+        tabHl.ZIndex = Z + 3
+        tabHl.Parent = tabBar
+
+        local textSz = cfg.tabSize or 12
+        local padX = 18
+        local cx = 14
+        for i, name in ipairs(tabNames) do
+            local ok, measured = pcall(function()
+                return TextService:GetTextSize(tostring(name), textSz, FONT_MED, Vector2.new(300, 40))
+            end)
+            local txtW = ok and measured.X or (#tostring(name) * 8)
+            local btnW = math.floor(txtW) + padX * 2
+
+            local btn = Instance.new("TextButton")
+            btn.BackgroundColor3 = Theme.WHITE
+            btn.BackgroundTransparency = 1
+            btn.BorderSizePixel = 0
+            btn.Text = name
+            btn.TextColor3 = (i == 1) and Theme.PRIMARY_DK or Theme.TEXT_MUTED
+            btn.TextSize = textSz
+            btn.Font = FONT_MED
+            btn.AutoButtonColor = false
+            btn.Position = UDim2.new(0, cx, 0, 4)
+            btn.Size = UDim2.new(0, btnW, 1, -8)
+            btn.ZIndex = Z + 2
+            corner(btn, 6)
+            btn.Parent = tabBar
+
+            local capture = i
+            btn.MouseEnter:Connect(function()
+                if currentTab ~= capture then
+                    btn.BackgroundTransparency = 0
+                    tw(btn, EASE_FAST, { BackgroundColor3 = Theme.HOVER_SOFT, TextColor3 = Theme.PRIMARY })
+                end
+            end)
+            btn.MouseLeave:Connect(function()
+                if currentTab ~= capture then
+                    tw(btn, EASE, { TextColor3 = Theme.TEXT_MUTED })
+                    task.delay(0.22, function()
+                        if currentTab ~= capture then
+                            btn.BackgroundTransparency = 1
+                        end
+                    end)
+                end
+            end)
+            btn.MouseButton1Click:Connect(function()
+                btn.BackgroundTransparency = 1
+                selectTab(capture)
+            end)
+
+            tabButtons[i] = btn
+            cx = cx + btnW
+        end
+
+        pageContainer = Instance.new("Frame")
+        pageContainer.BackgroundTransparency = 1
+        pageContainer.Position = UDim2.new(0, 0, 0, TITLE_H + TAB_H)
+        pageContainer.Size = UDim2.new(1, 0, 1, -(TITLE_H + TAB_H))
+        pageContainer.ZIndex = Z + 1
+        pageContainer.ClipsDescendants = true
+        pageContainer.Parent = panel
+
+        for i = 1, #tabNames do
+            local p = Instance.new("CanvasGroup")
+            p.BackgroundTransparency = 1
+            p.Position = UDim2.new(0, 0, 0, 0)
+            p.Size = UDim2.new(1, 0, 1, 0)
+            p.GroupTransparency = (i == 1) and 0 or 1
+            p.Visible = (i == 1)
+            p.ZIndex = Z + 1
+            p.Parent = pageContainer
+            pages[i] = p
+        end
+
+        task.defer(function()
+            task.wait(0.05)
+            selectTab(1, false)
+        end)
+    end
+
+    local body
+    if hasTabs then
+        body = pageContainer
+    else
+        body = Instance.new("Frame")
+        body.BackgroundTransparency = 1
+        body.Position = UDim2.new(0, 0, 0, TITLE_H)
+        body.Size = UDim2.new(1, 0, 1, -TITLE_H)
+        body.ZIndex = Z + 1
+        body.Parent = panel
+    end
+
+    if cfg.resizable ~= false then
+        local handleSize = 16
+        local minW, minH = cfg.minWidth or 260, cfg.minHeight or 200
+
+        local handle = Instance.new("TextButton")
+        handle.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+        handle.BackgroundTransparency = 0.3
+        handle.BorderSizePixel = 0
+        handle.Text = ""
+        handle.AutoButtonColor = false
+        handle.AnchorPoint = Vector2.new(1, 1)
+        handle.Position = UDim2.new(1, -4, 1, -4)
+        handle.Size = UDim2.new(0, handleSize, 0, handleSize)
+        handle.ZIndex = Z + 5
+        corner(handle, 4)
+        handle.Parent = panel
+
+        for k = 1, 3 do
+            local line = Instance.new("Frame")
+            line.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+            line.BorderSizePixel = 0
+            line.AnchorPoint = Vector2.new(1, 1)
+            line.Position = UDim2.new(1, -3 - (k - 1) * 4, 1, -3)
+            line.Size = UDim2.new(0, 2, 0, 2 + (k - 1) * 3)
+            line.ZIndex = Z + 6
+            corner(line, 1)
+            line.Parent = handle
+        end
+
+        handle.MouseEnter:Connect(function()
+            tw(handle, EASE_FAST, {
+                BackgroundColor3 = Theme.HOVER_BG,
+                BackgroundTransparency = 0,
+            })
+        end)
+        handle.MouseLeave:Connect(function()
+            tw(handle, EASE, {
+                BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+                BackgroundTransparency = 0.3,
+            })
+        end)
+
+        local resizing = false
+        local resizeStart, startW, startH
+        handle.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1
+               or input.UserInputType == Enum.UserInputType.Touch then
+                resizing = true
+                resizeStart = input.Position
+                startW = panel.Size.X.Offset
+                startH = panel.Size.Y.Offset
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if not resizing then return end
+            if input.UserInputType == Enum.UserInputType.MouseMovement
+               or input.UserInputType == Enum.UserInputType.Touch then
+                local dx = input.Position.X - resizeStart.X
+                local dy = input.Position.Y - resizeStart.Y
+                local nw = math.max(startW + dx, minW)
+                local nh = math.max(startH + dy, minH)
+                panel.Size = UDim2.new(0, nw, 0, nh)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1
+               or input.UserInputType == Enum.UserInputType.Touch then
+                resizing = false
+            end
+        end)
+    end
 
     return {
         frame = panel,
         body = body,
         titleBar = titleBar,
+        tabBar = tabBar,
+        tabs = pages,
+        selectTab = selectTab,
+        getCurrentTab = function() return currentTab end,
         setPosition = function(nx, ny)
             panel.Position = UDim2.new(0, nx, 0, ny)
         end,
@@ -288,6 +540,7 @@ local function createPanel(parent, cfg)
     }
 end
 
+--=================== Button ===================
 local function createButton(parent, cfg)
     local W, H = cfg.w or 120, cfg.h or 34
     local X, Y = cfg.x or 0, cfg.y or 0
@@ -370,6 +623,7 @@ local function createButton(parent, cfg)
     return btn
 end
 
+--=================== Toggle ===================
 local function createToggle(parent, cfg)
     local W, H = cfg.w or 36, cfg.h or 20
 
@@ -436,6 +690,7 @@ local function createToggle(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
+--=================== Slider ===================
 local function createSlider(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 22
     local minV, maxV = cfg.min or 0, cfg.max or 100
@@ -560,6 +815,7 @@ local function createSlider(parent, cfg)
     }
 end
 
+--=================== TextBox ===================
 local function createTextBox(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 28
     local X, Y = cfg.x or 0, cfg.y or 0
@@ -603,6 +859,7 @@ local function createTextBox(parent, cfg)
     return tb
 end
 
+--=================== Checkbox ===================
 local function createCheckbox(parent, cfg)
     local W, H = cfg.w or 200, cfg.h or 20
     local boxSize = cfg.boxSize or 16
@@ -686,6 +943,7 @@ local function createCheckbox(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
+--=================== Dropdown ===================
 local function createDropdownBase(parent, cfg, multi)
     local W = cfg.w or 200
     local H = cfg.h or 30
@@ -966,6 +1224,7 @@ local function createDropdownBase(parent, cfg, multi)
     }
 end
 
+--=================== 全局 ui ===================
 local ui = {}
 
 ui.Theme = Theme
@@ -1025,4 +1284,71 @@ end
 
 _G.ui = ui
 
-print("[LUMEN UI] 已加载。使用 ui.createPanel / createButton / createSlider ... 创建组件。")
+--=================== 调用示例 ===================
+local panel = ui.createPanel({
+    x = 60, y = 80, w = 460, h = 340,
+    title = "设置中心",
+    tabs = { "常规", "高级", "关于" },
+    resizable = true,
+    draggable = true,
+    onClose = function() panel.destroy() end,
+})
+
+-- 常规页
+ui.createLabel({
+    parent = panel.tabs[1],
+    x = 20, y = 16, w = 300, h = 20,
+    text = "常规设置",
+})
+ui.createSlider({
+    parent = panel.tabs[1],
+    x = 20, y = 48, w = 400, h = 22,
+    min = 0, max = 100, value = 50,
+    onChange = function(v) print("音量:", v) end,
+})
+ui.createToggle({
+    parent = panel.tabs[1],
+    x = 20, y = 84, w = 40, h = 22, value = true,
+    onChange = function(on) print("开关:", on) end,
+})
+ui.createDropdown({
+    parent = panel.tabs[1],
+    x = 20, y = 120, w = 220, h = 30,
+    items = { "标准模式", "性能优先", "质量优先" },
+    value = "标准模式",
+    onChange = function(v) print("模式:", v) end,
+})
+
+-- 高级页
+ui.createLabel({
+    parent = panel.tabs[2],
+    x = 20, y = 16, w = 300, h = 20,
+    text = "高级设置",
+})
+ui.createCheckbox({
+    parent = panel.tabs[2],
+    x = 20, y = 48, w = 300, h = 22,
+    label = "启用实时预览", value = true,
+})
+ui.createMultiDropdown({
+    parent = panel.tabs[2],
+    x = 20, y = 84, w = 220, h = 30,
+    items = { "抗锯齿", "动态阴影", "粒子特效" },
+    value = {},
+    onChange = function(list) print("已选:", #list) end,
+})
+
+-- 关于页
+ui.createLabel({
+    parent = panel.tabs[3],
+    x = 20, y = 16, w = 400, h = 20,
+    text = "LUMEN UI v1.0",
+})
+ui.createButton({
+    parent = panel.tabs[3],
+    x = 20, y = 50, w = 130, h = 34,
+    text = "查看文档",
+    onClick = function() print("文档") end,
+})
+
+print("[LUMEN UI] 已加载。")
