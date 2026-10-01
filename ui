@@ -118,6 +118,176 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
+local function createPanel(parent, cfg)
+    local W, H = cfg.w or 360, cfg.h or 260
+    local X, Y = cfg.x or 0, cfg.y or 0
+    local RADIUS = cfg.radius or 12
+    local Z = cfg.zIndex or 4
+    local hasTitle = cfg.title ~= nil
+    local TITLE_H = hasTitle and (cfg.titleHeight or 34) or 0
+
+    local shadow = nil
+    if cfg.shadow ~= false then
+        shadow = Instance.new("Frame")
+        shadow.BackgroundColor3 = Theme.SHADOW
+        shadow.BackgroundTransparency = 0.92
+        shadow.BorderSizePixel = 0
+        shadow.Position = UDim2.new(0, X - 2, 0, Y + 2)
+        shadow.Size = UDim2.new(0, W + 4, 0, H + 4)
+        shadow.ZIndex = Z - 1
+        corner(shadow, RADIUS + 2)
+        shadow.Parent = parent
+    end
+
+    local panel = Instance.new("Frame")
+    panel.BackgroundColor3 = cfg.bgColor or Theme.WHITE
+    panel.BorderSizePixel = 0
+    panel.Position = UDim2.new(0, X, 0, Y)
+    panel.Size = UDim2.new(0, W, 0, H)
+    panel.ZIndex = Z
+    panel.ClipsDescendants = true
+    corner(panel, RADIUS)
+    stroke(panel, cfg.borderColor or Theme.BORDER, 1)
+    panel.Parent = parent
+
+    local function syncShadow()
+        if not shadow then return end
+        shadow.Position = UDim2.new(0, panel.Position.X.Offset - 2, 0, panel.Position.Y.Offset + 2)
+        shadow.Size = UDim2.new(0, panel.Size.X.Offset + 4, 0, panel.Size.Y.Offset + 4)
+    end
+    panel:GetPropertyChangedSignal("Position"):Connect(syncShadow)
+    panel:GetPropertyChangedSignal("Size"):Connect(syncShadow)
+
+    local titleBar = nil
+    if hasTitle then
+        titleBar = Instance.new("Frame")
+        titleBar.BackgroundColor3 = cfg.titleBgColor or (cfg.bgColor or Theme.WHITE)
+        titleBar.BorderSizePixel = 0
+        titleBar.Position = UDim2.new(0, 0, 0, 0)
+        titleBar.Size = UDim2.new(1, 0, 0, TITLE_H)
+        titleBar.ZIndex = Z + 1
+        corner(titleBar, RADIUS)
+        titleBar.Parent = panel
+
+        createLabel(titleBar, {
+            text = cfg.title, x = 16, y = 0, w = W - 80, h = TITLE_H,
+            textSize = cfg.titleSize or 13, color = cfg.titleColor or Theme.TEXT,
+            font = FONT_MED, zIndex = Z + 2,
+        })
+
+        local line = Instance.new("Frame")
+        line.BackgroundColor3 = cfg.borderColor or Theme.BORDER
+        line.BorderSizePixel = 0
+        line.AnchorPoint = Vector2.new(0, 1)
+        line.Position = UDim2.new(0, 0, 1, 0)
+        line.Size = UDim2.new(1, 0, 0, 1)
+        line.ZIndex = Z + 2
+        line.Parent = titleBar
+    end
+
+    if cfg.onClose then
+        local closeBtn = Instance.new("TextButton")
+        closeBtn.BackgroundColor3 = cfg.bgColor or Theme.WHITE
+        closeBtn.BackgroundTransparency = 1
+        closeBtn.BorderSizePixel = 0
+        closeBtn.Text = "×"
+        closeBtn.TextColor3 = Theme.TEXT_MUTED
+        closeBtn.TextSize = 16
+        closeBtn.Font = FONT_MED
+        closeBtn.AutoButtonColor = false
+        closeBtn.AnchorPoint = Vector2.new(1, 0.5)
+        closeBtn.Position = UDim2.new(1, -8, 0, TITLE_H / 2)
+        closeBtn.Size = UDim2.new(0, 24, 0, 24)
+        closeBtn.ZIndex = Z + 3
+        corner(closeBtn, 6)
+        closeBtn.Parent = titleBar or panel
+
+        closeBtn.MouseEnter:Connect(function()
+            closeBtn.BackgroundTransparency = 0
+            tw(closeBtn, EASE_FAST, { BackgroundColor3 = Theme.HOVER_BG, TextColor3 = Theme.PRIMARY_DK })
+        end)
+        closeBtn.MouseLeave:Connect(function()
+            tw(closeBtn, EASE, { TextColor3 = Theme.TEXT_MUTED })
+            task.delay(0.22, function() closeBtn.BackgroundTransparency = 1 end)
+        end)
+        closeBtn.MouseButton1Click:Connect(function()
+            cfg.onClose()
+        end)
+    end
+
+    if cfg.draggable ~= false then
+        local dragHit = Instance.new("TextButton")
+        dragHit.BackgroundTransparency = 1
+        dragHit.Text = ""
+        dragHit.AutoButtonColor = false
+        dragHit.Position = UDim2.new(0, 0, 0, 0)
+        dragHit.Size = UDim2.new(1, 0, 0, hasTitle and TITLE_H or 20)
+        dragHit.ZIndex = Z + 2
+        dragHit.Parent = titleBar or panel
+
+        local dragging = false
+        local dragStart, startPos
+        dragHit.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1
+               or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                dragStart = input.Position
+                startPos = panel.Position
+                if activeDropdownClose then
+                    activeDropdownClose()
+                    activeDropdownClose = nil
+                end
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if not dragging then return end
+            if input.UserInputType == Enum.UserInputType.MouseMovement
+               or input.UserInputType == Enum.UserInputType.Touch then
+                local dx = input.Position.X - dragStart.X
+                local dy = input.Position.Y - dragStart.Y
+                local vp = workspace.CurrentCamera.ViewportSize
+                if vp.X <= 0 or vp.Y <= 0 then return end
+                local minX = -panel.Size.X.Offset + 40
+                local maxX = vp.X - 40
+                local minY = 0
+                local maxY = vp.Y - 20
+                local nx = math.clamp(startPos.X.Offset + dx, minX, maxX)
+                local ny = math.clamp(startPos.Y.Offset + dy, minY, maxY)
+                panel.Position = UDim2.new(0, nx, 0, ny)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1
+               or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = false
+            end
+        end)
+    end
+
+    local body = Instance.new("Frame")
+    body.BackgroundTransparency = 1
+    body.Position = UDim2.new(0, 0, 0, TITLE_H)
+    body.Size = UDim2.new(1, 0, 1, -TITLE_H)
+    body.ZIndex = Z + 1
+    body.Parent = panel
+
+    return {
+        frame = panel,
+        body = body,
+        titleBar = titleBar,
+        setPosition = function(nx, ny)
+            panel.Position = UDim2.new(0, nx, 0, ny)
+        end,
+        setSize = function(nw, nh)
+            panel.Size = UDim2.new(0, nw, 0, nh)
+        end,
+        destroy = function()
+            if shadow then shadow:Destroy() end
+            panel:Destroy()
+        end,
+    }
+end
+
 local function createButton(parent, cfg)
     local W, H = cfg.w or 120, cfg.h or 34
     local X, Y = cfg.x or 0, cfg.y or 0
@@ -804,6 +974,11 @@ ui.Ease = {
     NORMAL = EASE, FAST = EASE_FAST, BACK = EASE_BACK, IN = EASE_IN,
 }
 
+function ui.createPanel(cfg)
+    cfg = cfg or {}
+    return createPanel(resolveParent(cfg), cfg)
+end
+
 function ui.createLabel(cfg)
     cfg = cfg or {}
     return createLabel(resolveParent(cfg), cfg)
@@ -850,4 +1025,4 @@ end
 
 _G.ui = ui
 
-print("[LUMEN UI] 已加载。使用 ui.createXxx({...}) 创建组件。")
+print("[LUMEN UI] 已加载。使用 ui.createPanel / createButton / createSlider ... 创建组件。")
