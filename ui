@@ -2,7 +2,6 @@
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local TextService      = game:GetService("TextService")
 
 local player    = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -175,7 +174,7 @@ local function createPanel(parent, cfg)
         titleBar.Parent = panel
 
         createLabel(titleBar, {
-            text = cfg.title, x = 16, y = 0, w = W - 80, h = TITLE_H,
+            text = cfg.title, x = 16, y = 0, w = W - 100, h = TITLE_H,
             textSize = cfg.titleSize or 13, color = cfg.titleColor or Theme.TEXT,
             font = FONT_MED, zIndex = Z + 5,
         })
@@ -190,34 +189,80 @@ local function createPanel(parent, cfg)
         line.Parent = titleBar
     end
 
-    if cfg.onClose then
-        local closeBtn = Instance.new("TextButton")
-        closeBtn.BackgroundColor3 = cfg.bgColor or Theme.WHITE
-        closeBtn.BackgroundTransparency = 1
-        closeBtn.BorderSizePixel = 0
-        closeBtn.Text = "×"
-        closeBtn.TextColor3 = Theme.TEXT_MUTED
-        closeBtn.TextSize = 16
-        closeBtn.Font = FONT_MED
-        closeBtn.AutoButtonColor = false
-        closeBtn.AnchorPoint = Vector2.new(1, 0.5)
-        closeBtn.Position = UDim2.new(1, -8, 0, (hasTitle and TITLE_H or 0) / 2)
-        closeBtn.Size = UDim2.new(0, 24, 0, 24)
-        closeBtn.ZIndex = Z + 6
-        corner(closeBtn, 6)
-        closeBtn.Parent = titleBar or panel
+    local ICON = 24
+    local ICON_PAD = 8
+    local ICON_GAP = 4
 
-        closeBtn.MouseEnter:Connect(function()
-            closeBtn.BackgroundTransparency = 0
-            tw(closeBtn, EASE_FAST, { BackgroundColor3 = Theme.HOVER_BG, TextColor3 = Theme.PRIMARY_DK })
+    local function iconBtn(symbol, orderFromRight, onClick)
+        local b = Instance.new("TextButton")
+        b.BackgroundColor3 = Theme.WHITE
+        b.BackgroundTransparency = 1
+        b.BorderSizePixel = 0
+        b.Text = symbol
+        b.TextColor3 = Theme.TEXT_MUTED
+        b.TextSize = 16
+        b.Font = FONT_MED
+        b.AutoButtonColor = false
+        b.AnchorPoint = Vector2.new(1, 0.5)
+        b.Position = UDim2.new(1, -(ICON_PAD + (orderFromRight - 1) * (ICON + ICON_GAP)),
+                               0, (hasTitle and TITLE_H or 20) / 2)
+        b.Size = UDim2.new(0, ICON, 0, ICON)
+        b.ZIndex = Z + 6
+        corner(b, 6)
+        b.Parent = titleBar or panel
+
+        b.MouseEnter:Connect(function()
+            b.BackgroundTransparency = 0
+            tw(b, EASE_FAST, { BackgroundColor3 = Theme.HOVER_BG, TextColor3 = Theme.PRIMARY_DK })
         end)
-        closeBtn.MouseLeave:Connect(function()
-            tw(closeBtn, EASE, { TextColor3 = Theme.TEXT_MUTED })
-            task.delay(0.22, function() closeBtn.BackgroundTransparency = 1 end)
+        b.MouseLeave:Connect(function()
+            tw(b, EASE, { TextColor3 = Theme.TEXT_MUTED })
+            task.delay(0.22, function() b.BackgroundTransparency = 1 end)
         end)
-        closeBtn.MouseButton1Click:Connect(function()
-            cfg.onClose()
-        end)
+        b.MouseButton1Click:Connect(onClick)
+        return b
+    end
+
+    if cfg.onClose then
+        iconBtn("×", 1, function() cfg.onClose() end)
+    end
+
+    local minimized = false
+    local savedH = H
+
+    local sidebar = nil
+    local pageContainer = nil
+    local pages = {}
+    local tabButtons = {}
+    local tabHl = nil
+    local currentTab = 1
+
+    local function setContentVisible(v)
+        if sidebar then sidebar.Visible = v end
+        if pageContainer then pageContainer.Visible = v end
+        if not hasTabs then
+            local bh = panel:FindFirstChild("BodyHolder")
+            if bh then bh.Visible = v end
+        end
+    end
+
+    local function toggleMinimize()
+        if not minimized then
+            savedH = panel.Size.Y.Offset
+            minimized = true
+        else
+            minimized = false
+        end
+        local targetH = minimized and (hasTitle and TITLE_H or 20) or savedH
+        tw(panel, TweenInfo.new(0.28, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, panel.Size.X.Offset, 0, targetH),
+        })
+        setContentVisible(not minimized)
+        if cfg.onMinimize then cfg.onMinimize(minimized) end
+    end
+
+    if hasTitle then
+        iconBtn("−", 2, toggleMinimize)
     end
 
     if cfg.draggable ~= false then
@@ -268,13 +313,6 @@ local function createPanel(parent, cfg)
             end
         end)
     end
-
-    local sidebar = nil
-    local pageContainer = nil
-    local pages = {}
-    local tabButtons = {}
-    local tabHl = nil
-    local currentTab = 1
 
     local function selectTab(index, animate)
         if not hasTabs then return end
@@ -330,12 +368,14 @@ local function createPanel(parent, cfg)
     end
 
     if hasTabs then
+        --===== 侧栏：加 UICorner 与面板圆角对齐 =====
         sidebar = Instance.new("Frame")
         sidebar.BackgroundColor3 = cfg.bgColor or Theme.WHITE
         sidebar.BorderSizePixel = 0
         sidebar.Position = UDim2.new(0, 0, 0, TITLE_H)
         sidebar.Size = UDim2.new(0, SIDEBAR_W, 1, -TITLE_H)
         sidebar.ZIndex = Z + 3
+        corner(sidebar, RADIUS)   -- ★ 修复"正方形"
         sidebar.Parent = panel
 
         local sideLine = Instance.new("Frame")
@@ -449,80 +489,12 @@ local function createPanel(parent, cfg)
         body = pageContainer
     else
         body = Instance.new("Frame")
+        body.Name = "BodyHolder"
         body.BackgroundTransparency = 1
         body.Position = UDim2.new(0, 0, 0, TITLE_H)
         body.Size = UDim2.new(1, 0, 1, -TITLE_H)
         body.ZIndex = Z + 1
         body.Parent = panel
-    end
-
-    if cfg.resizable ~= false then
-        local handleSize = 20
-        local minW, minH = cfg.minWidth or 260, cfg.minHeight or 200
-
-        local handle = Instance.new("TextButton")
-        handle.BackgroundColor3 = Theme.HOVER_BG
-        handle.BackgroundTransparency = 0
-        handle.BorderSizePixel = 0
-        handle.Text = ""
-        handle.AutoButtonColor = false
-        handle.AnchorPoint = Vector2.new(1, 1)
-        handle.Position = UDim2.new(1, -3, 1, -3)
-        handle.Size = UDim2.new(0, handleSize, 0, handleSize)
-        handle.ZIndex = Z + 10
-        corner(handle, 5)
-        handle.Parent = panel
-
-        local hs = stroke(handle, Theme.PRIMARY, 1)
-        hs.Transparency = 0.4
-
-        for k = 1, 3 do
-            local line = Instance.new("Frame")
-            line.BackgroundColor3 = Theme.PRIMARY
-            line.BorderSizePixel = 0
-            line.AnchorPoint = Vector2.new(1, 1)
-            line.Position = UDim2.new(1, -3 - (k - 1) * 4, 1, -3)
-            line.Size = UDim2.new(0, 2, 0, 2 + (k - 1) * 3)
-            line.ZIndex = Z + 11
-            corner(line, 1)
-            line.Parent = handle
-        end
-
-        handle.MouseEnter:Connect(function()
-            tw(handle, EASE_FAST, { BackgroundColor3 = Theme.PRIMARY })
-        end)
-        handle.MouseLeave:Connect(function()
-            tw(handle, EASE, { BackgroundColor3 = Theme.HOVER_BG })
-        end)
-
-        local resizing = false
-        local resizeStart, startW, startH
-        handle.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1
-               or input.UserInputType == Enum.UserInputType.Touch then
-                resizing = true
-                resizeStart = input.Position
-                startW = panel.Size.X.Offset
-                startH = panel.Size.Y.Offset
-            end
-        end)
-        UserInputService.InputChanged:Connect(function(input)
-            if not resizing then return end
-            if input.UserInputType == Enum.UserInputType.MouseMovement
-               or input.UserInputType == Enum.UserInputType.Touch then
-                local dx = input.Position.X - resizeStart.X
-                local dy = input.Position.Y - resizeStart.Y
-                local nw = math.max(startW + dx, minW)
-                local nh = math.max(startH + dy, minH)
-                panel.Size = UDim2.new(0, nw, 0, nh)
-            end
-        end)
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1
-               or input.UserInputType == Enum.UserInputType.Touch then
-                resizing = false
-            end
-        end)
     end
 
     return {
@@ -533,6 +505,7 @@ local function createPanel(parent, cfg)
         tabs = pages,
         selectTab = selectTab,
         getCurrentTab = function() return currentTab end,
+        toggleMinimize = toggleMinimize,
         setPosition = function(nx, ny)
             panel.Position = UDim2.new(0, nx, 0, ny)
         end,
@@ -944,7 +917,7 @@ local function createCheckbox(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
---=================== Dropdown（修复版） ===================
+--=================== Dropdown（强制向下展开） ===================
 local function createDropdownBase(parent, cfg, multi)
     local W = cfg.w or 200
     local H = cfg.h or 30
@@ -1099,14 +1072,9 @@ local function createDropdownBase(parent, cfg, multi)
         local btnSize = btn.AbsoluteSize
         local listH = #items * ITEM_H + LIST_PAD * 2
         local listW = btnSize.X
-        local vp = workspace.CurrentCamera.ViewportSize
 
-        -- 始终优先向下展开
+        -- ★ 永远在按钮正下方展开，不再向上回退
         local posY = btnPos.Y + btnSize.Y + LIST_GAP
-        -- 只有下方完全放不下，且上方能放下，才向上
-        if posY + listH > vp.Y and (btnPos.Y - listH - LIST_GAP) >= 0 then
-            posY = btnPos.Y - listH - LIST_GAP
-        end
 
         list.Position = UDim2.new(0, btnPos.X, 0, posY)
         list.Size = UDim2.new(0, listW, 0, 0)
