@@ -85,7 +85,7 @@ end)
 
 local function resolveParent(cfg) return (cfg and cfg.parent) or uiGui end
 
--- ============ Tooltip ============
+-- Tooltip
 local tooltipGui = Instance.new("Frame")
 tooltipGui.Name = "TooltipLayer"; tooltipGui.BackgroundTransparency = 1
 tooltipGui.Size = UDim2.new(1,0,1,0); tooltipGui.ZIndex = 260; tooltipGui.Parent = uiGui
@@ -123,7 +123,7 @@ local function showTooltip(target, text, x, y)
     tw(st, EASE, { Transparency = 0 }); tw(lbl, EASE, { TextTransparency = 0 })
 end
 
--- ============ Toast ============
+-- Toast
 local toastContainer = Instance.new("Frame")
 toastContainer.AnchorPoint = Vector2.new(1, 1); toastContainer.Position = UDim2.new(1, -20, 1, -20)
 toastContainer.Size = UDim2.new(0, 0, 0, 0); toastContainer.BackgroundTransparency = 1
@@ -230,12 +230,12 @@ local function createToast(cfg)
     task.delay(duration, function() if not entry.closing then closeToast(entry) end end)
 end
 
--- ============ Favorites ============
+-- Favorites
 local favorites = {}
 local favoriteModeEnabled = false
 local function toggleFavorite(id) favorites[id] = not favorites[id]; return favorites[id] end
 
--- ============ Badge ============
+-- Badge
 local BADGE_COLORS = {
     green  = { bg = Color3.fromRGB(76,175,80),  fg = Color3.fromRGB(255,255,255) },
     blue   = { bg = Color3.fromRGB(37,99,235),  fg = Color3.fromRGB(255,255,255) },
@@ -252,9 +252,7 @@ local function resolveBadgeSpec(c, customFg)
     return { bg = s.bg, fg = customFg or s.fg }
 end
 local function createBadge(parent, cfg)
-    if badgeCount >= MAX_BADGES then
-        warn("[LUMEN] 标签框最多只能创建 " .. MAX_BADGES .. " 个"); return nil
-    end
+    if badgeCount >= MAX_BADGES then warn("[LUMEN] 标签框最多 " .. MAX_BADGES .. " 个"); return nil end
     badgeCount = badgeCount + 1
     local h = cfg.h or 26
     local padding = cfg.padding or 12
@@ -295,8 +293,7 @@ local function createBadge(parent, cfg)
         end,
         setColor = function(c, customFg)
             local s = resolveBadgeSpec(c, customFg)
-            tw(badge, EASE, { BackgroundColor3 = s.bg })
-            tw(lbl, EASE, { TextColor3 = s.fg })
+            tw(badge, EASE, { BackgroundColor3 = s.bg }); tw(lbl, EASE, { TextColor3 = s.fg })
         end,
         destroy = function()
             badgeCount = math.max(0, badgeCount - 1)
@@ -370,7 +367,6 @@ local function createPanel(parent, cfg)
     local SIDEBAR_W = hasTabs and (cfg.sidebarWidth or 100) or 0
     local showPlayer = cfg.showPlayer ~= false
     local minimizable = cfg.minimizable ~= false
-    local MINIMIZED_W = cfg.minimizedWidth or 200
 
     local useCenter = cfg.center == true
     if cfg.x == nil and cfg.y == nil then useCenter = true end
@@ -433,6 +429,7 @@ local function createPanel(parent, cfg)
     end
 
     local ICON=24; local ICON_PAD=8; local ICON_GAP=4
+    local titleIconButtons = {}
     local function iconBtn(symbol, orderFromRight, onClick)
         local b = Instance.new("TextButton")
         b.BackgroundColor3=Theme.WHITE; b.BackgroundTransparency=1
@@ -443,6 +440,7 @@ local function createPanel(parent, cfg)
         b.Position=UDim2.new(1,-(ICON_PAD+(orderFromRight-1)*(ICON+ICON_GAP)),0,(hasTitle and TITLE_H or 20)/2)
         b.Size=UDim2.new(0,ICON,0,ICON); b.ZIndex=Z+6
         corner(b,6); b.Parent=titleBar or panel
+        table.insert(titleIconButtons, b)
         b.MouseEnter:Connect(function()
             b.BackgroundTransparency=0
             tw(b,EASE_FAST,{BackgroundColor3=Theme.HOVER_BG,TextColor3=Theme.PRIMARY_DK})
@@ -463,33 +461,93 @@ local function createPanel(parent, cfg)
     local pages, tabButtons, tabHl, tabHlBar = {}, {}, nil, nil
     local groupStates = {}
     local currentTab = 1
+    local hiddenTitleNodes = {}
+
+    local function collectAndHide(node, list)
+        if node:IsA("GuiObject") then
+            local st = { node = node, bg = node.BackgroundTransparency, text = nil }
+            if node:IsA("TextLabel") or node:IsA("TextButton") or node:IsA("TextBox") then
+                st.text = node.TextTransparency
+            end
+            list[#list + 1] = st
+            tw(node, EASE_FAST, { BackgroundTransparency = 1 })
+            if st.text ~= nil then tw(node, EASE_FAST, { TextTransparency = 1 }) end
+        end
+        for _, c in ipairs(node:GetChildren()) do collectAndHide(c, list) end
+    end
+
+    local function restoreHidden(list)
+        for _, s in ipairs(list) do
+            if s.node and s.node.Parent then
+                local props = { BackgroundTransparency = s.bg }
+                if s.text ~= nil then props.TextTransparency = s.text end
+                tw(s.node, EASE, props)
+            end
+        end
+    end
 
     local function toggleMinimize()
         if not minimized then
+            -- ===== 收窄：先高度（从下往上），再宽度（从右往左） =====
             minimized = true
             if body then tw(body, EASE_FAST, { GroupTransparency = 1 }) end
             if playerBar then tw(playerBar, EASE_FAST, { BackgroundTransparency = 1 }) end
-            tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+
+            -- 收集标题栏上除标题和两个按钮以外的所有元素（badge 等）并隐藏
+            hiddenTitleNodes = {}
+            if titleBar then
+                for _, child in ipairs(titleBar:GetChildren()) do
+                    if child ~= titleLabel and child ~= titleLine
+                       and not (child:IsA("TextButton") and table.find(titleIconButtons, child)) then
+                        collectAndHide(child, hiddenTitleNodes)
+                    end
+                end
+            end
+
+            -- 阶段一：高度收缩（顶部固定，底边上移）
+            tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, panel.Size.X.Offset, 0, TITLE_H),
             })
-            task.delay(0.22, function()
+
+            -- 阶段二：宽度收缩（左边缘固定，右边缘左移），宽度按标题长度自适应
+            task.delay(0.24, function()
                 if not panel or not panel.Parent then return end
-                tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                    Size = UDim2.new(0, MINIMIZED_W, 0, TITLE_H),
+                local titleW = 100
+                if titleLabel then
+                    local ok, m = pcall(function()
+                        return TextService:GetTextSize(titleLabel.Text, titleLabel.TextSize, titleLabel.Font, Vector2.new(10000, TITLE_H))
+                    end)
+                    if ok and m then titleW = math.ceil(m.X) end
+                end
+                local btnZoneW = ICON_PAD + 2 * ICON + ICON_GAP + 4
+                local minW = 16 + titleW + 16 + btnZoneW + 8
+                minW = math.min(W, math.max(minW, 150))
+                tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                    Size = UDim2.new(0, minW, 0, TITLE_H),
                 })
             end)
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 1 }) end
         else
+            -- ===== 展开：先宽度（从右往左展开），再高度（从上往下） =====
             minimized = false
-            tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+
+            -- 阶段一：宽度展开
+            tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, W, 0, TITLE_H),
             })
-            task.delay(0.20, function()
+
+            -- 阶段二：高度展开
+            task.delay(0.24, function()
                 if not panel or not panel.Parent then return end
-                tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                     Size = UDim2.new(0, W, 0, H),
                 })
             end)
+
+            -- 恢复标题栏被隐藏的元素
+            restoreHidden(hiddenTitleNodes)
+            hiddenTitleNodes = {}
+
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 0 }) end
             if body then tw(body, EASE, { GroupTransparency = 0 }) end
             if playerBar then tw(playerBar, EASE, { BackgroundTransparency = 0 }) end
@@ -644,7 +702,6 @@ local function createPanel(parent, cfg)
         tabHlBar.Size=UDim2.new(0,3,0,14); tabHlBar.ZIndex=Z+4
         corner(tabHlBar,2); tabHlBar.Parent=tabHl
 
-        -- 展开成扁平列表
         local flatList = {}
         for _, entry in ipairs(tabConfig) do
             if type(entry) == "string" then
@@ -660,7 +717,6 @@ local function createPanel(parent, cfg)
             end
         end
 
-        -- ★ 关键：先声明 relayoutMenu 变量（闭包提前捕获）
         local relayoutMenu
 
         local tabIndexCounter = 0
@@ -737,7 +793,6 @@ local function createPanel(parent, cfg)
             end
         end
 
-        -- ★ 现在给 relayoutMenu 赋值
         relayoutMenu = function(animate)
             local y = ITEM_START_Y
             for _, item in ipairs(flatList) do
@@ -757,9 +812,7 @@ local function createPanel(parent, cfg)
                     end
                     if hidden then
                         item.targetY = y
-                        if item.button then
-                            item.button.Visible = false
-                        end
+                        if item.button then item.button.Visible = false end
                     else
                         item.targetY = y
                         y = y + ITEM_H + 4
@@ -1380,7 +1433,7 @@ local function staggerChildren(parent, delayPerItem)
     end
 end
 
--- ============ ui API ============
+-- ui API
 local ui = {}
 ui.Theme = Theme
 ui.ScreenGui = uiGui
