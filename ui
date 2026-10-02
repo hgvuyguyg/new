@@ -26,16 +26,135 @@ local DarkTheme = {
 
 local FONT_REG = Enum.Font.Gotham
 local FONT_MED = Enum.Font.GothamMedium
+
+-- ★ 更灵动的缓动
 local EASE      = TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local EASE_FAST = TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local EASE_BACK = TweenInfo.new(0.28, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+local EASE_BACK = TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 local EASE_IN   = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 local EASE_NONE = TweenInfo.new(0, Enum.EasingStyle.Linear)
-local EASE_SOFT = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+local EASE_SOFT = TweenInfo.new(0.32, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+local EASE_ELASTIC = TweenInfo.new(0.45, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
+local EASE_SINE = TweenInfo.new(0.28, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 
 local function tw(o,i,p) local t=TweenService:Create(o,i,p); t:Play(); return t end
 local function corner(p,r) local c=Instance.new("UICorner"); c.CornerRadius=UDim.new(0,r or 8); c.Parent=p; return c end
 local function stroke(p,c,t) local s=Instance.new("UIStroke"); s.Color=c or Theme.BORDER; s.Thickness=t or 1; s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border; s.Parent=p; return s end
+
+-- ★ 脉冲：放大再弹性回弹
+local function pulse(obj, peakScale, peakTime)
+    peakScale = peakScale or 1.04
+    peakTime = peakTime or 0.1
+    local origSize = obj.Size
+    local peakSize = UDim2.new(
+        origSize.X.Scale, origSize.X.Offset * peakScale,
+        origSize.Y.Scale, origSize.Y.Offset * peakScale
+    )
+    local t1 = TweenService:Create(obj, TweenInfo.new(peakTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = peakSize })
+    t1.Completed:Connect(function()
+        if obj and obj.Parent then
+            TweenService:Create(obj, EASE_ELASTIC, { Size = origSize }):Play()
+        end
+    end)
+    t1:Play()
+end
+
+-- ★ 波纹：从点击处扩散的圆圈
+local function ripple(parent, cx, cy, color)
+    color = color or Theme.PRIMARY
+    local ring = Instance.new("Frame")
+    ring.AnchorPoint = Vector2.new(0.5, 0.5)
+    ring.Position = UDim2.new(0, cx, 0, cy)
+    ring.Size = UDim2.new(0, 4, 0, 4)
+    ring.BackgroundTransparency = 1
+    ring.BorderSizePixel = 0
+    ring.ZIndex = 100
+    ring.Parent = parent
+    corner(ring, 4)
+    local s = stroke(ring, color, 2)
+    s.Transparency = 0.2
+    local t = TweenService:Create(ring, TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 80, 0, 80),
+    })
+    TweenService:Create(s, TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Transparency = 1,
+    }):Play()
+    t.Completed:Connect(function() pcall(function() ring:Destroy() end) end)
+    t:Play()
+end
+
+-- ★ 闪光：白色高光扫过
+local function shine(obj)
+    local s = Instance.new("Frame")
+    s.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    s.BackgroundTransparency = 0.75
+    s.BorderSizePixel = 0
+    s.Size = UDim2.new(0, 24, 1, 0)
+    s.Position = UDim2.new(0, -30, 0, 0)
+    s.ZIndex = 20
+    s.Parent = obj
+    local g = Instance.new("UIGradient", s)
+    g.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 1),
+        NumberSequenceKeypoint.new(0.5, 0),
+        NumberSequenceKeypoint.new(1, 1),
+    })
+    local t = TweenService:Create(s, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Position = UDim2.new(1, 30, 0, 0),
+    })
+    t.Completed:Connect(function() pcall(function() s:Destroy() end) end)
+    t:Play()
+end
+
+-- ★ 抖动：左右快速摆动
+local function shakeX(obj, intensity, times)
+    intensity = intensity or 4
+    times = times or 3
+    local baseX = obj.Position.X.Offset
+    local baseY = obj.Position.Y.Offset
+    task.spawn(function()
+        for i = 1, times do
+            if not obj or not obj.Parent then return end
+            local off = intensity * ((i % 2 == 1) and 1 or -1) * (1 - (i-1)/times)
+            tw(obj, TweenInfo.new(0.05, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                { Position = UDim2.new(obj.Position.X.Scale, baseX + off, obj.Position.Y.Scale, baseY) })
+            task.wait(0.05)
+        end
+        if obj and obj.Parent then
+            tw(obj, EASE_BACK, { Position = UDim2.new(obj.Position.X.Scale, baseX, obj.Position.Y.Scale, baseY) })
+        end
+    end)
+end
+
+-- ★ 数字滚动
+local function rollNumber(label, fromV, toV, duration, decimals)
+    duration = duration or 0.28
+    decimals = decimals or 0
+    local startTime = tick()
+    task.spawn(function()
+        while true do
+            local el = tick() - startTime
+            if el >= duration then break end
+            if not label or not label.Parent then return end
+            local t = el / duration
+            t = 1 - (1 - t) * (1 - t)
+            local v = fromV + (toV - fromV) * t
+            if decimals > 0 then
+                label.Text = string.format("%." .. decimals .. "f", v)
+            else
+                label.Text = tostring(math.floor(v + 0.5))
+            end
+            task.wait(0.016)
+        end
+        if label and label.Parent then
+            if decimals > 0 then
+                label.Text = string.format("%." .. decimals .. "f", toV)
+            else
+                label.Text = tostring(math.floor(toV + 0.5))
+            end
+        end
+    end)
+end
 
 local uiGui = Instance.new("ScreenGui")
 uiGui.Name="LumenUI"; uiGui.ResetOnSpawn=false; uiGui.IgnoreGuiInset=true
@@ -66,11 +185,7 @@ tooltipGui.ZIndex = 260
 tooltipGui.Parent = uiGui
 
 local activeTooltip = nil
-local activeTooltipTimer = nil
 local function hideTooltip()
-    if activeTooltipTimer then
-        pcall(function() task.cancel(activeTooltipTimer) end); activeTooltipTimer = nil
-    end
     if activeTooltip then
         local box = activeTooltip
         activeTooltip = nil
@@ -87,9 +202,10 @@ local function showTooltip(target, text, x, y)
     local box = Instance.new("Frame")
     box.BackgroundColor3 = Theme.WHITE
     box.BorderSizePixel = 0
-    box.Position = UDim2.new(0, x, 0, y)
+    box.Position = UDim2.new(0, x, 0, y - 4)
     box.Size = UDim2.new(0, 220, 0, 0)
     box.AutomaticSize = Enum.AutomaticSize.Y
+    box.BackgroundTransparency = 1
     box.ZIndex = 261
     box.Parent = tooltipGui
     corner(box, 8)
@@ -110,14 +226,13 @@ local function showTooltip(target, text, x, y)
     lbl.ZIndex = 262
     lbl.TextTransparency = 1
     activeTooltip = box
-    tw(box, EASE_SOFT, { BackgroundTransparency = 0 })
+    tw(box, EASE_SOFT, { BackgroundTransparency = 0, Position = UDim2.new(0, x, 0, y) })
     tw(st, EASE, { Transparency = 0 })
     tw(lbl, EASE, { TextTransparency = 0 })
 end
 
--- ============ Toast（去掉左侧竖条） ============
+-- ============ Toast ============
 local toastContainer = Instance.new("Frame")
-toastContainer.Name = "ToastContainer"
 toastContainer.AnchorPoint = Vector2.new(1, 1)
 toastContainer.Position = UDim2.new(1, -20, 1, -20)
 toastContainer.Size = UDim2.new(0, 0, 0, 0)
@@ -146,7 +261,7 @@ local function relayoutToasts(animate)
         local targetY = -((i - 1) * (TOAST_H + TOAST_GAP))
         local targetPos = UDim2.new(1, 0, 1, targetY)
         if animate then
-            tw(t.frame, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
+            tw(t.frame, TweenInfo.new(0.28, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Position = targetPos })
         else
             t.frame.Position = targetPos
         end
@@ -159,12 +274,12 @@ local function closeToast(t)
     for i, item in ipairs(toastList) do
         if item == t then table.remove(toastList, i); break end
     end
-    tw(t.frame, TweenInfo.new(0.26, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+    tw(t.frame, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
         { Position = UDim2.new(1, TOAST_W + 60, 1, t.frame.Position.Y.Offset) })
-    tw(t.frame, TweenInfo.new(0.26), { BackgroundTransparency = 1 })
-    if t.stroke then tw(t.stroke, TweenInfo.new(0.26), { Transparency = 1 }) end
-    task.delay(0.30, function() relayoutToasts(true) end)
-    task.delay(0.32, function() pcall(function() t.frame:Destroy() end) end)
+    tw(t.frame, TweenInfo.new(0.22), { BackgroundTransparency = 1 })
+    if t.stroke then tw(t.stroke, TweenInfo.new(0.22), { Transparency = 1 }) end
+    task.delay(0.26, function() relayoutToasts(true) end)
+    task.delay(0.28, function() pcall(function() t.frame:Destroy() end) end)
 end
 
 local function createToast(cfg)
@@ -176,7 +291,6 @@ local function createToast(cfg)
     local iconSymbol = iconParam or style.symbol
 
     local card = Instance.new("Frame")
-    card.Name = "Toast"
     card.AnchorPoint = Vector2.new(1, 1)
     card.Position = UDim2.new(1, TOAST_W + 60, 1, 0)
     card.Size = UDim2.new(0, TOAST_W, 0, TOAST_H)
@@ -187,7 +301,7 @@ local function createToast(cfg)
     corner(card, 12)
     local cardStroke = stroke(card, Color3.fromRGB(229, 231, 235), 1)
 
-    -- 图标（圆形渐变底）
+    -- 图标圆
     local iconCircle = Instance.new("Frame")
     iconCircle.AnchorPoint = Vector2.new(0, 0)
     iconCircle.Position = UDim2.new(0, 16, 0, 16)
@@ -203,6 +317,10 @@ local function createToast(cfg)
         ColorSequenceKeypoint.new(0, style.color),
         ColorSequenceKeypoint.new(1, style.c2),
     })
+    -- 图标弹性放大
+    iconCircle.Size = UDim2.new(0, 0, 0, 0)
+    tw(iconCircle, TweenInfo.new(0.42, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
+        { Size = UDim2.new(0, 32, 0, 32) })
 
     if iconIsImage then
         local img = Instance.new("ImageLabel")
@@ -220,7 +338,6 @@ local function createToast(cfg)
         iconText.Parent = iconCircle
     end
 
-    -- 标题
     local titleLbl = Instance.new("TextLabel")
     titleLbl.BackgroundTransparency = 1; titleLbl.Text = cfg.title or "通知"
     titleLbl.TextColor3 = Color3.fromRGB(31, 41, 55)
@@ -231,7 +348,6 @@ local function createToast(cfg)
     titleLbl.Size = UDim2.new(1, -94, 0, 16)
     titleLbl.ZIndex = 252; titleLbl.Parent = card
 
-    -- 正文
     local msgLbl = Instance.new("TextLabel")
     msgLbl.BackgroundTransparency = 1; msgLbl.Text = cfg.message or ""
     msgLbl.TextColor3 = Color3.fromRGB(156, 163, 175)
@@ -242,7 +358,6 @@ local function createToast(cfg)
     msgLbl.Size = UDim2.new(1, -74, 0, 30)
     msgLbl.ZIndex = 252; msgLbl.Parent = card
 
-    -- 关闭按钮（普通 ×）
     local closeBtn = Instance.new("TextButton")
     closeBtn.AnchorPoint = Vector2.new(1, 0)
     closeBtn.Position = UDim2.new(1, -8, 0, 8)
@@ -270,7 +385,6 @@ local function createToast(cfg)
         end)
     end)
 
-    -- 进度条
     local progressBg = Instance.new("Frame")
     progressBg.AnchorPoint = Vector2.new(0, 1)
     progressBg.Position = UDim2.new(0, 8, 1, -6)
@@ -310,9 +424,6 @@ local favoriteModeEnabled = false
 
 local function toggleFavorite(id)
     favorites[id] = not favorites[id]
-    if _G._lumenOnFavoriteChanged then
-        pcall(_G._lumenOnFavoriteChanged, id, favorites[id])
-    end
     return favorites[id]
 end
 
@@ -357,7 +468,7 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
--- ============ 收藏星标 ============
+-- ============ 收藏星标（抖动） ============
 local allStars = {}
 
 local function createStar(parent, id, x, y)
@@ -376,20 +487,19 @@ local function createStar(parent, id, x, y)
     btn.Parent = parent
     table.insert(allStars, btn)
 
-    local function refresh(v)
-        btn.Text = v and "★" or "☆"
-        tw(btn, EASE_FAST, { TextColor3 = v and Color3.fromRGB(245, 158, 11) or Color3.fromRGB(200, 200, 200) })
-    end
-
     btn.MouseEnter:Connect(function()
         tw(btn, EASE_FAST, { TextColor3 = Color3.fromRGB(245, 158, 11) })
+        tw(btn, EASE_SINE, { Size = UDim2.new(0, 22, 0, 22) })
     end)
     btn.MouseLeave:Connect(function()
         tw(btn, EASE, { TextColor3 = favorites[id] and Color3.fromRGB(245, 158, 11) or Color3.fromRGB(200, 200, 200) })
+        tw(btn, EASE, { Size = UDim2.new(0, 20, 0, 20) })
     end)
     btn.MouseButton1Click:Connect(function()
         local v = toggleFavorite(id)
-        refresh(v)
+        btn.Text = v and "★" or "☆"
+        tw(btn, EASE_FAST, { TextColor3 = v and Color3.fromRGB(245, 158, 11) or Color3.fromRGB(200, 200, 200) })
+        pulse(btn, 1.25, 0.1)
     end)
     return btn
 end
@@ -438,7 +548,7 @@ local function createPanel(parent, cfg)
     local shadow = nil
     if cfg.shadow ~= false then
         shadow = Instance.new("Frame")
-        shadow.BackgroundColor3=Theme.SHADOW; shadow.BackgroundTransparency=0.92
+        shadow.BackgroundColor3=Theme.SHADOW; shadow.BackgroundTransparency=0.95
         shadow.BorderSizePixel=0
         shadow.Position=UDim2.new(0,X-2,0,Y+2)
         shadow.Size=UDim2.new(0,W+4,0,H+4)
@@ -454,6 +564,17 @@ local function createPanel(parent, cfg)
     corner(panel,RADIUS)
     local panelStroke = stroke(panel,cfg.borderColor or Theme.BORDER,1)
     panel.Parent=parent
+
+    -- ★ 面板入场：从 0.9 缩放 + 弹性
+    panel.Size = UDim2.new(0, W * 0.9, 0, H * 0.9)
+    local grad = Instance.new("UIGradient", panel)
+    grad.Rotation = 135
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, cfg.bgColor or Theme.WHITE),
+        ColorSequenceKeypoint.new(1, cfg.bgColor or Theme.WHITE),
+    })
+    tw(panel, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        { Size = UDim2.new(0, W, 0, H), Position = UDim2.new(0, X, 0, Y) })
 
     local function syncShadow()
         if not shadow then return end
@@ -503,12 +624,17 @@ local function createPanel(parent, cfg)
         b.MouseEnter:Connect(function()
             b.BackgroundTransparency=0
             tw(b,EASE_FAST,{BackgroundColor3=Theme.HOVER_BG,TextColor3=Theme.PRIMARY_DK})
+            tw(b,EASE_SINE,{Size=UDim2.new(0,26,0,26)})
         end)
         b.MouseLeave:Connect(function()
             tw(b,EASE,{TextColor3=Theme.TEXT_MUTED})
+            tw(b,EASE,{Size=UDim2.new(0,ICON,0,ICON)})
             task.delay(0.22,function() if b then b.BackgroundTransparency=1 end end)
         end)
-        b.MouseButton1Click:Connect(onClick)
+        b.MouseButton1Click:Connect(function()
+            ripple(b, ICON/2, ICON/2, Theme.PRIMARY)
+            onClick()
+        end)
         return b
     end
     if cfg.onClose then iconBtn("×",1,function() cfg.onClose() end) end
@@ -531,7 +657,7 @@ local function createPanel(parent, cfg)
         if not minimized then savedH=panel.Size.Y.Offset; minimized=true
         else minimized=false end
         local targetH = minimized and (hasTitle and TITLE_H or 20) or savedH
-        tw(panel,TweenInfo.new(0.28,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
+        tw(panel,TweenInfo.new(0.32,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
             {Size=UDim2.new(0,panel.Size.X.Offset,0,targetH)})
         setContentVisible(not minimized)
         if titleLine then tw(titleLine,EASE,{BackgroundTransparency=minimized and 1 or 0}) end
@@ -550,6 +676,7 @@ local function createPanel(parent, cfg)
             if input.UserInputType==Enum.UserInputType.MouseButton1
                or input.UserInputType==Enum.UserInputType.Touch then
                 dragging=true; dragStart=input.Position; startPos=panel.Position
+                tw(panel, EASE_FAST, { BackgroundColor3 = (currentDark and DarkTheme.WHITE or Theme.WHITE) })
                 if activeDropdownClose then activeDropdownClose(); activeDropdownClose=nil end
             end
         end)
@@ -586,6 +713,14 @@ local function createPanel(parent, cfg)
                 Position=UDim2.new(0,8,0,btn.Position.Y.Offset),
                 Size=UDim2.new(0,SIDEBAR_W-16,0,btn.Size.Y.Offset),
             })
+            if tabHlBar then
+                tabHlBar.Size = UDim2.new(0, 3, 0, 6)
+                task.delay(0.15, function()
+                    if tabHlBar and tabHlBar.Parent then
+                        tw(tabHlBar, EASE_BACK, { Size = UDim2.new(0, 3, 0, 14) })
+                    end
+                end)
+            end
             local navScroll = btn.Parent
             if navScroll and navScroll:IsA("ScrollingFrame") then
                 tw(navScroll, EASE, { CanvasPosition = Vector2.new(0, math.max(btn.Position.Y.Offset - 100, 0)) })
@@ -604,16 +739,16 @@ local function createPanel(parent, cfg)
         end
         if prev and prev~=nxt then
             local closing=prev
-            tw(closing,EASE,{GroupTransparency=1,Position=UDim2.new(0,-8,0,0)})
-            task.delay(0.24,function()
+            tw(closing, EASE, {GroupTransparency=1, Position=UDim2.new(0,-12,0,0)})
+            task.delay(0.22,function()
                 if closing~=pages[currentTab] then
                     closing.Visible=false; closing.Position=UDim2.new(0,0,0,0)
                 end
             end)
         end
         if nxt then
-            nxt.Position=UDim2.new(0,8,0,0); nxt.GroupTransparency=1; nxt.Visible=true
-            tw(nxt,EASE,{GroupTransparency=0,Position=UDim2.new(0,0,0,0)})
+            nxt.Position=UDim2.new(0,14,0,0); nxt.GroupTransparency=1; nxt.Visible=true
+            tw(nxt, EASE_BACK, {GroupTransparency=0, Position=UDim2.new(0,0,0,0)})
         end
     end
 
@@ -632,6 +767,29 @@ local function createPanel(parent, cfg)
         avatar.Size=UDim2.new(0,avatarSize,0,avatarSize); avatar.ZIndex=Z+7
         avatar.Image="rbxthumb://type=AvatarHeadShot&id="..player.UserId.."&w=60&h=60"
         corner(avatar,avatarSize/2); avatar.Parent=playerBar
+        -- 头像呼吸
+        local ring = Instance.new("Frame")
+        ring.BackgroundTransparency = 1
+        ring.BorderSizePixel = 0
+        ring.AnchorPoint = Vector2.new(0.5,0.5)
+        ring.Position = UDim2.new(0, 6 + avatarSize/2, 0.5, 0)
+        ring.Size = UDim2.new(0, avatarSize, 0, avatarSize)
+        ring.ZIndex = Z+6
+        ring.Parent = playerBar
+        corner(ring, avatarSize/2)
+        local rs = stroke(ring, Theme.PRIMARY, 1.5)
+        rs.Transparency = 0.6
+        task.spawn(function()
+            while ring.Parent do
+                ring.Size = UDim2.new(0, avatarSize, 0, avatarSize)
+                rs.Transparency = 0.6
+                tw(ring, TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+                    { Size = UDim2.new(0, avatarSize + 8, 0, avatarSize + 8) })
+                tw(rs, TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+                    { Transparency = 1 })
+                task.wait(1.4)
+            end
+        end)
         local nameText=Instance.new("TextLabel")
         nameText.BackgroundTransparency=1; nameText.Text=player.DisplayName
         nameText.TextColor3=Theme.TEXT; nameText.TextSize=11; nameText.Font=FONT_MED
@@ -749,7 +907,6 @@ local function createPanel(parent, cfg)
         body.ZIndex=Z+1; body.Parent=panel
     end
 
-    -- ★ 主题切换时刷新面板相关元素的颜色
     addThemeListener(function(dark)
         local src = dark and DarkTheme or Theme
         if panel and panel.Parent then panel.BackgroundColor3 = src.WHITE end
@@ -761,7 +918,6 @@ local function createPanel(parent, cfg)
         if playerBar and playerBar.Parent then playerBar.BackgroundColor3 = src.WHITE end
         if tabHl and tabHl.Parent then tabHl.BackgroundColor3 = src.HOVER_BG end
         if tabHlBar and tabHlBar.Parent then tabHlBar.BackgroundColor3 = src.PRIMARY end
-        -- 侧栏菜单文字
         for i, b in ipairs(tabButtons) do
             if b and b.Parent then
                 b.TextColor3 = (i == currentTab) and src.PRIMARY_DK or src.TEXT_MUTED
@@ -781,18 +937,26 @@ local function createPanel(parent, cfg)
         setPosition=function(nx,ny) panel.Position=UDim2.new(0,nx,0,ny) end,
         setSize=function(nw,nh) panel.Size=UDim2.new(0,nw,0,nh) end,
         destroy=function()
-            if activeDropdownClose then
-                pcall(activeDropdownClose); activeDropdownClose = nil
-            end
-            for _, ext in ipairs(ownedExternals) do
-                pcall(function() if ext and ext.Parent then ext:Destroy() end end)
-            end
-            pcall(function() if panel then panel:Destroy() end end)
+            -- ★ 退场动画
+            tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+                { Size = UDim2.new(0, panel.Size.X.Offset * 0.85, 0, panel.Size.Y.Offset * 0.85),
+                  Position = UDim2.new(0, panel.Position.X.Offset + panel.Size.X.Offset * 0.075,
+                                       0, panel.Position.Y.Offset + panel.Size.Y.Offset * 0.075) })
+            tw(panel, TweenInfo.new(0.22), { BackgroundTransparency = 1 })
+            task.delay(0.28, function()
+                if activeDropdownClose then
+                    pcall(activeDropdownClose); activeDropdownClose = nil
+                end
+                for _, ext in ipairs(ownedExternals) do
+                    pcall(function() if ext and ext.Parent then ext:Destroy() end end)
+                end
+                pcall(function() if panel then panel:Destroy() end end)
+            end)
         end,
     }
 end
 
--- ============ Button（关键修复：主题切换时同步刷新所有颜色 + hover 基准） ============
+-- ============ Button ============
 local function createButton(parent, cfg)
     local isCard = cfg.layout == "card"
     local W = cfg.w or 120
@@ -817,7 +981,6 @@ local function createButton(parent, cfg)
     btn.Parent = parent
     local enabled = cfg.enabled ~= false
 
-    -- 使用"当前主题基准色"函数，确保 hover/leave 拿到的是最新值
     local function currentBaseBg()
         if customBg then return customBg end
         return currentDark and DarkTheme.WHITE or Theme.WHITE
@@ -864,7 +1027,6 @@ local function createButton(parent, cfg)
         btn.MouseLeave:Connect(function() hideTooltip() end)
     end
 
-    -- ★ 主题切换刷新按钮外观
     addThemeListener(function(dark)
         if not btn or not btn.Parent then return end
         local src = dark and DarkTheme or Theme
@@ -887,30 +1049,43 @@ local function createButton(parent, cfg)
         tw(btn, EASE_FAST, {
             BackgroundColor3 = src.HOVER_BG,
             TextColor3 = src.PRIMARY_DK,
-            Position = UDim2.new(0, X, 0, Y - 1),
+            Position = UDim2.new(0, X, 0, Y - 2),
         })
         tw(st, EASE_FAST, { Color = src.PRIMARY_DK })
-        if iconLabel then tw(iconLabel, EASE_FAST, { TextColor3 = src.PRIMARY_DK }) end
+        if iconLabel then
+            tw(iconLabel, EASE_FAST, { TextColor3 = src.PRIMARY_DK })
+            -- 箭头右移
+            tw(iconLabel, EASE_SINE, { Position = UDim2.new(0, W - 26, 0, 0) })
+        end
     end)
     btn.MouseLeave:Connect(function()
         if not enabled then return end
-        -- ★ 用 currentBase* 拿实时颜色，避免切完主题后 hover 又变回旧色
-        tw(btn, EASE, {
+        tw(btn, EASE_BACK, {
             BackgroundColor3 = currentBaseBg(),
             TextColor3 = currentBaseTx(),
             Position = UDim2.new(0, X, 0, Y),
         })
         tw(st, EASE, { Color = currentBaseBd() })
-        if iconLabel then tw(iconLabel, EASE, { TextColor3 = currentBaseTx() }) end
+        if iconLabel then
+            tw(iconLabel, EASE, { TextColor3 = currentBaseTx() })
+            tw(iconLabel, EASE_SINE, { Position = UDim2.new(0, W - 30, 0, 0) })
+        end
     end)
     btn.MouseButton1Down:Connect(function()
         if not enabled then return end
+        -- ★ 点击处波纹
+        local mx = UserInputService:GetMouseLocation()
+        local btnPos = btn.AbsolutePosition
+        local relX = mx.X - btnPos.X
+        local relY = mx.Y - btnPos.Y
+        ripple(btn, relX, relY, Theme.PRIMARY)
         tw(btn, EASE_FAST, {
             BackgroundColor3 = Theme.PRIMARY_DK,
             TextColor3 = Color3.fromRGB(255, 255, 255),
             Position = UDim2.new(0, X, 0, Y),
         })
-        local props = { Size = UDim2.new(0, W * 0.97, 0, H * 0.94) }
+        -- 按下时轻微内缩
+        local props = { Size = UDim2.new(0, W * 0.96, 0, H * 0.94) }
         local t1 = TweenService:Create(btn, EASE_FAST, props)
         t1.Completed:Connect(function()
             TweenService:Create(btn, EASE_BACK, { Size = UDim2.new(0, W, 0, H) }):Play()
@@ -924,10 +1099,10 @@ local function createButton(parent, cfg)
             tw(btn, EASE, {
                 BackgroundColor3 = src.HOVER_BG,
                 TextColor3 = src.PRIMARY_DK,
-                Position = UDim2.new(0, X, 0, Y - 1),
+                Position = UDim2.new(0, X, 0, Y - 2),
             })
         else
-            tw(btn, EASE, {
+            tw(btn, EASE_BACK, {
                 BackgroundColor3 = currentBaseBg(),
                 TextColor3 = currentBaseTx(),
                 Position = UDim2.new(0, X, 0, Y),
@@ -935,12 +1110,16 @@ local function createButton(parent, cfg)
         end
     end)
     if cfg.onClick and enabled then
-        btn.MouseButton1Click:Connect(function() cfg.onClick(btn) end)
+        btn.MouseButton1Click:Connect(function()
+            -- ★ 点击时闪光扫过
+            shine(btn)
+            cfg.onClick(btn)
+        end)
     end
     return btn
 end
 
--- ============ Toggle ============
+-- ============ Toggle（圆点弹性滑动 + 轨道渐变） ============
 local function createToggle(parent, cfg)
     local W, H = cfg.w or 36, cfg.h or 20
     local container = Instance.new("Frame")
@@ -959,10 +1138,20 @@ local function createToggle(parent, cfg)
     knob.Size=UDim2.new(0,knobSize,0,knobSize)
     knob.Position=UDim2.new(0,2,0,2)
     corner(knob,knobSize/2); knob.ZIndex=6; knob.Parent=container
+    -- 小阴影
+    local ks = Instance.new("Frame")
+    ks.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    ks.BackgroundTransparency = 0.85
+    ks.BorderSizePixel = 0
+    ks.Size = UDim2.new(1, 0, 1, 0)
+    ks.Position = UDim2.new(0, 0, 0, 1)
+    corner(ks, knobSize/2)
+    ks.ZIndex = 5; ks.Parent = knob
+
     local state=cfg.value or false
     local onChange=cfg.onChange
     local function apply(animate,elastic)
-        local info=animate and (elastic and EASE_BACK or EASE) or EASE_NONE
+        local info=animate and (elastic and EASE_ELASTIC or EASE) or EASE_NONE
         local onC = cfg.onColor or (currentDark and DarkTheme.PRIMARY or Theme.PRIMARY)
         local offC = cfg.offColor or (currentDark and DarkTheme.TRACK or Theme.TRACK)
         tw(track,animate and EASE or EASE_NONE,{BackgroundColor3=state and onC or offC})
@@ -980,14 +1169,31 @@ local function createToggle(parent, cfg)
     local click=Instance.new("TextButton")
     click.BackgroundTransparency=1; click.Text=""; click.AutoButtonColor=false
     click.Size=UDim2.new(1,0,1,0); click.ZIndex=7; click.Parent=container
+    click.MouseEnter:Connect(function()
+        if not state then
+            tw(track, EASE_FAST, { BackgroundColor3 = Color3.fromRGB(210, 214, 220) })
+        end
+    end)
+    click.MouseLeave:Connect(function()
+        if not state then
+            tw(track, EASE, { BackgroundColor3 = currentDark and DarkTheme.TRACK or Theme.TRACK })
+        end
+    end)
     click.MouseButton1Click:Connect(function()
-        state=not state; apply(true,true)
+        state=not state
+        -- 按下时轨道轻微内缩
+        local W2 = W; local H2 = H
+        tw(container, EASE_FAST, { Size = UDim2.new(0, W2 - 2, 0, H2 - 2) })
+        task.delay(0.12, function()
+            tw(container, EASE_BACK, { Size = UDim2.new(0, W2, 0, H2) })
+        end)
+        apply(true,true)
         if onChange then onChange(state) end
     end)
     return {container=container,getValue=function() return state end}
 end
 
--- ============ Slider ============
+-- ============ Slider（数字滚动 + 悬浮脉冲） ============
 local function createSlider(parent, cfg)
     local W = cfg.w or 220
     local H = cfg.h or 26
@@ -1022,23 +1228,45 @@ local function createSlider(parent, cfg)
     fill.BackgroundColor3=primaryColor; fill.BorderSizePixel=0
     fill.Size=UDim2.new(0,0,1,0); corner(fill,trackH/2)
     fill.ZIndex=6; fill.Parent=track
+    -- 滑块填充渐变
+    local fillGrad = Instance.new("UIGradient", fill)
+    fillGrad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, primaryColor),
+        ColorSequenceKeypoint.new(1, primaryColor:Lerp(Color3.fromRGB(255,255,255), 0.25)),
+    })
+
     local knobSize=14
     local knob=Instance.new("Frame")
     knob.BackgroundColor3=primaryColor; knob.BorderSizePixel=0
     knob.AnchorPoint=Vector2.new(0.5,0.5); knob.Position=UDim2.new(0,0,0.5,0)
     knob.Size=UDim2.new(0,knobSize,0,knobSize)
     corner(knob,knobSize/2); knob.ZIndex=7; knob.Parent=container
+    -- 圆点阴影
+    local ksh = Instance.new("Frame")
+    ksh.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    ksh.BackgroundTransparency = 0.85
+    ksh.BorderSizePixel = 0
+    ksh.Size = UDim2.new(1, 2, 1, 2)
+    ksh.Position = UDim2.new(0, -1, 0, 1)
+    corner(ksh, knobSize/2)
+    ksh.ZIndex = 6; ksh.Parent = knob
+
     addThemeListener(function()
         if not cfg.color then
             local c = currentDark and DarkTheme.PRIMARY or Theme.PRIMARY
             fill.BackgroundColor3 = c
             knob.BackgroundColor3 = c
+            fillGrad.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, c),
+                ColorSequenceKeypoint.new(1, c:Lerp(Color3.fromRGB(255,255,255), 0.25)),
+            })
         end
         if track and track.Parent then
             track.BackgroundColor3 = currentDark and DarkTheme.TRACK or Theme.TRACK
         end
     end)
-    local valueBtn, valueInput
+
+    local valueBtn, valueInput, lastShownValue = nil, nil, value
     if showValue then
         valueBtn = Instance.new("TextButton")
         valueBtn.BackgroundColor3=Theme.WHITE; valueBtn.BackgroundTransparency=1
@@ -1063,6 +1291,7 @@ local function createSlider(parent, cfg)
         valueBtn.MouseEnter:Connect(function()
             valueBtn.BackgroundTransparency=0
             tw(valueBtn,EASE_FAST,{BackgroundColor3=Theme.HOVER_BG})
+            pulse(valueBtn, 1.08, 0.1)
         end)
         valueBtn.MouseLeave:Connect(function()
             tw(valueBtn,EASE,{BackgroundColor3=Theme.WHITE})
@@ -1087,14 +1316,18 @@ local function createSlider(parent, cfg)
                     n = math.clamp(n,minV,maxV)
                 end
                 local changed = n ~= value
+                local old = value
                 value = n
                 local r = (maxV==minV) and 0 or (value-minV)/(maxV-minV)
                 local trackW = track.AbsoluteSize.X
                 if trackW>0 then
                     tw(fill,EASE_FAST,{Size=UDim2.new(r,0,1,0)})
-                    tw(knob,EASE_FAST,{Position=UDim2.new(0,r*trackW,0.5,0)})
+                    tw(knob,EASE_ELASTIC,{Position=UDim2.new(0,r*trackW,0.5,0)})
                 end
-                valueBtn.Text = formatValue(value)
+                if changed then
+                    -- 数字滚动
+                    rollNumber(valueBtn, old, value, 0.28, decimals)
+                end
                 if changed and onChange then onChange(value) end
             end
             valueInput.Visible=false
@@ -1105,12 +1338,16 @@ local function createSlider(parent, cfg)
         if maxV==minV then return 0 end
         return math.clamp((value-minV)/(maxV-minV),0,1)
     end
-    local function applyVisual(animate)
+    local function applyVisual(animate, elastic)
         local r=ratio()
         local trackW=track.AbsoluteSize.X
         if trackW<=0 then return end
         tw(fill,animate and EASE_FAST or EASE_NONE,{Size=UDim2.new(r,0,1,0)})
-        tw(knob,animate and EASE_FAST or EASE_NONE,{Position=UDim2.new(0,r*trackW,0.5,0)})
+        if elastic then
+            tw(knob, EASE_ELASTIC, {Position=UDim2.new(0,r*trackW,0.5,0)})
+        else
+            tw(knob,animate and EASE_FAST or EASE_NONE,{Position=UDim2.new(0,r*trackW,0.5,0)})
+        end
     end
     local function setValue(v, silent)
         v=math.clamp(v,minV,maxV)
@@ -1119,9 +1356,21 @@ local function createSlider(parent, cfg)
             v=math.clamp(v,minV,maxV)
         end
         local changed=v~=value
+        local old = value
         value=v
-        applyVisual(true)
-        if valueBtn then valueBtn.Text=formatValue(value) end
+        applyVisual(true, false)
+        if valueBtn then
+            -- 拖动时不做滚动（性能考虑），但轻微脉冲
+            valueBtn.Text = formatValue(value)
+            if changed then
+                tw(valueBtn, EASE_SINE, { TextColor3 = Theme.PRIMARY })
+                task.delay(0.15, function()
+                    if valueBtn and valueBtn.Parent then
+                        tw(valueBtn, EASE, { TextColor3 = currentDark and DarkTheme.PRIMARY_DK or Theme.PRIMARY_DK })
+                    end
+                end)
+            end
+        end
         if changed and not silent and onChange then onChange(value) end
     end
     local dragging=false
@@ -1137,11 +1386,19 @@ local function createSlider(parent, cfg)
     hit.Position=UDim2.new(0,0,0,0)
     hit.Size=UDim2.new(0,sliderW,1,0)
     hit.ZIndex=7; hit.Parent=container
+    hit.MouseEnter:Connect(function()
+        if dragging then return end
+        tw(knob,EASE_SINE,{Size=UDim2.new(0,knobSize+4,0,knobSize+4)})
+    end)
+    hit.MouseLeave:Connect(function()
+        if dragging then return end
+        tw(knob,EASE,{Size=UDim2.new(0,knobSize,0,knobSize)})
+    end)
     hit.InputBegan:Connect(function(input)
         if input.UserInputType==Enum.UserInputType.MouseButton1
            or input.UserInputType==Enum.UserInputType.Touch then
             dragging=true
-            tw(knob,EASE_FAST,{Size=UDim2.new(0,knobSize+6,0,knobSize+6)})
+            tw(knob,EASE_SINE,{Size=UDim2.new(0,knobSize+6,0,knobSize+6)})
             fromAbsX(input.Position.X)
         end
     end)
@@ -1156,11 +1413,11 @@ local function createSlider(parent, cfg)
            or input.UserInputType==Enum.UserInputType.Touch then
             if dragging then
                 dragging=false
-                tw(knob,EASE_BACK,{Size=UDim2.new(0,knobSize,0,knobSize)})
+                tw(knob,EASE_ELASTIC,{Size=UDim2.new(0,knobSize,0,knobSize)})
             end
         end
     end)
-    task.defer(function() task.wait(0.05); applyVisual(false) end)
+    task.defer(function() task.wait(0.05); applyVisual(false, false) end)
     return {container=container,getValue=function() return value end,setValue=setValue}
 end
 
@@ -1197,9 +1454,14 @@ local function createTextBox(parent, cfg)
     end)
     tb.Focused:Connect(function()
         tw(st,EASE_FAST,{Color=Theme.PRIMARY,Thickness=1.5})
+        -- ★ 聚焦时轻微放大
+        tw(container, EASE_SINE, { Size = UDim2.new(0, W + 2, 0, H + 2),
+            Position = UDim2.new(0, X - 1, 0, Y - 1) })
     end)
     tb.FocusLost:Connect(function()
         tw(st,EASE,{Color=cfg.borderColor or Theme.BORDER,Thickness=1})
+        tw(container, EASE_BACK, { Size = UDim2.new(0, W, 0, H),
+            Position = UDim2.new(0, X, 0, Y) })
         if cfg.onChange then cfg.onChange(tb.Text) end
     end)
     return tb
@@ -1238,7 +1500,16 @@ local function createCheckbox(parent, cfg)
         if state then
             tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=ck})
             tw(boxStroke,animate and EASE or EASE_NONE,{Color=ck})
-            tw(mark,animate and EASE_BACK or EASE_NONE,{Size=UDim2.new(0,6,0,6),BackgroundTransparency=0})
+            -- ★ 内嵌方块弹性放大
+            mark.Size = UDim2.new(0, 0, 0, 0)
+            mark.BackgroundTransparency = 1
+            local t = TweenService:Create(mark, EASE_FAST, { Size = UDim2.new(0, 9, 0, 9), BackgroundTransparency = 0 })
+            t.Completed:Connect(function()
+                if mark and mark.Parent then
+                    tw(mark, EASE_ELASTIC, { Size = UDim2.new(0, 6, 0, 6) })
+                end
+            end)
+            t:Play()
         else
             tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=(currentDark and DarkTheme.WHITE or Theme.WHITE)})
             tw(boxStroke,animate and EASE or EASE_NONE,{Color=(currentDark and DarkTheme.BORDER or Theme.BORDER)})
@@ -1259,8 +1530,23 @@ local function createCheckbox(parent, cfg)
     local click=Instance.new("TextButton")
     click.BackgroundTransparency=1; click.Text=""; click.AutoButtonColor=false
     click.Size=UDim2.new(1,0,1,0); click.ZIndex=8; click.Parent=container
+    click.MouseEnter:Connect(function()
+        if not state then
+            tw(boxStroke, EASE_FAST, { Color = Theme.PRIMARY })
+            tw(box, EASE_SINE, { Size = UDim2.new(0, boxSize + 1, 0, boxSize + 1) })
+        end
+    end)
+    click.MouseLeave:Connect(function()
+        if not state then
+            tw(boxStroke, EASE, { Color = currentDark and DarkTheme.BORDER or Theme.BORDER })
+            tw(box, EASE, { Size = UDim2.new(0, boxSize, 0, boxSize) })
+        end
+    end)
     click.MouseButton1Click:Connect(function()
-        state=not state; apply(true)
+        state=not state
+        apply(true)
+        -- 点击脉冲
+        pulse(box, 1.2, 0.1)
         if onChange then onChange(state) end
     end)
     return {container=container,getValue=function() return state end}
@@ -1315,8 +1601,20 @@ local function createColorPicker(parent, cfg)
         local s=stroke(sw,Theme.BORDER,1)
         sw.Parent=container
         local capture=i
+        sw.MouseEnter:Connect(function()
+            if selectedIndex ~= capture then
+                tw(sw, EASE_SINE, { Size = UDim2.new(0, size + 4, 0, size + 4) })
+            end
+        end)
+        sw.MouseLeave:Connect(function()
+            if selectedIndex ~= capture then
+                tw(sw, EASE, { Size = UDim2.new(0, size, 0, size) })
+            end
+        end)
         sw.MouseButton1Click:Connect(function()
-            selectedIndex=capture; refresh(true)
+            selectedIndex=capture
+            refresh(true)
+            pulse(sw, 1.25, 0.1)
             if onChange then onChange(palette[capture],capture,names[capture]) end
         end)
         swatches[i]=sw; strokes[i]=s
@@ -1467,7 +1765,16 @@ local function createDropdownBase(parent, cfg, multi)
             local inner=mbox:FindFirstChild("InnerMark")
             if isSelected(i) then
                 tw(mbox,EASE_FAST,{BackgroundColor3=Theme.PRIMARY})
-                if inner then tw(inner,EASE_BACK,{Size=UDim2.new(0,5,0,5),BackgroundTransparency=0}) end
+                if inner then
+                    inner.Size = UDim2.new(0, 0, 0, 0)
+                    local t = TweenService:Create(inner, EASE_FAST, { Size = UDim2.new(0, 7, 0, 7), BackgroundTransparency = 0 })
+                    t.Completed:Connect(function()
+                        if inner and inner.Parent then
+                            tw(inner, EASE_ELASTIC, { Size = UDim2.new(0, 5, 0, 5) })
+                        end
+                    end)
+                    t:Play()
+                end
             else
                 tw(mbox,EASE,{BackgroundColor3=Theme.WHITE})
                 if inner then tw(inner,EASE,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1}) end
@@ -1479,12 +1786,13 @@ local function createDropdownBase(parent, cfg, multi)
         isOpen=false
         interceptLayer.Visible=false
         if activeDropdownClose==closeList then activeDropdownClose=nil end
-        tw(list,EASE_IN,{Size=UDim2.new(0,list.Size.X.Offset,0,0)})
-        tw(list,EASE_IN,{BackgroundTransparency=1})
+        -- ★ 收起动画：向上收 + 淡出
+        tw(list,TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {Size=UDim2.new(0,list.Size.X.Offset,0,0), BackgroundTransparency=1})
         tw(listStroke,EASE_IN,{Transparency=1})
-        tw(arrow,EASE,{Text="v"})
+        tw(arrow,EASE_BACK,{Text="v"})
         tw(btnStroke,EASE,{Color=Theme.BORDER})
-        task.delay(0.20,function()
+        task.delay(0.24,function()
             if not isOpen then list.Visible=false end
         end)
     end
@@ -1499,12 +1807,15 @@ local function createDropdownBase(parent, cfg, multi)
         list.Size=UDim2.new(0,listW,0,0)
         list.Visible=true; isOpen=true
         interceptLayer.Visible=true
-        tw(list,TweenInfo.new(0.22,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
+        -- ★ 展开：弹性下拉
+        tw(list,TweenInfo.new(0.28,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
             {Size=UDim2.new(0,listW,0,listH)})
         tw(list,EASE_FAST,{BackgroundTransparency=0})
         tw(listStroke,EASE_FAST,{Transparency=0})
+        -- ★ 每项错开滑入
         for i,row in ipairs(itemRows) do
-            row.Position=UDim2.new(0,-10,0,(i-1)*ITEM_H)
+            row.Position=UDim2.new(0,-14,0,(i-1)*ITEM_H)
+            row.BackgroundTransparency = 1
             task.delay(0.03*(i-1),function()
                 if not isOpen then return end
                 tw(row,EASE_BACK,{Position=UDim2.new(0,0,0,(i-1)*ITEM_H)})
@@ -1595,10 +1906,10 @@ local function staggerChildren(parent, delayPerItem)
     table.sort(children, function(a, b) return a.Position.Y.Offset < b.Position.Y.Offset end)
     for i, c in ipairs(children) do
         local targetY = c.Position.Y.Offset
-        c.Position = UDim2.new(0, c.Position.X.Offset, 0, targetY - 8)
+        c.Position = UDim2.new(0, c.Position.X.Offset, 0, targetY - 10)
         local trans0 = c.BackgroundTransparency
         c.BackgroundTransparency = 1
-        task.delay((i - 1) * (delayPerItem or 0.03), function()
+        task.delay((i - 1) * (delayPerItem or 0.04), function()
             tw(c, TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
                 Position = UDim2.new(0, c.Position.X.Offset, 0, targetY),
             })
@@ -1610,8 +1921,7 @@ end
 -- ============ ui API ============
 local ui = {}
 ui.Theme = Theme
-ui.ScreenGui = uiGui
-ui.Ease = { NORMAL=EASE, FAST=EASE_FAST, BACK=EASE_BACK, IN=EASE_IN, SOFT=EASE_SOFT }
+ui.ScreenGui = uiGuiui.Ease = { NORMAL=EASE, FAST=EASE_FAST, BACK=EASE_BACK, IN=EASE_IN, SOFT=EASE_SOFT, ELASTIC=EASE_ELASTIC }
 
 function ui.createPanel(cfg) cfg=cfg or {}; return createPanel(resolveParent(cfg), cfg) end
 function ui.createLabel(cfg) cfg=cfg or {}; return createLabel(resolveParent(cfg), cfg) end
