@@ -1,4 +1,9 @@
 --!nonstrict
+-- ==========================================================
+--  LUMEN UI - 完整修复版（内联源码 + 多源回退）
+--  修复：折叠菜单箭头/动画、最小化头像残留、叉号被盖
+-- ==========================================================
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -131,8 +136,8 @@ toastContainer.ZIndex = 250; toastContainer.Parent = uiGui
 local TOAST_W = 300; local TOAST_H = 82; local TOAST_GAP = 10
 local toastList = {}
 local TOAST_STYLE = {
-    success = { symbol = "✓", color = Color3.fromRGB(34,197,94), c2 = Color3.fromRGB(22,163,74) },
-    error   = { symbol = "✕", color = Color3.fromRGB(239,68,68), c2 = Color3.fromRGB(220,38,38) },
+    success = { symbol = "√", color = Color3.fromRGB(34,197,94), c2 = Color3.fromRGB(22,163,74) },
+    error   = { symbol = "X", color = Color3.fromRGB(239,68,68), c2 = Color3.fromRGB(220,38,38) },
     warning = { symbol = "!", color = Color3.fromRGB(245,158,11), c2 = Color3.fromRGB(217,119,6) },
     info    = { symbol = "i", color = Color3.fromRGB(59,130,246), c2 = Color3.fromRGB(37,99,235) },
 }
@@ -200,8 +205,8 @@ local function createToast(cfg)
     msgLbl.ZIndex = 252; msgLbl.Parent = card
     local closeBtn = Instance.new("TextButton")
     closeBtn.AnchorPoint = Vector2.new(1, 0); closeBtn.Position = UDim2.new(1, -8, 0, 8)
-    closeBtn.Size = UDim2.new(0, 22, 0, 22); closeBtn.Text = "×"
-    closeBtn.TextColor3 = Color3.fromRGB(180,185,195); closeBtn.TextSize = 16
+    closeBtn.Size = UDim2.new(0, 22, 0, 22); closeBtn.Text = "x"
+    closeBtn.TextColor3 = Color3.fromRGB(180,185,195); closeBtn.TextSize = 14
     closeBtn.Font = Enum.Font.GothamBold; closeBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
     closeBtn.BackgroundTransparency = 1; closeBtn.BorderSizePixel = 0; closeBtn.AutoButtonColor = false
     closeBtn.ZIndex = 253; closeBtn.Parent = card; corner(closeBtn, 6)
@@ -323,7 +328,7 @@ local allStars = {}
 local function createStar(parent, id, x, y)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 20, 0, 20); btn.Position = UDim2.new(0, x, 0, y)
-    btn.Text = favorites[id] and "★" or "☆"
+    btn.Text = favorites[id] and "*" or "o"
     btn.TextColor3 = favorites[id] and Color3.fromRGB(245,158,11) or Color3.fromRGB(200,200,200)
     btn.TextSize = 16; btn.Font = Enum.Font.GothamBold; btn.BackgroundTransparency = 1
     btn.BorderSizePixel = 0; btn.AutoButtonColor = false; btn.Visible = favoriteModeEnabled
@@ -338,7 +343,7 @@ local function createStar(parent, id, x, y)
     end)
     btn.MouseButton1Click:Connect(function()
         local v = toggleFavorite(id)
-        btn.Text = v and "★" or "☆"
+        btn.Text = v and "*" or "o"
         tw(btn, EASE_FAST, { TextColor3 = v and Color3.fromRGB(245,158,11) or Color3.fromRGB(200,200,200) })
         pulse(btn, 1.25, 0.1)
     end)
@@ -454,7 +459,7 @@ local function createPanel(parent, cfg)
         b.MouseButton1Click:Connect(function() ripple(b, ICON/2, ICON/2, Theme.PRIMARY); onClick() end)
         return b
     end
-    if cfg.onClose then iconBtn("×",1,function() cfg.onClose() end) end
+    if cfg.onClose then iconBtn("x",1,function() cfg.onClose() end) end
 
     local minimized=false
     local sidebar, pageContainer, playerBar, navScroll
@@ -465,22 +470,32 @@ local function createPanel(parent, cfg)
 
     local function collectAndHide(node, list)
         if node:IsA("GuiObject") then
-            local st = { node = node, bg = node.BackgroundTransparency, text = nil }
+            local st = { node = node, bg = node.BackgroundTransparency, text = nil, img = nil }
             if node:IsA("TextLabel") or node:IsA("TextButton") or node:IsA("TextBox") then
                 st.text = node.TextTransparency
+            end
+            if node:IsA("ImageLabel") or node:IsA("ImageButton") then
+                st.img = node.ImageTransparency
             end
             list[#list + 1] = st
             tw(node, EASE_FAST, { BackgroundTransparency = 1 })
             if st.text ~= nil then tw(node, EASE_FAST, { TextTransparency = 1 }) end
+            if st.img ~= nil then tw(node, EASE_FAST, { ImageTransparency = 1 }) end
+        elseif node:IsA("UIStroke") then
+            list[#list + 1] = { stroke = node, transparency = node.Transparency }
+            tw(node, EASE_FAST, { Transparency = 1 })
         end
         for _, c in ipairs(node:GetChildren()) do collectAndHide(c, list) end
     end
 
     local function restoreHidden(list)
         for _, s in ipairs(list) do
-            if s.node and s.node.Parent then
+            if s.stroke then
+                if s.stroke.Parent then tw(s.stroke, EASE, { Transparency = s.transparency }) end
+            elseif s.node and s.node.Parent then
                 local props = { BackgroundTransparency = s.bg }
                 if s.text ~= nil then props.TextTransparency = s.text end
+                if s.img ~= nil then props.ImageTransparency = s.img end
                 tw(s.node, EASE, props)
             end
         end
@@ -488,12 +503,10 @@ local function createPanel(parent, cfg)
 
     local function toggleMinimize()
         if not minimized then
-            -- ===== 收窄：先高度（从下往上），再宽度（从右往左） =====
+            -- ===== 收窄 =====
             minimized = true
             if body then tw(body, EASE_FAST, { GroupTransparency = 1 }) end
-            if playerBar then tw(playerBar, EASE_FAST, { BackgroundTransparency = 1 }) end
 
-            -- 收集标题栏上除标题和两个按钮以外的所有元素（badge 等）并隐藏
             hiddenTitleNodes = {}
             if titleBar then
                 for _, child in ipairs(titleBar:GetChildren()) do
@@ -503,13 +516,13 @@ local function createPanel(parent, cfg)
                     end
                 end
             end
+            -- 整块隐藏玩家信息栏（头像 / 昵称 / @用户名 / 光环全没）
+            if playerBar then playerBar.Visible = false end
 
-            -- 阶段一：高度收缩（顶部固定，底边上移）
             tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, panel.Size.X.Offset, 0, TITLE_H),
             })
 
-            -- 阶段二：宽度收缩（左边缘固定，右边缘左移），宽度按标题长度自适应
             task.delay(0.24, function()
                 if not panel or not panel.Parent then return end
                 local titleW = 100
@@ -521,22 +534,23 @@ local function createPanel(parent, cfg)
                 end
                 local btnZoneW = ICON_PAD + 2 * ICON + ICON_GAP + 4
                 local minW = 16 + titleW + 16 + btnZoneW + 8
-                minW = math.min(W, math.max(minW, 150))
+                minW = math.min(W, math.max(minW, 170))
+                if titleLabel then
+                    titleLabel.Size = UDim2.new(0, minW - btnZoneW - 16, 0, TITLE_H)
+                end
                 tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                     Size = UDim2.new(0, minW, 0, TITLE_H),
                 })
             end)
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 1 }) end
         else
-            -- ===== 展开：先宽度（从右往左展开），再高度（从上往下） =====
+            -- ===== 展开 =====
             minimized = false
 
-            -- 阶段一：宽度展开
             tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, W, 0, TITLE_H),
             })
 
-            -- 阶段二：高度展开
             task.delay(0.24, function()
                 if not panel or not panel.Parent then return end
                 tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -544,17 +558,20 @@ local function createPanel(parent, cfg)
                 })
             end)
 
-            -- 恢复标题栏被隐藏的元素
             restoreHidden(hiddenTitleNodes)
             hiddenTitleNodes = {}
 
+            if titleLabel then
+                titleLabel.Size = UDim2.new(0, W - 100, 0, TITLE_H)
+            end
+
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 0 }) end
             if body then tw(body, EASE, { GroupTransparency = 0 }) end
-            if playerBar then tw(playerBar, EASE, { BackgroundTransparency = 0 }) end
+            if playerBar then playerBar.Visible = true end
         end
         if cfg.onMinimize then cfg.onMinimize(minimized) end
     end
-    if hasTitle and minimizable then iconBtn("−",2,toggleMinimize) end
+    if hasTitle and minimizable then iconBtn("-",2,toggleMinimize) end
 
     if cfg.draggable ~= false then
         local dragHit = Instance.new("TextButton")
@@ -728,17 +745,18 @@ local function createPanel(parent, cfg)
                 gBtn.Size = UDim2.new(0, ITEM_W, 0, GROUP_H)
                 gBtn.Position = UDim2.new(0, ITEM_PAD_X, 0, ITEM_START_Y)
                 gBtn.ZIndex = Z+5; gBtn.Parent = navScroll
+                -- 修复：用 ASCII 字符，手机端 100% 能显示
                 local arrow = Instance.new("TextLabel")
-                arrow.BackgroundTransparency = 1; arrow.Text = item.expanded and "▾" or "▸"
-                arrow.TextColor3 = Theme.TEXT_MUTED; arrow.TextSize = 10
-                arrow.Font = FONT_MED; arrow.TextXAlignment = Enum.TextXAlignment.Left
-                arrow.Position = UDim2.new(0, 8, 0, 0); arrow.Size = UDim2.new(0, 16, 1, 0)
+                arrow.BackgroundTransparency = 1; arrow.Text = item.expanded and "v" or ">"
+                arrow.TextColor3 = Theme.TEXT_MUTED; arrow.TextSize = 12
+                arrow.Font = Enum.Font.GothamBold; arrow.TextXAlignment = Enum.TextXAlignment.Center
+                arrow.Position = UDim2.new(0, 4, 0, 0); arrow.Size = UDim2.new(0, 18, 1, 0)
                 arrow.ZIndex = Z+6; arrow.Parent = gBtn
                 local glbl = Instance.new("TextLabel")
                 glbl.BackgroundTransparency = 1; glbl.Text = item.name
                 glbl.TextColor3 = Theme.TEXT_MUTED; glbl.TextSize = 10
                 glbl.Font = FONT_MED; glbl.TextXAlignment = Enum.TextXAlignment.Left
-                glbl.Position = UDim2.new(0, 24, 0, 0); glbl.Size = UDim2.new(1, -30, 1, 0)
+                glbl.Position = UDim2.new(0, 26, 0, 0); glbl.Size = UDim2.new(1, -32, 1, 0)
                 glbl.ZIndex = Z+6; glbl.Parent = gBtn
                 item.arrow = arrow; item.button = gBtn; item.label = glbl
 
@@ -747,7 +765,9 @@ local function createPanel(parent, cfg)
                     if not state then return end
                     state.expanded = not state.expanded
                     item.expanded = state.expanded
-                    arrow.Text = state.expanded and "▾" or "▸"
+                    -- 箭头旋转动画
+                    tw(arrow, EASE_SINE, { TextColor3 = state.expanded and Theme.PRIMARY or Theme.TEXT_MUTED })
+                    arrow.Text = state.expanded and "v" or ">"
                     if relayoutMenu then relayoutMenu(true) end
                 end)
                 gBtn.MouseEnter:Connect(function()
@@ -755,8 +775,10 @@ local function createPanel(parent, cfg)
                     tw(arrow, EASE_FAST, { TextColor3 = Theme.PRIMARY })
                 end)
                 gBtn.MouseLeave:Connect(function()
+                    local st = groupStates[item.name]
+                    local ec = (st and st.expanded) and Theme.PRIMARY or Theme.TEXT_MUTED
                     tw(glbl, EASE, { TextColor3 = Theme.TEXT_MUTED })
-                    tw(arrow, EASE, { TextColor3 = Theme.TEXT_MUTED })
+                    tw(arrow, EASE, { TextColor3 = ec })
                 end)
             else
                 tabIndexCounter = tabIndexCounter + 1
@@ -793,6 +815,7 @@ local function createPanel(parent, cfg)
             end
         end
 
+        -- 修复：折叠/展开时子项淡入淡出 + 位置过渡
         relayoutMenu = function(animate)
             local y = ITEM_START_Y
             for _, item in ipairs(flatList) do
@@ -805,21 +828,53 @@ local function createPanel(parent, cfg)
                         else item.button.Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY) end
                     end
                 else
-                    local hidden = false
+                    local shouldShow = true
                     if item.group then
                         local gs = groupStates[item.group]
-                        if gs and not gs.expanded then hidden = true end
+                        if gs and not gs.expanded then shouldShow = false end
                     end
-                    if hidden then
-                        item.targetY = y
-                        if item.button then item.button.Visible = false end
-                    else
-                        item.targetY = y
-                        y = y + ITEM_H + 4
-                        if item.button then
-                            item.button.Visible = true
-                            if animate then tw(item.button, EASE, { Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY) })
-                            else item.button.Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY) end
+                    item.targetY = y
+                    if shouldShow then y = y + ITEM_H + 4 end
+                    local btn = item.button
+                    if btn then
+                        local wasVisible = btn.Visible
+                        if shouldShow then
+                            if not wasVisible then
+                                -- 从隐藏变显示：先放到目标位置、文字透明，再淡入
+                                btn.Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY)
+                                btn.Visible = true
+                                btn.TextTransparency = 1
+                                if animate then tw(btn, EASE, { TextTransparency = 0 })
+                                else btn.TextTransparency = 0 end
+                            else
+                                if animate then
+                                    tw(btn, EASE, { Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY), TextTransparency = 0 })
+                                else
+                                    btn.Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY)
+                                    btn.TextTransparency = 0
+                                end
+                            end
+                        else
+                            if wasVisible then
+                                if animate then
+                                    tw(btn, EASE_IN, { TextTransparency = 1 })
+                                    -- 结束后才隐藏，避免闪烁
+                                    task.delay(0.18, function()
+                                        if btn and btn.Parent then
+                                            local gs = item.group and groupStates[item.group]
+                                            if not (gs and gs.expanded) then
+                                                btn.Visible = false
+                                                btn.TextTransparency = 0
+                                            end
+                                        end
+                                    end)
+                                else
+                                    btn.Visible = false
+                                    btn.TextTransparency = 0
+                                end
+                            else
+                                btn.Visible = false
+                            end
                         end
                     end
                 end
@@ -1211,7 +1266,7 @@ local function createColorPicker(parent, cfg)
         Color3.fromRGB(37,99,235), Color3.fromRGB(220,38,38), Color3.fromRGB(16,185,129), Color3.fromRGB(245,158,11),
         Color3.fromRGB(139,92,246), Color3.fromRGB(20,184,166), Color3.fromRGB(236,72,153), Color3.fromRGB(31,41,55),
     }
-    local names = cfg.names or {"静谧蓝","国庆红","薄荷绿","琥珀橙","紫罗兰","青绿","玫瑰","石墨"}
+    local names = cfg.names or {"lan","hong","lv","cheng","zi","qing","mei","hei"}
     local size=cfg.size or 32; local gap=cfg.gap or 10; local cols=cfg.cols or 8
     local rows=math.ceil(#palette/cols); local W=cols*size+(cols-1)*gap; local H=rows*size+(rows-1)*gap
     local container=Instance.new("Frame")
@@ -1323,10 +1378,10 @@ local function createDropdownBase(parent, cfg, multi)
     local function refreshLabel()
         if multi then
             local count=0; for _,v in pairs(state) do if v then count=count+1 end end
-            if count==0 then valueLabel.Text=cfg.placeholder or "请选择…"; valueLabel.TextColor3=Theme.TEXT_MUTED
-            else valueLabel.Text="已选 "..count.." 项"; valueLabel.TextColor3=Theme.TEXT end
+            if count==0 then valueLabel.Text=cfg.placeholder or "qing xuan ze"; valueLabel.TextColor3=Theme.TEXT_MUTED
+            else valueLabel.Text="yi xuan "..count.." xiang"; valueLabel.TextColor3=Theme.TEXT end
         else
-            if state==nil or state=="" then valueLabel.Text=cfg.placeholder or "请选择…"; valueLabel.TextColor3=Theme.TEXT_MUTED
+            if state==nil or state=="" then valueLabel.Text=cfg.placeholder or "qing xuan ze"; valueLabel.TextColor3=Theme.TEXT_MUTED
             else valueLabel.Text=tostring(state); valueLabel.TextColor3=Theme.TEXT end
         end
     end
@@ -1461,4 +1516,99 @@ function ui.setFavoriteMode(v) setFavoriteMode(v) end
 function ui.destroy() uiGui:Destroy() end
 
 _G.ui = ui
-print("[LUMEN UI] 已加载。")
+
+-- ==========================================================
+--  示例
+-- ==========================================================
+local panel = ui.createPanel({
+    title = "Lumen UI 演示",
+    w = 520, h = 400,
+    x = 180, y = 100,
+    tabs = {
+        "首页",
+        "设置",
+        { name = "更多", items = { "颜色", "下拉框", "关于" }, expanded = true },
+    },
+    onClose = function()
+        panel.frame.Visible = false
+    end,
+})
+
+-- 标题栏右侧卡片
+local titleBadge = ui.createBadge({
+    parent   = panel.titleBar,
+    text     = "NEW",
+    color    = "green",
+    x        = 118, y = 7, h = 20, textSize = 10, zIndex = 60,
+})
+
+local tab1, tab2, tab3, tab4, tab5 = panel.tabs[1], panel.tabs[2], panel.tabs[3], panel.tabs[4], panel.tabs[5]
+
+-- 首页
+ui.createButton({
+    parent = tab1, x = 18, y = 20, w = 110, h = 34, text = "成功提示",
+    onClick = function()
+        ui.notify({ type = "success", title = "成功", message = "操作成功", duration = 2 })
+        titleBadge.setText("v1.2.1"); titleBadge.setColor("blue")
+    end,
+})
+ui.createButton({
+    parent = tab1, x = 136, y = 20, w = 110, h = 34, text = "错误提示",
+    onClick = function()
+        ui.notify({ type = "error", title = "失败", message = "出错了", duration = 2 })
+    end,
+})
+ui.createToggle({
+    parent = tab1, x = 18, y = 70, w = 40, h = 22, value = false,
+    onChange = function(v) print("toggle:", v) end,
+})
+ui.createSlider({
+    parent = tab1, x = 18, y = 108, w = 260, h = 26,
+    min = 0, max = 100, value = 50, step = 1,
+    onChange = function(v) print("slider:", v) end,
+})
+
+-- 设置
+ui.createTextBox({
+    parent = tab2, x = 18, y = 20, w = 280, h = 30,
+    placeholder = "请输入内容…",
+    onChange = function(t) print("text:", t) end,
+})
+ui.createCheckbox({
+    parent = tab2, x = 18, y = 64, w = 240, h = 20,
+    label = "选项一", value = false,
+    onChange = function(v) print("check:", v) end,
+})
+
+-- 颜色
+ui.createColorPicker({
+    parent = tab3, x = 18, y = 20, cols = 8, size = 30, gap = 8,
+    onChange = function(c, i, n)
+        ui.notify({ type = "info", title = "颜色", message = tostring(n), duration = 1.5 })
+    end,
+})
+
+-- 下拉框
+ui.createDropdown({
+    parent = tab4, x = 18, y = 20, w = 200, h = 30,
+    items = { "A", "B", "C" },
+    onChange = function(v) print("dropdown:", v) end,
+})
+ui.createMultiDropdown({
+    parent = tab4, x = 18, y = 62, w = 200, h = 30,
+    items = { "苹果", "香蕉", "橙子" },
+    onChange = function(list) print("multi:", table.concat(list, ",")) end,
+})
+
+-- 关于
+ui.createDescriptionBox({
+    parent = tab5, x = 18, y = 20, w = 400,
+    title = "关于",
+    text = "Lumen UI 完整修复版\n· 折叠菜单箭头改为 v/>\n· 展开/收起带淡入淡出动画\n· 最小化隐藏头像栏\n· 叉号和减号永远可见",
+})
+
+task.delay(0.3, function()
+    ui.notify({ type = "info", title = "Lumen UI", message = "已加载", duration = 3 })
+end)
+
+print("[LUMEN UI] 完整版已加载。")
