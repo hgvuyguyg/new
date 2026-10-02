@@ -120,7 +120,8 @@ end
 
 local function createPanel(parent, cfg)
     cfg = cfg or {}
-    local W, H = cfg.w or 360, cfg.h or 260
+    -- ★ 默认尺寸改为 460×340
+    local W, H = cfg.w or 460, cfg.h or 340
     local X, Y = cfg.x or 0, cfg.y or 0
     local RADIUS = cfg.radius or 12
     local Z = cfg.zIndex or 4
@@ -128,7 +129,7 @@ local function createPanel(parent, cfg)
     local TITLE_H = hasTitle and (cfg.titleHeight or 34) or 0
     local tabNames = cfg.tabs
     local hasTabs = type(tabNames) == "table" and #tabNames > 0
-    local SIDEBAR_W = hasTabs and (cfg.sidebarWidth or 110) or 0
+    local SIDEBAR_W = hasTabs and (cfg.sidebarWidth or 100) or 0
     local showPlayer = cfg.showPlayer ~= false
 
     local shadow = nil
@@ -448,7 +449,7 @@ local function createPanel(parent, cfg)
         sideLine.ZIndex = Z + 4
         sideLine.Parent = sidebar
 
-        local ITEM_H = cfg.tabHeight or 34
+        local ITEM_H = cfg.tabHeight or 32
         local ITEM_PAD_X = 8
         local ITEM_START_Y = 10
         local ITEM_W = SIDEBAR_W - ITEM_PAD_X * 2
@@ -467,7 +468,7 @@ local function createPanel(parent, cfg)
         tabHlBar.BorderSizePixel = 0
         tabHlBar.AnchorPoint = Vector2.new(0, 0.5)
         tabHlBar.Position = UDim2.new(0, 0, 0.5, 0)
-        tabHlBar.Size = UDim2.new(0, 3, 0, 16)
+        tabHlBar.Size = UDim2.new(0, 3, 0, 14)
         tabHlBar.ZIndex = Z + 4
         corner(tabHlBar, 2)
         tabHlBar.Parent = tabHl
@@ -479,7 +480,7 @@ local function createPanel(parent, cfg)
             btn.BorderSizePixel = 0
             btn.Text = name
             btn.TextColor3 = (i == 1) and Theme.PRIMARY_DK or Theme.TEXT_MUTED
-            btn.TextSize = cfg.tabSize or 12
+            btn.TextSize = cfg.tabSize or 11
             btn.Font = FONT_MED
             btn.AutoButtonColor = false
             btn.TextXAlignment = Enum.TextXAlignment.Left
@@ -490,7 +491,7 @@ local function createPanel(parent, cfg)
             btn.Parent = sidebar
 
             local pad = Instance.new("UIPadding")
-            pad.PaddingLeft = UDim.new(0, 16)
+            pad.PaddingLeft = UDim.new(0, 14)
             pad.Parent = btn
 
             local capture = i
@@ -592,7 +593,6 @@ local function createButton(parent, cfg)
     btn.TextSize = cfg.textSize or 12
     btn.Font = FONT_MED
     btn.AutoButtonColor = false
-    btn.TextWrapped = cfg.textWrapped or false
     btn.Position = UDim2.new(0, X, 0, Y)
     btn.Size = UDim2.new(0, W, 0, H)
     btn.ZIndex = cfg.zIndex or 5
@@ -605,9 +605,9 @@ local function createButton(parent, cfg)
     local baseTx = cfg.textColor or Theme.PRIMARY
     local baseBd = cfg.borderColor or Theme.PRIMARY
     if not enabled then
-        btn.BackgroundColor3 = cfg.disabledBg or Theme.DISABLED_BG
-        btn.TextColor3 = cfg.disabledTx or Theme.TEXT
-        st.Color = cfg.disabledBd or Theme.BORDER
+        btn.BackgroundColor3 = Theme.DISABLED_BG
+        btn.TextColor3 = Theme.DISABLED_FG
+        st.Color = Theme.BORDER
     end
     btn.MouseEnter:Connect(function()
         if not enabled then return end
@@ -636,8 +636,7 @@ local function createButton(parent, cfg)
         })
         tapPulse(btn, "Size",
             UDim2.new(0, W, 0, H),
-            UDim2.new(0, W * 0.94, 0, H * 0.94),
-            0.08)
+            UDim2.new(0, W * 0.94, 0, H * 0.94), 0.08)
     end)
     btn.MouseButton1Up:Connect(function()
         if not enabled then return end
@@ -711,28 +710,127 @@ local function createToggle(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
+-- ★★★ 滑块：左侧输入框 + 右侧数值显示 ★★★
 local function createSlider(parent, cfg)
-    local W, H = cfg.w or 220, cfg.h or 22
-    local minV, maxV = cfg.min or 0, cfg.max or 100
+    local W = cfg.w or 220
+    local H = cfg.h or 26
+    local minV = cfg.min or 0
+    local maxV = cfg.max or 100
     local value = cfg.value or minV
+    local step = cfg.step or 0
     local onChange = cfg.onChange
     local primaryColor = cfg.color or Theme.PRIMARY
+    local showInput = cfg.showInput or false
+    local showValue = cfg.showValue or false
+    local decimals = cfg.decimals or 0
+    local inputW = cfg.inputWidth or 54
+    local valueW = cfg.valueWidth or 46
+    local gap = 6
+
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
+
+    local leftOffset = showInput and (inputW + gap) or 0
+    local rightOffset = showValue and (valueW + gap) or 0
+    local sliderW = math.max(W - leftOffset - rightOffset, 40)
+
+    local function formatValue(v)
+        if decimals > 0 then
+            return string.format("%." .. decimals .. "f", v)
+        else
+            return tostring(math.floor(v + 0.5))
+        end
+    end
+
+    -- 输入框
+    local inputBox = nil
+    if showInput then
+        local inputContainer = Instance.new("Frame")
+        inputContainer.BackgroundColor3 = Theme.WHITE
+        inputContainer.BorderSizePixel = 0
+        inputContainer.AnchorPoint = Vector2.new(0, 0.5)
+        inputContainer.Position = UDim2.new(0, 0, 0.5, 0)
+        inputContainer.Size = UDim2.new(0, inputW, 0, H)
+        inputContainer.ZIndex = 5
+        corner(inputContainer, 5)
+        local inStroke = stroke(inputContainer, Theme.BORDER, 1)
+        inputContainer.Parent = container
+
+        inputBox = Instance.new("TextBox")
+        inputBox.BackgroundTransparency = 1
+        inputBox.Text = formatValue(value)
+        inputBox.TextColor3 = Theme.TEXT
+        inputBox.TextSize = 11
+        inputBox.Font = FONT_MED
+        inputBox.ClearTextOnFocus = false
+        inputBox.TextXAlignment = Enum.TextXAlignment.Center
+        inputBox.TextYAlignment = Enum.TextYAlignment.Center
+        inputBox.Size = UDim2.new(1, 0, 1, 0)
+        inputBox.ZIndex = 6
+        inputBox.Parent = inputContainer
+
+        inputBox.Focused:Connect(function()
+            tw(inStroke, EASE_FAST, { Color = Theme.PRIMARY, Thickness = 1.5 })
+        end)
+        inputBox.FocusLost:Connect(function()
+            tw(inStroke, EASE, { Color = Theme.BORDER, Thickness = 1 })
+            local n = tonumber(inputBox.Text)
+            if n then
+                -- 直接改 value 并触发视觉
+                n = math.clamp(n, minV, maxV)
+                if step and step > 0 then
+                    n = math.floor((n - minV) / step + 0.5) * step + minV
+                    n = math.clamp(n, minV, maxV)
+                end
+                local changed = n ~= value
+                value = n
+                local r = (maxV == minV) and 0 or (value - minV) / (maxV - minV)
+                local trackW = track.AbsoluteSize.X
+                if trackW > 0 then
+                    tw(fill, EASE_FAST, { Size = UDim2.new(r, 0, 1, 0) })
+                    tw(knob, EASE_FAST, { Position = UDim2.new(0, r * trackW, 0.5, 0) })
+                end
+                if valueLabel then valueLabel.Text = formatValue(value) end
+                if changed and onChange then onChange(value) end
+            end
+            inputBox.Text = formatValue(value)
+        end)
+    end
+
+    -- 数值显示
+    local valueLabel = nil
+    if showValue then
+        valueLabel = Instance.new("TextLabel")
+        valueLabel.BackgroundTransparency = 1
+        valueLabel.Text = formatValue(value)
+        valueLabel.TextColor3 = Theme.PRIMARY_DK
+        valueLabel.TextSize = 12
+        valueLabel.Font = FONT_MED
+        valueLabel.TextXAlignment = Enum.TextXAlignment.Left
+        valueLabel.TextYAlignment = Enum.TextYAlignment.Center
+        valueLabel.AnchorPoint = Vector2.new(0, 0.5)
+        valueLabel.Position = UDim2.new(0, leftOffset + sliderW + gap, 0.5, 0)
+        valueLabel.Size = UDim2.new(0, valueW, 1, 0)
+        valueLabel.ZIndex = 5
+        valueLabel.Parent = container
+    end
+
+    -- 轨道
     local trackH = 4
     local track = Instance.new("Frame")
     track.BackgroundColor3 = Theme.TRACK
     track.BorderSizePixel = 0
     track.AnchorPoint = Vector2.new(0, 0.5)
-    track.Position = UDim2.new(0, 0, 0.5, 0)
-    track.Size = UDim2.new(1, 0, 0, trackH)
+    track.Position = UDim2.new(0, leftOffset, 0.5, 0)
+    track.Size = UDim2.new(0, sliderW, 0, trackH)
     corner(track, trackH / 2)
     track.ZIndex = 5
     track.Parent = container
+
     local fill = Instance.new("Frame")
     fill.BackgroundColor3 = primaryColor
     fill.BorderSizePixel = 0
@@ -740,6 +838,7 @@ local function createSlider(parent, cfg)
     corner(fill, trackH / 2)
     fill.ZIndex = 6
     fill.Parent = track
+
     local knobSize = 14
     local knob = Instance.new("Frame")
     knob.BackgroundColor3 = primaryColor
@@ -750,10 +849,12 @@ local function createSlider(parent, cfg)
     corner(knob, knobSize / 2)
     knob.ZIndex = 7
     knob.Parent = container
+
     local function ratio()
         if maxV == minV then return 0 end
         return math.clamp((value - minV) / (maxV - minV), 0, 1)
     end
+
     local function applyVisual(animate)
         local r = ratio()
         local trackW = track.AbsoluteSize.X
@@ -761,14 +862,21 @@ local function createSlider(parent, cfg)
         tw(fill, animate and EASE_FAST or EASE_NONE, { Size = UDim2.new(r, 0, 1, 0) })
         tw(knob, animate and EASE_FAST or EASE_NONE, { Position = UDim2.new(0, r * trackW, 0.5, 0) })
     end
+
     local function setValue(v, silent)
         v = math.clamp(v, minV, maxV)
-        if v ~= value then
-            value = v
-            applyVisual(true)
-            if not silent and onChange then onChange(value) end
+        if step and step > 0 then
+            v = math.floor((v - minV) / step + 0.5) * step + minV
+            v = math.clamp(v, minV, maxV)
         end
+        local changed = v ~= value
+        value = v
+        applyVisual(true)
+        if inputBox then inputBox.Text = formatValue(value) end
+        if valueLabel then valueLabel.Text = formatValue(value) end
+        if changed and not silent and onChange then onChange(value) end
     end
+
     local dragging = false
     local function fromAbsX(absX)
         local sx = track.AbsolutePosition.X
@@ -777,13 +885,24 @@ local function createSlider(parent, cfg)
         local r = math.clamp((absX - sx) / w, 0, 1)
         setValue(minV + r * (maxV - minV))
     end
+
     local hit = Instance.new("TextButton")
     hit.BackgroundTransparency = 1
     hit.Text = ""
     hit.AutoButtonColor = false
-    hit.Size = UDim2.new(1, 0, 1, 0)
+    hit.Position = UDim2.new(0, leftOffset, 0, 0)
+    hit.Size = UDim2.new(0, sliderW, 1, 0)
     hit.ZIndex = 8
     hit.Parent = container
+
+    hit.MouseEnter:Connect(function()
+        if dragging then return end
+        tw(knob, EASE_FAST, { Size = UDim2.new(0, knobSize + 4, 0, knobSize + 4) })
+    end)
+    hit.MouseLeave:Connect(function()
+        if dragging then return end
+        tw(knob, EASE, { Size = UDim2.new(0, knobSize, 0, knobSize) })
+    end)
     hit.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1
            or input.UserInputType == Enum.UserInputType.Touch then
@@ -807,8 +926,14 @@ local function createSlider(parent, cfg)
             end
         end
     end)
+
     task.defer(function() task.wait(0.05); applyVisual(false) end)
-    return { container = container, getValue = function() return value end, setValue = setValue }
+
+    return {
+        container = container,
+        getValue = function() return value end,
+        setValue = setValue,
+    }
 end
 
 local function createTextBox(parent, cfg)
@@ -840,11 +965,9 @@ local function createTextBox(parent, cfg)
     tb.Parent = container
     tb.Focused:Connect(function()
         tw(st, EASE_FAST, { Color = Theme.PRIMARY, Thickness = 1.5 })
-        tw(container, EASE_FAST, { Size = UDim2.new(0, W + 2, 0, H + 2), Position = UDim2.new(0, X - 1, 0, Y - 1) })
     end)
     tb.FocusLost:Connect(function()
         tw(st, EASE, { Color = cfg.borderColor or Theme.BORDER, Thickness = 1 })
-        tw(container, EASE, { Size = UDim2.new(0, W, 0, H), Position = UDim2.new(0, X, 0, Y) })
         if cfg.onChange then cfg.onChange(tb.Text) end
     end)
     return tb
@@ -917,17 +1040,12 @@ local function createCheckbox(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
--- ★★★ 颜色选择器（带蓝框选中） ★★★
 local function createColorPicker(parent, cfg)
     local palette = cfg.palette or {
-        Color3.fromRGB(37, 99, 235),
-        Color3.fromRGB(220, 38, 38),
-        Color3.fromRGB(16, 185, 129),
-        Color3.fromRGB(245, 158, 11),
-        Color3.fromRGB(139, 92, 246),
-        Color3.fromRGB(20, 184, 166),
-        Color3.fromRGB(236, 72, 153),
-        Color3.fromRGB(31, 41, 55),
+        Color3.fromRGB(37, 99, 235), Color3.fromRGB(220, 38, 38),
+        Color3.fromRGB(16, 185, 129), Color3.fromRGB(245, 158, 11),
+        Color3.fromRGB(139, 92, 246), Color3.fromRGB(20, 184, 166),
+        Color3.fromRGB(236, 72, 153), Color3.fromRGB(31, 41, 55),
     }
     local names = cfg.names or {
         "静谧蓝", "国庆红", "薄荷绿", "琥珀橙",
@@ -939,46 +1057,33 @@ local function createColorPicker(parent, cfg)
     local rows = math.ceil(#palette / cols)
     local W = cols * size + (cols - 1) * gap
     local H = rows * size + (rows - 1) * gap
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
-
     local selectedIndex = cfg.value or 1
     local onChange = cfg.onChange
     local swatches = {}
     local strokes = {}
-
     local function refresh(animate, pulsed)
         for i, sw in ipairs(swatches) do
             local so = strokes[i]
             if i == selectedIndex then
-                tw(sw, animate and EASE_FAST or EASE_NONE, {
-                    Size = UDim2.new(0, size + 4, 0, size + 4),
-                })
-                tw(so, animate and EASE_FAST or EASE_NONE, {
-                    Thickness = 3, Color = Theme.PRIMARY, Transparency = 0,
-                })
+                tw(sw, animate and EASE_FAST or EASE_NONE, { Size = UDim2.new(0, size + 4, 0, size + 4) })
+                tw(so, animate and EASE_FAST or EASE_NONE, { Thickness = 3, Color = Theme.PRIMARY, Transparency = 0 })
             else
-                tw(sw, animate and EASE or EASE_NONE, {
-                    Size = UDim2.new(0, size, 0, size),
-                })
-                tw(so, animate and EASE or EASE_NONE, {
-                    Thickness = 1, Color = Theme.BORDER, Transparency = 0.5,
-                })
+                tw(sw, animate and EASE or EASE_NONE, { Size = UDim2.new(0, size, 0, size) })
+                tw(so, animate and EASE or EASE_NONE, { Thickness = 1, Color = Theme.BORDER, Transparency = 0.5 })
             end
         end
         if pulsed and swatches[pulsed] then
             tapPulse(swatches[pulsed], "Size",
                 UDim2.new(0, size + 4, 0, size + 4),
-                UDim2.new(0, size + 10, 0, size + 10),
-                0.08)
+                UDim2.new(0, size + 10, 0, size + 10), 0.08)
         end
     end
-
     for i, col in ipairs(palette) do
         local c = (i - 1) % cols
         local r = math.floor((i - 1) / cols)
@@ -994,30 +1099,15 @@ local function createColorPicker(parent, cfg)
         corner(sw, 6)
         local s = stroke(sw, Theme.BORDER, 1)
         sw.Parent = container
-
         local capture = i
-        sw.MouseEnter:Connect(function()
-            if selectedIndex ~= capture then
-                tw(sw, EASE_FAST, { Size = UDim2.new(0, size + 4, 0, size + 4) })
-            end
-        end)
-        sw.MouseLeave:Connect(function()
-            if selectedIndex ~= capture then
-                tw(sw, EASE, { Size = UDim2.new(0, size, 0, size) })
-            end
-        end)
         sw.MouseButton1Click:Connect(function()
             selectedIndex = capture
             refresh(true, capture)
-            if onChange then
-                onChange(palette[capture], capture, names[capture])
-            end
+            if onChange then onChange(palette[capture], capture, names[capture]) end
         end)
-
         swatches[i] = sw
         strokes[i] = s
     end
-
     refresh(false)
     return {
         container = container,
@@ -1025,12 +1115,10 @@ local function createColorPicker(parent, cfg)
     }
 end
 
--- ★★★ 描述框（左上角黑字，自动高度） ★★★
 local function createDescriptionBox(parent, cfg)
     local W = cfg.w or 300
     local padX = cfg.padX or 14
     local padY = cfg.padY or 12
-
     local box = Instance.new("Frame")
     box.BackgroundColor3 = cfg.bgColor or Theme.PANEL_SOFT
     box.BorderSizePixel = 0
@@ -1041,20 +1129,17 @@ local function createDescriptionBox(parent, cfg)
     corner(box, 8)
     stroke(box, cfg.borderColor or Theme.BORDER, 1)
     box.Parent = parent
-
     local layout = Instance.new("UIListLayout")
     layout.FillDirection = Enum.FillDirection.Vertical
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Padding = UDim.new(0, 6)
     layout.Parent = box
-
     local pad = Instance.new("UIPadding")
     pad.PaddingTop = UDim.new(0, padY)
     pad.PaddingBottom = UDim.new(0, padY)
     pad.PaddingLeft = UDim.new(0, padX)
     pad.PaddingRight = UDim.new(0, padX)
     pad.Parent = box
-
     if cfg.title then
         local title = Instance.new("TextLabel")
         title.BackgroundTransparency = 1
@@ -1069,7 +1154,6 @@ local function createDescriptionBox(parent, cfg)
         title.ZIndex = 6
         title.Parent = box
     end
-
     local body = Instance.new("TextLabel")
     body.BackgroundTransparency = 1
     body.Text = cfg.text or ""
@@ -1084,7 +1168,6 @@ local function createDescriptionBox(parent, cfg)
     body.AutomaticSize = Enum.AutomaticSize.Y
     body.ZIndex = 6
     body.Parent = box
-
     return box
 end
 
@@ -1093,16 +1176,14 @@ local function createDropdownBase(parent, cfg, multi)
     local H = cfg.h or 30
     local items = cfg.items or {}
     local ITEM_H = cfg.itemHeight or 24
-    local LIST_GAP = 18     -- ★★★ 再往下加大 ★★★
+    local LIST_GAP = 18
     local LIST_PAD = 4
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
-
     local btn = Instance.new("TextButton")
     btn.BackgroundColor3 = Theme.WHITE
     btn.BorderSizePixel = 0
@@ -1113,7 +1194,6 @@ local function createDropdownBase(parent, cfg, multi)
     corner(btn, 6)
     local btnStroke = stroke(btn, Theme.BORDER, 1)
     btn.Parent = container
-
     local valueLabel = Instance.new("TextLabel")
     valueLabel.BackgroundTransparency = 1
     valueLabel.Text = ""
@@ -1126,7 +1206,6 @@ local function createDropdownBase(parent, cfg, multi)
     valueLabel.Size = UDim2.new(1, -32, 1, 0)
     valueLabel.ZIndex = 6
     valueLabel.Parent = btn
-
     local arrow = Instance.new("TextLabel")
     arrow.BackgroundTransparency = 1
     arrow.Text = "v"
@@ -1139,7 +1218,6 @@ local function createDropdownBase(parent, cfg, multi)
     arrow.Size = UDim2.new(0, 16, 0, 16)
     arrow.ZIndex = 6
     arrow.Parent = btn
-
     local list = Instance.new("Frame")
     list.BackgroundColor3 = Theme.WHITE
     list.BorderSizePixel = 0
@@ -1152,12 +1230,10 @@ local function createDropdownBase(parent, cfg, multi)
     local listStroke = stroke(list, Theme.BORDER, 1)
     listStroke.Transparency = 1
     list.Parent = listLayer
-
     local innerPad = Instance.new("UIPadding")
     innerPad.PaddingTop = UDim.new(0, LIST_PAD)
     innerPad.PaddingBottom = UDim.new(0, LIST_PAD)
     innerPad.Parent = list
-
     local state
     if multi then
         state = {}
@@ -1174,12 +1250,10 @@ local function createDropdownBase(parent, cfg, multi)
     local itemMarks = {}
     local itemRows = {}
     local isOpen = false
-
     local function isSelected(i)
         if multi then return state[i] == true
         else return state == items[i] end
     end
-
     local function refreshLabel()
         if multi then
             local count = 0
@@ -1201,7 +1275,6 @@ local function createDropdownBase(parent, cfg, multi)
             end
         end
     end
-
     local function refreshMarks()
         for i, mbox in ipairs(itemMarks) do
             local inner = mbox:FindFirstChild("InnerMark")
@@ -1218,7 +1291,6 @@ local function createDropdownBase(parent, cfg, multi)
             end
         end
     end
-
     local function closeList()
         if not isOpen then return end
         isOpen = false
@@ -1233,7 +1305,6 @@ local function createDropdownBase(parent, cfg, multi)
             if not isOpen then list.Visible = false end
         end)
     end
-
     local function openList()
         if activeDropdownClose and activeDropdownClose ~= closeList then
             activeDropdownClose()
@@ -1264,7 +1335,6 @@ local function createDropdownBase(parent, cfg, multi)
         tw(btnStroke, EASE_FAST, { Color = Theme.PRIMARY })
         activeDropdownClose = closeList
     end
-
     for i, item in ipairs(items) do
         local row = Instance.new("TextButton")
         row.BackgroundColor3 = Theme.WHITE
@@ -1277,13 +1347,11 @@ local function createDropdownBase(parent, cfg, multi)
         row.ZIndex = 92
         corner(row, 5)
         row.Parent = list
-
         createLabel(row, {
             text = item, x = 10, y = 0,
             w = W - 42, h = ITEM_H,
             textSize = 11, color = Theme.TEXT, zIndex = 93,
         })
-
         local mbox = Instance.new("Frame")
         mbox.BackgroundColor3 = Theme.WHITE
         mbox.BorderSizePixel = 0
@@ -1294,7 +1362,6 @@ local function createDropdownBase(parent, cfg, multi)
         corner(mbox, 3)
         stroke(mbox, Theme.BORDER, 1)
         mbox.Parent = row
-
         local inner = Instance.new("Frame")
         inner.Name = "InnerMark"
         inner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1306,7 +1373,6 @@ local function createDropdownBase(parent, cfg, multi)
         corner(inner, 1)
         inner.BackgroundTransparency = 1
         inner.Parent = mbox
-
         row.MouseEnter:Connect(function()
             row.BackgroundTransparency = 0
             tw(row, EASE_FAST, { BackgroundColor3 = Theme.HOVER_SOFT })
@@ -1334,14 +1400,11 @@ local function createDropdownBase(parent, cfg, multi)
                 if onChange then onChange(state) end
             end
         end)
-
         itemMarks[i] = mbox
         itemRows[i] = row
     end
-
     refreshLabel()
     task.defer(function() task.wait(0.05); refreshMarks() end)
-
     btn.MouseButton1Click:Connect(function()
         if isOpen then closeList() else openList() end
     end)
@@ -1351,7 +1414,6 @@ local function createDropdownBase(parent, cfg, multi)
     btn.MouseLeave:Connect(function()
         if not isOpen then tw(btnStroke, EASE, { Color = Theme.BORDER }) end
     end)
-
     return {
         container = container,
         getValue = function() return state end,
