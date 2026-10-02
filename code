@@ -1,4 +1,7 @@
--- ============ 加载 LUMEN UI 库 ============
+-- ============ 执行前等待 2 秒 ============
+task.wait(2)
+
+-- ============ 加载 LUMEN UI ============
 loadstring(game:HttpGet("https://raw.githubusercontent.com/hgvuyguyg/new/main/ui"))()
 local ui = _G.ui
 if type(ui) ~= "table" then warn("[黑脚本] LUMEN UI 加载失败") return end
@@ -877,9 +880,12 @@ local pageContents = {
         items = {{name = "多人甩飞", desc = "选择玩家然后甩飞", icon = "💨", url = "https://raw.githubusercontent.com/hgvuyguyg/jjjjjjjjj/main/%E7%94%A9%E9%A3%9E"}}
     },
 }
+
+-- ============ 服务器页 ============
 pageContents["服务器"] = {
     type = "buttons",
     items = {
+        {name = "灾难之岛", desc = "点击执行", icon = "🎍", url = "https://raw.githubusercontent.com/hgvuyguyg/new/main/灾难之岛"},
         {name = "找出谁打了一巴掌", desc = "点击执行", icon = "🤲", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/巴掌"},
         {name = "汉堡包", desc = "点击执行", icon = "🍔", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/汉堡"},
         {name = "机器人滑膛枪", desc = "点击执行", icon = "🤖", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/机器人"},
@@ -994,10 +1000,10 @@ pageContents["服务器"] = {
         {name = "路线06", desc = "点击执行", icon = "🐍", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/路线"},
         {name = "军事军队大亨", desc = "点击执行", icon = "🤠", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/战斗大亨"},
         {name = "偷走巴掌", desc = "点击执行", icon = "🖐🏻️", url = "https://raw.githubusercontent.com/hgvuyguyg/sbqr/main/1巴掌"},
-        {name = "灾难之岛", desc = "点击执行", icon = "🎍", url = "https://raw.githubusercontent.com/hgvuyguyg/new/main/灾难之岛"},
     }
 }
 
+-- ============ 国内脚本页 ============
 pageContents["国内脚本"] = {
     type = "buttons",
     items = {
@@ -1008,6 +1014,7 @@ pageContents["国内脚本"] = {
         {name = "Loarder脚本", desc = "拉完了", icon = "🤔", url = "https://raw.githubusercontent.com/Jilxi/123/refs/heads/main/Loader.lua"},
     }
 }
+
 -- ============ 收集所有功能 ============
 local allSearchItems = {}
 for pageName, contentData in pairs(pageContents) do
@@ -1035,7 +1042,7 @@ end
 
 mainWin = ui.createPanel({
     w = 500, h = 340,
-    title = "黑脚本",
+    title = "黑脚本·管理员版",
     tabs = TAB_NAMES,
     sidebarWidth = 100,
     showPlayer = true,
@@ -1075,7 +1082,7 @@ mainWin = ui.createPanel({
     end,
 })
 
--- ============ 顶部信息框（固定绿黄，位置左移） ============
+-- ============ 顶部信息框 ============
 do
     local tb = mainWin.titleBar
     if tb then
@@ -1143,12 +1150,26 @@ local function makeScrollFrame(parent)
     return scroll
 end
 
+-- ★ 通用 tooltip 挂载
+local function attachTooltip(frame, text)
+    if not text then return end
+    frame.MouseEnter:Connect(function()
+        local mp = UserInputService:GetMouseLocation()
+        ui.showTooltip(frame, text, mp.X + 12, mp.Y + 12)
+    end)
+    frame.MouseLeave:Connect(function()
+        ui.hideTooltip()
+    end)
+end
+
 local function makeButtonCard(scroll, item, yPos)
+    local tooltipText = (item.name or "") .. "\n" .. (item.desc or "")
     ui.createButton({
         parent = scroll, x = PAD, y = yPos, w = CW, h = CARD_H,
         layout = "card",
         text = (item.icon or "") .. "  " .. (item.name or ""),
         icon = ">", textSize = 11,
+        tooltip = tooltipText,
         onClick = function()
             if item.url == "teleport" or item.url == "follow" then
                 local selectWin = ui.createPanel({
@@ -1163,6 +1184,7 @@ local function makeButtonCard(scroll, item, yPos)
                         ui.createButton({
                             parent = selectWin.body, x = 8, y = pY, w = 204, h = 30,
                             layout = "card", text = target.Name, icon = ">", textSize = 11,
+                            tooltip = "点击传送到 " .. target.Name .. " 旁边",
                             onClick = function()
                                 if item.url == "follow" then
                                     followActive = true
@@ -1245,6 +1267,7 @@ local function makeToggleCard(scroll, item, yPos)
             pcall(handleFeatureToggle, item.code, v)
         end,
     })
+    attachTooltip(card, (item.name or "") .. "\n" .. (item.desc or ""))
     return yPos + CARD_H + CARD_GAP
 end
 
@@ -1275,6 +1298,7 @@ local function makeInputCard(scroll, item, yPos)
     ui.createButton({
         parent = card, x = CW - 62, y = 10, w = 50, h = 22,
         text = "设置", textSize = 10,
+        tooltip = "点击应用输入框中的数值",
         onClick = function()
             local v = tonumber(tb.Text)
             if v and item.execute then
@@ -1282,6 +1306,7 @@ local function makeInputCard(scroll, item, yPos)
             end
         end,
     })
+    attachTooltip(card, (item.name or "") .. "\n" .. (item.desc or "") .. "，当前默认值 " .. tostring(item.default or ""))
     return yPos + CARD_H + CARD_GAP
 end
 
@@ -1310,6 +1335,7 @@ local function makeMusicCard(scroll, item, yPos)
     btn = ui.createButton({
         parent = card, x = CW - 62, y = 10, w = 50, h = 22,
         text = "播放", textSize = 10,
+        tooltip = "点击播放 / 再点一次停止",
         onClick = function()
             if isPlaying then
                 if sound then sound:Stop(); sound:Destroy(); sound = nil end
@@ -1331,6 +1357,7 @@ local function makeMusicCard(scroll, item, yPos)
             end
         end,
     })
+    attachTooltip(card, (item.name or "") .. "\n" .. (item.desc or ""))
     return yPos + CARD_H + CARD_GAP
 end
 
@@ -1348,6 +1375,7 @@ local function renderItem(scroll, item, pageType, yPos)
     return yPos
 end
 
+-- ============ 公告页 ============
 local function buildAnnouncementPage(page)
     local searchTb = ui.createTextBox({
         parent = page, x = PAD, y = 8, w = CW, h = 32,
@@ -1371,7 +1399,13 @@ local function buildAnnouncementPage(page)
     task.spawn(function()
         while mainWin and mainWin.frame and mainWin.frame.Parent do
             pcall(function()
-                timeLabel.Text = "⏰ " .. getTime() .. "\n\n👤 制作者：C Studio\n📅 创建日期：2026年7月10日\n🔄 此脚本一直更新\n\n📊 您目前已经执行了 " .. globalExecCount .. " 次，感谢您的支持！\n\n🎮 玩法：开启功能后在游戏中体验效果\n如果在游玩时遇到任何问题 请报告给我们❤️\n最大帮助者:CHANGCHENG56☕\n\n感谢 hacker_lololo888的支持❤️❤️❤️❤️❤️\n开学了更新会变慢👁️"
+                timeLabel.Text =
+                    "⏰ " .. getTime() .. "\n\n" ..
+                    "👤 制作者：C Studio\n" ..
+                    "📅 创建日期：2026年7月10日\n" ..
+                    "🔄 此脚本一直更新\n\n" ..
+                    "📊 您目前已经执行了 " .. globalExecCount .. " 次，感谢您的支持！\n" ..
+                    "\n🇨🇳金秋十月，喜迎国庆！山河锦绣，国泰民安。\n\n✨感谢各位一直以来支持黑脚本。\n\n🎉愿大家假期愉快，万事顺遂！"
             end)
             task.wait(1)
         end
@@ -1399,6 +1433,7 @@ local function buildAnnouncementPage(page)
                     layout = "card",
                     text = (itm.icon or "") .. "  " .. (itm.name or "") .. "   (" .. entry.page .. ")",
                     icon = ">", textSize = 11,
+                    tooltip = (itm.name or "") .. "\n" .. (itm.desc or "") .. "\n所在分类：" .. entry.page,
                     onClick = function()
                         local idx = findTabIndex(entry.page)
                         if idx then mainWin:selectTab(idx) end
@@ -1410,6 +1445,7 @@ local function buildAnnouncementPage(page)
     end)
 end
 
+-- ============ 遍历页面构建 ============
 for pageName, contentData in pairs(pageContents) do
     local idx = findTabIndex(pageName)
     if idx and mainWin.tabs[idx] then
@@ -1427,7 +1463,7 @@ for pageName, contentData in pairs(pageContents) do
     end
 end
 
--- ============ 设置页（颜色只改 panelStroke） ============
+-- ============ 设置页 ============
 do
     local settingsIdx = findTabIndex("设置")
     if settingsIdx and mainWin.tabs[settingsIdx] then
@@ -1466,7 +1502,6 @@ do
                 size = 22, gap = 6, cols = 8, value = 1,
                 palette = colorValues, names = colorNames,
                 onChange = function(col, idx, name)
-                    -- ★ 只改面板外框，其它 UIStroke 不动
                     if mainWin.panelStroke then
                         mainWin.panelStroke.Color = col
                     end
@@ -1497,11 +1532,13 @@ do
             ui.createButton({
                 parent = card, x = CW - 150, y = 16, w = 66, h = 28,
                 text = "平板", textSize = 10,
+                tooltip = "切换到平板尺寸 580 × 440",
                 onClick = function() mainWin:setSize(580, 440) end,
             })
             ui.createButton({
                 parent = card, x = CW - 78, y = 16, w = 66, h = 28,
                 text = "手机", textSize = 10,
+                tooltip = "切换到手机尺寸 500 × 340",
                 onClick = function() mainWin:setSize(500, 340) end,
             })
             yPos = yPos + 60 + CARD_GAP
@@ -1533,9 +1570,50 @@ do
                     if v then enableAuthorESP() else disableAuthorESP() end
                 end,
             })
+            attachTooltip(card, "透视作者\n开启后金色高亮脚本作者 CHANGCHENG66")
+            yPos = yPos + CARD_H + CARD_GAP
+        end
+
+        -- 收藏模式
+        do
+            local card = Instance.new("Frame")
+            card.Size = UDim2.new(0, CW, 0, CARD_H)
+            card.Position = UDim2.new(0, PAD, 0, yPos)
+            card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
+            card.BorderSizePixel = 0
+            card.Parent = scroll
+            Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
+            local fst = Instance.new("UIStroke", card); fst.Color = Color3.fromRGB(230, 230, 230)
+            ui.createLabel({
+                parent = card, x = 10, y = 5, w = CW - 60, h = 16,
+                text = "⭐  收藏模式", textSize = 11, font = Enum.Font.GothamMedium,
+            })
+            ui.createLabel({
+                parent = card, x = 30, y = 22, w = CW - 80, h = 14,
+                text = "开启后卡片右上角显示收藏星标", textSize = 9,
+                color = Color3.fromRGB(130, 130, 130),
+            })
+            ui.createToggle({
+                parent = card, x = CW - 46, y = 11, w = 36, h = 20,
+                value = false,
+                onChange = function(v)
+                    ui.setFavoriteMode(v)
+                end,
+            })
+            attachTooltip(card, "收藏模式\n开启后在每个功能卡片右上角显示星标，点击即可收藏")
             yPos = yPos + CARD_H + CARD_GAP
         end
     end
 end
+
+-- ============ 启动提示（仅此一次） ============
+task.delay(0.5, function()
+    ui.notify({
+        type = "success",
+        title = "黑脚本·管理员版",
+        message = "脚本执行成功",
+        duration = 4,
+    })
+end)
 
 print("[黑脚本·管理员版 V2.0] 已加载")
