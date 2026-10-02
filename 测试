@@ -32,7 +32,6 @@ local function getGlobalExecCount()
     if success and result and result > 0 then return result end
     return 0
 end
-
 local function saveGlobalExecCount(count)
     if getgenv then getgenv().GlobalExecCount = count end
     pcall(function()
@@ -44,7 +43,6 @@ local function saveGlobalExecCount(count)
         if writefile then writefile("black_script_exec_count.txt", tostring(count)) end
     end)
 end
-
 local globalExecCount = getGlobalExecCount()
 if globalExecCount == 0 then globalExecCount = 1 else globalExecCount = globalExecCount + 1 end
 saveGlobalExecCount(globalExecCount)
@@ -53,24 +51,15 @@ saveGlobalExecCount(globalExecCount)
 if globalExecCount == 520 then
     spawn(function()
         local heartGui = Instance.new("ScreenGui")
-        heartGui.Name = "HeartEffectGui"
-        heartGui.ResetOnSpawn = false
-        heartGui.Parent = PlayerGui
+        heartGui.Name = "HeartEffectGui"; heartGui.ResetOnSpawn = false; heartGui.Parent = PlayerGui
         local overlay = Instance.new("Frame")
-        overlay.Size = UDim2.new(1, 0, 1, 0)
-        overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        overlay.BackgroundTransparency = 0.5
-        overlay.ZIndex = 999
-        overlay.Parent = heartGui
+        overlay.Size = UDim2.new(1, 0, 1, 0); overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        overlay.BackgroundTransparency = 0.5; overlay.ZIndex = 999; overlay.Parent = heartGui
         local heartLabel = Instance.new("TextLabel")
-        heartLabel.Size = UDim2.new(0, 200, 0, 200)
-        heartLabel.Position = UDim2.new(0.5, -100, 0.5, -100)
-        heartLabel.Text = "❤️"
-        heartLabel.Font = Enum.Font.GothamBold
-        heartLabel.TextSize = 150
-        heartLabel.BackgroundTransparency = 1
-        heartLabel.ZIndex = 1000
-        heartLabel.Parent = heartGui
+        heartLabel.Size = UDim2.new(0, 200, 0, 200); heartLabel.Position = UDim2.new(0.5, -100, 0.5, -100)
+        heartLabel.Text = "❤️"; heartLabel.Font = Enum.Font.GothamBold
+        heartLabel.TextSize = 150; heartLabel.BackgroundTransparency = 1
+        heartLabel.ZIndex = 1000; heartLabel.Parent = heartGui
         local heartHue = 0
         local heartConn = RunService.RenderStepped:Connect(function(delta)
             heartHue = (heartHue + delta * 0.5) % 1
@@ -80,60 +69,45 @@ if globalExecCount == 520 then
         TweenService:Create(heartLabel, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 200, 0, 200)}):Play()
         wait(3)
         local msgLabel = Instance.new("TextLabel")
-        msgLabel.Size = UDim2.new(0, 400, 0, 60)
-        msgLabel.Position = UDim2.new(0.5, -200, 0.5, 120)
+        msgLabel.Size = UDim2.new(0, 400, 0, 60); msgLabel.Position = UDim2.new(0.5, -200, 0.5, 120)
         msgLabel.Text = "您已执行 520 次，感谢您的支持！❤️"
-        msgLabel.Font = Enum.Font.GothamBold
-        msgLabel.TextSize = 24
-        msgLabel.BackgroundTransparency = 1
-        msgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        msgLabel.TextStrokeTransparency = 0
-        msgLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-        msgLabel.ZIndex = 1000
-        msgLabel.Parent = heartGui
+        msgLabel.Font = Enum.Font.GothamBold; msgLabel.TextSize = 24
+        msgLabel.BackgroundTransparency = 1; msgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        msgLabel.TextStrokeTransparency = 0; msgLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        msgLabel.ZIndex = 1000; msgLabel.Parent = heartGui
         local msgHue = 0
         local msgConn = RunService.RenderStepped:Connect(function(delta)
             msgHue = (msgHue + delta * 0.3) % 1
             msgLabel.TextColor3 = Color3.fromHSV(msgHue, 1, 1)
         end)
         wait(2)
-        heartConn:Disconnect()
-        msgConn:Disconnect()
+        heartConn:Disconnect(); msgConn:Disconnect()
         TweenService:Create(heartLabel, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
         TweenService:Create(msgLabel, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {TextTransparency = 1}):Play()
         TweenService:Create(overlay, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 1}):Play()
-        wait(0.5)
-        heartGui:Destroy()
+        wait(0.5); heartGui:Destroy()
     end)
 end
 
 -- ============ 欢迎音效 ============
 spawn(function()
     local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://80701295792893"
-    sound.Volume = 1
-    sound.Parent = workspace
-    sound:Play()
+    sound.SoundId = "rbxassetid://80701295792893"; sound.Volume = 1
+    sound.Parent = workspace; sound:Play()
     sound.Ended:Connect(function() sound:Destroy() end)
 end)
 
 -- ============ 欢迎动画 ============
 spawn(function()
     local welcomeGui = Instance.new("ScreenGui")
-    welcomeGui.Name = "WelcomeGui"
-    welcomeGui.ResetOnSpawn = false
-    welcomeGui.Parent = PlayerGui
+    welcomeGui.Name = "WelcomeGui"; welcomeGui.ResetOnSpawn = false; welcomeGui.Parent = PlayerGui
     local welcomeLabel = Instance.new("TextLabel")
-    welcomeLabel.Size = UDim2.new(0, 500, 0, 80)
-    welcomeLabel.Position = UDim2.new(0.5, -250, 0.5, -40)
+    welcomeLabel.Size = UDim2.new(0, 500, 0, 80); welcomeLabel.Position = UDim2.new(0.5, -250, 0.5, -40)
     welcomeLabel.Text = "欢迎使用黑脚本·管理员版"
-    welcomeLabel.Font = Enum.Font.GothamBold
-    welcomeLabel.TextSize = 36
+    welcomeLabel.Font = Enum.Font.GothamBold; welcomeLabel.TextSize = 36
     welcomeLabel.BackgroundTransparency = 1
-    welcomeLabel.TextStrokeTransparency = 0
-    welcomeLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    welcomeLabel.ZIndex = 1000
-    welcomeLabel.Parent = welcomeGui
+    welcomeLabel.TextStrokeTransparency = 0; welcomeLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    welcomeLabel.ZIndex = 1000; welcomeLabel.Parent = welcomeGui
     local hue2 = 0
     local colorConnection
     colorConnection = RunService.RenderStepped:Connect(function(delta)
@@ -143,45 +117,29 @@ spawn(function()
     wait(3)
     colorConnection:Disconnect()
     TweenService:Create(welcomeLabel, TweenInfo.new(0.8, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
-    wait(0.8)
-    welcomeGui:Destroy()
+    wait(0.8); welcomeGui:Destroy()
     local infoGui = Instance.new("ScreenGui")
-    infoGui.Name = "InfoGui"
-    infoGui.ResetOnSpawn = false
-    infoGui.Parent = PlayerGui
+    infoGui.Name = "InfoGui"; infoGui.ResetOnSpawn = false; infoGui.Parent = PlayerGui
     local infoLabel = Instance.new("TextLabel")
-    infoLabel.Size = UDim2.new(0, 400, 0, 60)
-    infoLabel.Position = UDim2.new(0.5, -200, 0.5, -30)
+    infoLabel.Size = UDim2.new(0, 400, 0, 60); infoLabel.Position = UDim2.new(0.5, -200, 0.5, -30)
     infoLabel.Text = "此脚本会一直更新\n此脚本作者:CHANGCHENG66"
-    infoLabel.Font = Enum.Font.GothamBold
-    infoLabel.TextSize = 22
-    infoLabel.BackgroundTransparency = 1
-    infoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    infoLabel.TextStrokeTransparency = 0
-    infoLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    infoLabel.ZIndex = 1000
-    infoLabel.Parent = infoGui
+    infoLabel.Font = Enum.Font.GothamBold; infoLabel.TextSize = 22
+    infoLabel.BackgroundTransparency = 1; infoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    infoLabel.TextStrokeTransparency = 0; infoLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    infoLabel.ZIndex = 1000; infoLabel.Parent = infoGui
     wait(2)
     TweenService:Create(infoLabel, TweenInfo.new(0.6, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
-    wait(0.6)
-    infoGui:Destroy()
+    wait(0.6); infoGui:Destroy()
 end)
 
--- ============ FPS 统计 ============
+-- ============ FPS ============
 local fpsGui = Instance.new("ScreenGui")
-fpsGui.Name = "FPSGui"
-fpsGui.ResetOnSpawn = false
-fpsGui.Parent = PlayerGui
+fpsGui.Name = "FPSGui"; fpsGui.ResetOnSpawn = false; fpsGui.Parent = PlayerGui
 local FPSLabel = Instance.new("TextLabel")
-FPSLabel.Size = UDim2.new(0, 180, 0, 28)
-FPSLabel.Position = UDim2.new(0, 8, 0, 8)
-FPSLabel.BackgroundTransparency = 1
-FPSLabel.Font = Enum.Font.GothamBold
-FPSLabel.TextSize = 16
-FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
-FPSLabel.ZIndex = 100
-FPSLabel.Visible = true
-FPSLabel.RichText = true
+FPSLabel.Size = UDim2.new(0, 180, 0, 28); FPSLabel.Position = UDim2.new(0, 8, 0, 8)
+FPSLabel.BackgroundTransparency = 1; FPSLabel.Font = Enum.Font.GothamBold
+FPSLabel.TextSize = 16; FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
+FPSLabel.ZIndex = 100; FPSLabel.Visible = true; FPSLabel.RichText = true
 FPSLabel.Parent = fpsGui
 local fpsEnabled = true
 local lastFrameTime = tick()
@@ -211,8 +169,9 @@ local followConnection = nil
 local followActive = false
 local homePosition = nil
 local authorEspEnabled = true
+local _toggleConns = {}
 
--- ============ ESP 相关函数 ============
+-- ============ ESP ============
 local function clearESP()
     for _, h in pairs(espHighlights) do pcall(function() h:Destroy() end) end
     for _, b in pairs(espBillboards) do pcall(function() b:Destroy() end) end
@@ -226,7 +185,6 @@ local function clearEnemyGlow()
     for _, h in pairs(enemyGlowHighlights) do pcall(function() h:Destroy() end) end
     enemyGlowHighlights = {}
 end
-
 local function addAuthorESP(p)
     if not authorEspEnabled then return end
     if p.Name ~= "CHANGCHENG66" then return end
@@ -235,31 +193,22 @@ local function addAuthorESP(p)
     local function s(c)
         if not c then return end
         local hl = Instance.new("Highlight")
-        hl.FillColor = Color3.fromRGB(255, 215, 0)
-        hl.FillTransparency = 0.3
-        hl.OutlineColor = Color3.fromRGB(255, 215, 0)
-        hl.OutlineTransparency = 0
+        hl.FillColor = Color3.fromRGB(255, 215, 0); hl.FillTransparency = 0.3
+        hl.OutlineColor = Color3.fromRGB(255, 215, 0); hl.OutlineTransparency = 0
         hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        hl.Adornee = c
-        hl.Parent = c
+        hl.Adornee = c; hl.Parent = c
         espHighlights[p] = hl
         local h = c:FindFirstChild("Head")
         if h then
             local bb = Instance.new("BillboardGui")
-            bb.Size = UDim2.new(0, 200, 0, 40)
-            bb.StudsOffset = Vector3.new(0, 3.5, 0)
-            bb.AlwaysOnTop = true
-            bb.Parent = h
+            bb.Size = UDim2.new(0, 200, 0, 40); bb.StudsOffset = Vector3.new(0, 3.5, 0)
+            bb.AlwaysOnTop = true; bb.Parent = h
             local nl = Instance.new("TextLabel")
-            nl.Size = UDim2.new(1, 0, 1, 0)
-            nl.BackgroundTransparency = 1
+            nl.Size = UDim2.new(1, 0, 1, 0); nl.BackgroundTransparency = 1
             nl.Text = "👑 " .. p.Name .. " · 此脚本作者"
-            nl.TextColor3 = Color3.fromRGB(255, 215, 0)
-            nl.Font = Enum.Font.GothamBold
-            nl.TextSize = 16
-            nl.TextStrokeTransparency = 0
-            nl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            nl.Parent = bb
+            nl.TextColor3 = Color3.fromRGB(255, 215, 0); nl.Font = Enum.Font.GothamBold
+            nl.TextSize = 16; nl.TextStrokeTransparency = 0
+            nl.TextStrokeColor3 = Color3.fromRGB(0, 0, 0); nl.Parent = bb
             espBillboards[p] = bb
         end
     end
@@ -274,7 +223,6 @@ local function refreshAuthorESP()
 end
 local function enableAuthorESP() authorEspEnabled = true; refreshAuthorESP() end
 local function disableAuthorESP() authorEspEnabled = false; clearESP() end
-
 for _, p in ipairs(Players:GetPlayers()) do addAuthorESP(p) end
 Players.PlayerAdded:Connect(function(p) if authorEspEnabled then addAuthorESP(p) end end)
 Players.PlayerRemoving:Connect(function(p)
@@ -291,21 +239,19 @@ spawn(function()
     end
 end)
 
--- ============ 处理 toggle 开关逻辑 ============
+-- ============ toggle 处理 ============
 local function handleFeatureToggle(runCode, enabled)
     if enabled then
-        if runCode == "esp" then
-            enableAuthorESP()
+        if runCode == "esp" then enableAuthorESP()
         elseif runCode == "night" then
-            Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.FogEnd = 100000; Lighting.GlobalShadows = false
-        elseif runCode == "fps" then
-            fpsEnabled = true; FPSLabel.Visible = true
+            Lighting.Brightness = 2; Lighting.ClockTime = 14
+            Lighting.FogEnd = 100000; Lighting.GlobalShadows = false
+        elseif runCode == "fps" then fpsEnabled = true; FPSLabel.Visible = true
         elseif runCode == "float" then
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("HumanoidRootPart") then
                 local hrp = c.HumanoidRootPart; local floatY = hrp.Position.Y
-                _G._blackToggleConns = _G._blackToggleConns or {}
-                _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+                _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                     if hrp and hrp.Parent then
                         hrp.Velocity = Vector3.new(hrp.Velocity.X, 0, hrp.Velocity.Z)
                         hrp.CFrame = CFrame.new(hrp.Position.X, floatY, hrp.Position.Z)
@@ -323,8 +269,7 @@ local function handleFeatureToggle(runCode, enabled)
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("HumanoidRootPart") then
                 local hrp = c.HumanoidRootPart
-                _G._blackToggleConns = _G._blackToggleConns or {}
-                _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+                _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                     for _, item in ipairs(workspace:GetDescendants()) do
                         if item:IsA("Tool") or item:IsA("MeshPart") or (item:IsA("Part") and (item.Name:lower():find("drop") or item.Name:lower():find("coin") or item.Name:lower():find("gem") or item.Name:lower():find("collect") or item.Name:lower():find("orb"))) then
                             if (item.Position - hrp.Position).Magnitude < 80 then
@@ -336,8 +281,7 @@ local function handleFeatureToggle(runCode, enabled)
             end
         elseif runCode == "clicktp" then
             local mouse = Players.LocalPlayer:GetMouse()
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = mouse.Button1Down:Connect(function()
+            _toggleConns[runCode] = mouse.Button1Down:Connect(function()
                 local c = Players.LocalPlayer.Character
                 if c and c:FindFirstChild("HumanoidRootPart") and mouse.Hit then
                     c.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.p + Vector3.new(0, 3, 0))
@@ -345,23 +289,20 @@ local function handleFeatureToggle(runCode, enabled)
             end)
         elseif runCode == "autoclick" then
             local vu = game:GetService("VirtualUser"); local camera = workspace.CurrentCamera
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 local s = camera.ViewportSize
                 vu:Button1Down(Vector2.new(s.X/2, s.Y/2))
                 wait(0.05)
                 vu:Button1Up(Vector2.new(s.X/2, s.Y/2))
             end)
         elseif runCode == "speedhack" then
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 for _, v in ipairs(workspace:GetDescendants()) do
                     if v:IsA("Animation") then v.Speed = 2 end
                 end
             end)
         elseif runCode == "itemesp" then
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 for _, item in ipairs(workspace:GetDescendants()) do
                     if (item:IsA("Tool") or item.Name:find("Drop")) and not item:FindFirstChild("ItemESP") then
                         local hl = Instance.new("Highlight"); hl.Name = "ItemESP"
@@ -371,32 +312,26 @@ local function handleFeatureToggle(runCode, enabled)
             end)
         elseif runCode == "invisible" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.Transparency = 0.8 end
-                end
-            end
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.Transparency = 0.8 end
+            end end
         elseif runCode == "noclip" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.CanCollide = false end
-                end
-            end
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = false end
+            end end
         elseif runCode == "god" then
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("Humanoid") then
                 c.Humanoid.MaxHealth = 99999; c.Humanoid.Health = 99999
-                _G._blackToggleConns = _G._blackToggleConns or {}
-                _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+                _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                     if c and c:FindFirstChild("Humanoid") then c.Humanoid.Health = 99999 end
                 end)
             end
         elseif runCode == "teamglow" then
             local myTeam = Players.LocalPlayer.Team
             clearTeamGlow()
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 for _, p in ipairs(Players:GetPlayers()) do
                     if p ~= Players.LocalPlayer and p.Character and p.Team == myTeam then
                         if not teamGlowHighlights[p] then
@@ -411,8 +346,7 @@ local function handleFeatureToggle(runCode, enabled)
         elseif runCode == "enemyglow" then
             local myTeam = Players.LocalPlayer.Team
             clearEnemyGlow()
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 for _, p in ipairs(Players:GetPlayers()) do
                     if p ~= Players.LocalPlayer and p.Character and p.Team ~= myTeam then
                         if not enemyGlowHighlights[p] then
@@ -425,8 +359,7 @@ local function handleFeatureToggle(runCode, enabled)
                 end
             end)
         elseif runCode == "autoattack" then
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 local c = Players.LocalPlayer.Character; if not c then return end
                 local nearest = nil; local minDist = 15; local myTeam = Players.LocalPlayer.Team
                 for _, p in ipairs(Players:GetPlayers()) do
@@ -453,14 +386,12 @@ local function handleFeatureToggle(runCode, enabled)
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("Humanoid") then c.Humanoid.WalkSpeed = 1000 end
         elseif runCode == "infstamina" then
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 local c = Players.LocalPlayer.Character
                 if c and c:FindFirstChild("Humanoid") then c.Humanoid.MaxHealth = c.Humanoid.MaxHealth end
             end)
         elseif runCode == "infammo" then
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function()
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function()
                 local c = Players.LocalPlayer.Character
                 if c then
                     for _, tool in ipairs(c:GetChildren()) do
@@ -473,11 +404,9 @@ local function handleFeatureToggle(runCode, enabled)
             local infoGui = Instance.new("ScreenGui")
             infoGui.Name = "ServerInfoGui"; infoGui.ResetOnSpawn = false; infoGui.Parent = PlayerGui
             local infoFrame = Instance.new("Frame")
-            infoFrame.Size = UDim2.new(0, 280, 0, 180)
-            infoFrame.Position = UDim2.new(1, -290, 0, 10)
-            infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            infoFrame.BackgroundTransparency = 0.2; infoFrame.BorderSizePixel = 0
-            infoFrame.ZIndex = 500; infoFrame.Parent = infoGui
+            infoFrame.Size = UDim2.new(0, 280, 0, 180); infoFrame.Position = UDim2.new(1, -290, 0, 10)
+            infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30); infoFrame.BackgroundTransparency = 0.2
+            infoFrame.BorderSizePixel = 0; infoFrame.ZIndex = 500; infoFrame.Parent = infoGui
             local infoCorner = Instance.new("UICorner"); infoCorner.CornerRadius = UDim.new(0, 8); infoCorner.Parent = infoFrame
             local playerCountLabel = Instance.new("TextLabel")
             playerCountLabel.Size = UDim2.new(1, -16, 0, 30); playerCountLabel.Position = UDim2.new(0, 8, 0, 8)
@@ -520,8 +449,7 @@ local function handleFeatureToggle(runCode, enabled)
                 end
                 nearestLabel.Text = nearestText
             end)
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = {Disconnect = function()
+            _toggleConns[runCode] = {Disconnect = function()
                 infoActive = false
                 if infoGui then infoGui:Destroy() end
                 if renderConn then renderConn:Disconnect() end
@@ -531,8 +459,7 @@ local function handleFeatureToggle(runCode, enabled)
             if c and c:FindFirstChild("Humanoid") then
                 local anim = Instance.new("Animation"); anim.AnimationId = "rbxassetid://5918726674"
                 local track = c.Humanoid:LoadAnimation(anim); track:Play()
-                _G._blackToggleConns = _G._blackToggleConns or {}
-                _G._blackToggleConns[runCode] = {Disconnect = function() if track then track:Stop() end end}
+                _toggleConns[runCode] = {Disconnect = function() if track then track:Stop() end end}
             end
         elseif runCode == "fire" then
             local c = Players.LocalPlayer.Character
@@ -633,8 +560,7 @@ local function handleFeatureToggle(runCode, enabled)
                 local now = os.date("*t")
                 timeLabel.Text = now.year .. "年" .. now.month .. "月" .. now.day .. "日 " .. string.format("%02d:%02d:%02d", now.hour, now.min, now.sec)
             end)
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = {Disconnect = function()
+            _toggleConns[runCode] = {Disconnect = function()
                 subActive = false
                 if subGui then subGui:Destroy() end
                 if renderConn then renderConn:Disconnect() end
@@ -653,8 +579,7 @@ local function handleFeatureToggle(runCode, enabled)
                 end
             end
             local hue2 = 0
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = RunService.RenderStepped:Connect(function(delta)
+            _toggleConns[runCode] = RunService.RenderStepped:Connect(function(delta)
                 hue2 = (hue2 + delta * 0.5) % 1
                 local c2 = Players.LocalPlayer.Character
                 if c2 and c2:FindFirstChild("Head") then
@@ -667,73 +592,74 @@ local function handleFeatureToggle(runCode, enabled)
             end)
         elseif runCode == "giant" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.Size = v.Size * 3 end
-                end
-            end
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.Size = v.Size * 3 end
+            end end
         elseif runCode == "deletepart" then
             local mouse = Players.LocalPlayer:GetMouse(); local curGui = nil; local curHl = nil
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = mouse.Button1Down:Connect(function()
+            _toggleConns[runCode] = mouse.Button1Down:Connect(function()
                 local t = mouse.Target
                 if t then
                     if curGui then curGui:Destroy() end; if curHl then curHl:Destroy() end
-                    curHl = Instance.new("Highlight"); curHl.FillColor = Color3.fromRGB(255, 0, 0); curHl.FillTransparency = 0.5
-                    curHl.OutlineColor = Color3.fromRGB(255, 0, 0); curHl.Adornee = t; curHl.Parent = t
+                    curHl = Instance.new("Highlight"); curHl.FillColor = Color3.fromRGB(255, 0, 0)
+                    curHl.FillTransparency = 0.5; curHl.OutlineColor = Color3.fromRGB(255, 0, 0)
+                    curHl.Adornee = t; curHl.Parent = t
                     local cg = Instance.new("ScreenGui"); cg.Parent = PlayerGui; curGui = cg
-                    local frame = Instance.new("Frame"); frame.Size = UDim2.new(0, 280, 0, 130); frame.Position = UDim2.new(0.5, -140, 0.5, -65)
-                    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40); frame.BorderSizePixel = 0; frame.ZIndex = 99; frame.Parent = cg
+                    local frame = Instance.new("Frame"); frame.Size = UDim2.new(0, 280, 0, 130)
+                    frame.Position = UDim2.new(0.5, -140, 0.5, -65)
+                    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40); frame.BorderSizePixel = 0
+                    frame.ZIndex = 99; frame.Parent = cg
                     local frameCorner = Instance.new("UICorner"); frameCorner.CornerRadius = UDim.new(0, 10); frameCorner.Parent = frame
                     local text = Instance.new("TextLabel"); text.Size = UDim2.new(1, 0, 0, 45); text.Text = "确定删除此建模吗？"
-                    text.TextColor3 = Color3.fromRGB(255, 255, 255); text.Font = Enum.Font.GothamBold; text.TextSize = 15
-                    text.BackgroundTransparency = 1; text.ZIndex = 100; text.Parent = frame
-                    local confirmBtn = Instance.new("TextButton"); confirmBtn.Size = UDim2.new(0, 110, 0, 34); confirmBtn.Position = UDim2.new(0, 18, 0, 75)
-                    confirmBtn.Text = "确定删除"; confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255); confirmBtn.Font = Enum.Font.GothamBold
-                    confirmBtn.TextSize = 13; confirmBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60); confirmBtn.BorderSizePixel = 0
-                    confirmBtn.ZIndex = 100; confirmBtn.AutoButtonColor = false; confirmBtn.Parent = frame
-                    local confirmCorner = Instance.new("UICorner"); confirmCorner.CornerRadius = UDim.new(0, 6); confirmCorner.Parent = confirmBtn
-                    confirmBtn.MouseButton1Click:Connect(function() if curHl then curHl:Destroy() end; t:Destroy(); cg:Destroy() end)
-                    local cancelBtn = Instance.new("TextButton"); cancelBtn.Size = UDim2.new(0, 110, 0, 34); cancelBtn.Position = UDim2.new(0, 152, 0, 75)
-                    cancelBtn.Text = "取消"; cancelBtn.TextColor3 = Color3.fromRGB(255, 255, 255); cancelBtn.Font = Enum.Font.GothamBold
-                    cancelBtn.TextSize = 13; cancelBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100); cancelBtn.BorderSizePixel = 0
-                    cancelBtn.ZIndex = 100; cancelBtn.AutoButtonColor = false; cancelBtn.Parent = frame
-                    local cancelCorner = Instance.new("UICorner"); cancelCorner.CornerRadius = UDim.new(0, 6); cancelCorner.Parent = cancelBtn
-                    cancelBtn.MouseButton1Click:Connect(function() if curHl then curHl:Destroy() end; cg:Destroy() end)
+                    text.TextColor3 = Color3.fromRGB(255, 255, 255); text.Font = Enum.Font.GothamBold
+                    text.TextSize = 15; text.BackgroundTransparency = 1; text.ZIndex = 100; text.Parent = frame
+                    local confirmBtn = Instance.new("TextButton"); confirmBtn.Size = UDim2.new(0, 110, 0, 34)
+                    confirmBtn.Position = UDim2.new(0, 18, 0, 75); confirmBtn.Text = "确定删除"
+                    confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255); confirmBtn.Font = Enum.Font.GothamBold
+                    confirmBtn.TextSize = 13; confirmBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+                    confirmBtn.BorderSizePixel = 0; confirmBtn.ZIndex = 100
+                    confirmBtn.AutoButtonColor = false; confirmBtn.Parent = frame
+                    local cc = Instance.new("UICorner"); cc.CornerRadius = UDim.new(0, 6); cc.Parent = confirmBtn
+                    confirmBtn.MouseButton1Click:Connect(function()
+                        if curHl then curHl:Destroy() end; t:Destroy(); cg:Destroy()
+                    end)
+                    local cancelBtn = Instance.new("TextButton"); cancelBtn.Size = UDim2.new(0, 110, 0, 34)
+                    cancelBtn.Position = UDim2.new(0, 152, 0, 75); cancelBtn.Text = "取消"
+                    cancelBtn.TextColor3 = Color3.fromRGB(255, 255, 255); cancelBtn.Font = Enum.Font.GothamBold
+                    cancelBtn.TextSize = 13; cancelBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+                    cancelBtn.BorderSizePixel = 0; cancelBtn.ZIndex = 100
+                    cancelBtn.AutoButtonColor = false; cancelBtn.Parent = frame
+                    local canc = Instance.new("UICorner"); canc.CornerRadius = UDim.new(0, 6); canc.Parent = cancelBtn
+                    cancelBtn.MouseButton1Click:Connect(function()
+                        if curHl then curHl:Destroy() end; cg:Destroy()
+                    end)
                 end
             end)
         elseif runCode == "infjump" then
             infJumpEnabled = true
-            _G._blackToggleConns = _G._blackToggleConns or {}
-            _G._blackToggleConns[runCode] = UserInputService.JumpRequest:Connect(function()
+            _toggleConns[runCode] = UserInputService.JumpRequest:Connect(function()
                 if infJumpEnabled then
                     local c = Players.LocalPlayer.Character
-                    if c and c:FindFirstChild("Humanoid") then c.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
+                    if c and c:FindFirstChild("Humanoid") then
+                        c.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
                 end
             end)
         end
     else
-        local conns = _G._blackToggleConns or {}
-        if runCode == "esp" then
-            disableAuthorESP()
-        elseif runCode == "night" then
-            Lighting.Brightness = 1; Lighting.GlobalShadows = true
-        elseif runCode == "fps" then
-            fpsEnabled = false; FPSLabel.Visible = false
+        if runCode == "esp" then disableAuthorESP()
+        elseif runCode == "night" then Lighting.Brightness = 1; Lighting.GlobalShadows = true
+        elseif runCode == "fps" then fpsEnabled = false; FPSLabel.Visible = false
         elseif runCode == "invisible" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.Transparency = 0 end
-                end
-            end
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.Transparency = 0 end
+            end end
         elseif runCode == "noclip" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.CanCollide = true end
-                end
-            end
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = true end
+            end end
         elseif runCode == "fulllight" then
             Lighting.Brightness = 1; Lighting.GlobalShadows = true
         elseif runCode == "superspeed" then
@@ -757,8 +683,7 @@ local function handleFeatureToggle(runCode, enabled)
         elseif runCode == "glow" then
             local c = Players.LocalPlayer.Character
             if c then
-                local hl = c:FindFirstChild("PlayerGlow")
-                if hl then hl:Destroy() end
+                local hl = c:FindFirstChild("PlayerGlow"); if hl then hl:Destroy() end
             end
         elseif runCode == "upsidedown" then
             local c = Players.LocalPlayer.Character
@@ -769,8 +694,7 @@ local function handleFeatureToggle(runCode, enabled)
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("Head") then c.Head.Size = Vector3.new(2, 1, 1) end
         elseif runCode == "screenfx" then
-            local fx = Lighting:FindFirstChild("ScreenFX")
-            if fx then fx:Destroy() end
+            local fx = Lighting:FindFirstChild("ScreenFX"); if fx then fx:Destroy() end
         elseif runCode == "trail" then
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("HumanoidRootPart") then
@@ -808,21 +732,16 @@ local function handleFeatureToggle(runCode, enabled)
             end
         elseif runCode == "giant" then
             local c = Players.LocalPlayer.Character
-            if c then
-                for _, v in ipairs(c:GetDescendants()) do
-                    if v:IsA("BasePart") then v.Size = v.Size / 3 end
-                end
-            end
-        elseif runCode == "teamglow" then
-            clearTeamGlow()
-        elseif runCode == "enemyglow" then
-            clearEnemyGlow()
-        elseif runCode == "infjump" then
-            infJumpEnabled = false
+            if c then for _, v in ipairs(c:GetDescendants()) do
+                if v:IsA("BasePart") then v.Size = v.Size / 3 end
+            end end
+        elseif runCode == "teamglow" then clearTeamGlow()
+        elseif runCode == "enemyglow" then clearEnemyGlow()
+        elseif runCode == "infjump" then infJumpEnabled = false
         end
-        if conns[runCode] then
-            pcall(function() conns[runCode]:Disconnect() end)
-            conns[runCode] = nil
+        if _toggleConns[runCode] then
+            pcall(function() _toggleConns[runCode]:Disconnect() end)
+            _toggleConns[runCode] = nil
         end
     end
 end
@@ -1091,24 +1010,40 @@ pageContents["国内脚本"] = {
     }
 }
 
--- ============ 主窗口 ============
+-- ============ 收集所有功能（供搜索用） ============
+local allSearchItems = {}
+for pageName, contentData in pairs(pageContents) do
+    if contentData.items then
+        for _, itm in ipairs(contentData.items) do
+            table.insert(allSearchItems, {
+                page = pageName,
+                item = itm,
+                pageType = contentData.type,
+            })
+        end
+    end
+end
+
+-- ============ 主窗口（小尺寸 500x340） ============
 local TAB_NAMES = {"公告", "通用", "战斗功能", "整活功能", "音乐区", "甩飞", "服务器", "国内脚本", "设置"}
+local findTabIndex
+do
+    local m = {}
+    for i, n in ipairs(TAB_NAMES) do m[n] = i end
+    findTabIndex = function(n) return m[n] end
+end
 
 local mainWin = ui.createPanel({
-    w = 580, h = 440,
+    w = 500, h = 340,
     title = "黑脚本·管理员版",
     tabs = TAB_NAMES,
-    sidebarWidth = 110,
+    sidebarWidth = 100,
     showPlayer = true,
     center = true,
     onClose = function()
-        -- 二次验证弹窗
         local verify = ui.createPanel({
             w = 320, h = 180, title = "确认关闭", center = true,
             minimizable = false, showPlayer = false,
-            onClose = function()
-                if verify.frame then verify:destroy() end
-            end,
         })
         ui.createLabel({
             parent = verify.body, x = 0, y = 10, w = 320, h = 40,
@@ -1116,13 +1051,12 @@ local mainWin = ui.createPanel({
             align = Enum.TextXAlignment.Center, textSize = 12,
         })
         ui.createButton({
-            parent = verify.body, x = 60, y = 70, w = 80, h = 40,
+            parent = verify.body, x = 60, y = 80, w = 90, h = 40,
             text = "1", textSize = 18,
             onClick = function()
                 ui.createLabel({
-                    parent = verify.body, x = 0, y = 120, w = 320, h = 30,
-                    text = "验证失败，无法关闭脚本",
-                    color = Color3.fromRGB(255, 100, 100),
+                    parent = verify.body, x = 0, y = 130, w = 320, h = 24,
+                    text = "验证失败", color = Color3.fromRGB(255, 100, 100),
                     align = Enum.TextXAlignment.Center, textSize = 11,
                 })
                 task.wait(0.8)
@@ -1130,7 +1064,7 @@ local mainWin = ui.createPanel({
             end,
         })
         ui.createButton({
-            parent = verify.body, x = 180, y = 70, w = 80, h = 40,
+            parent = verify.body, x = 170, y = 80, w = 90, h = 40,
             text = "2", textSize = 18,
             onClick = function()
                 verify:destroy()
@@ -1141,13 +1075,96 @@ local mainWin = ui.createPanel({
     end,
 })
 
+-- ============ 顶部信息框（时间 + 管理员） ============
+do
+    local tb = mainWin.titleBar
+    if tb then
+        -- 绿色时间框
+        local infoBox = Instance.new("Frame")
+        infoBox.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+        infoBox.BorderSizePixel = 0
+        infoBox.Position = UDim2.new(0, 148, 0, 4)
+        infoBox.Size = UDim2.new(0, 200, 0, 26)
+        infoBox.ZIndex = 30
+        infoBox.Parent = tb
+        Instance.new("UICorner", infoBox).CornerRadius = UDim.new(0, 6)
+
+        local infoBorder = Instance.new("Frame")
+        infoBorder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        infoBorder.BorderSizePixel = 0
+        infoBorder.Position = UDim2.new(0, -1, 0, -1)
+        infoBorder.Size = UDim2.new(1, 2, 1, 2)
+        infoBorder.ZIndex = 29
+        infoBorder.Parent = infoBox
+        Instance.new("UICorner", infoBorder).CornerRadius = UDim.new(0, 7)
+
+        local infoLabel = Instance.new("TextLabel")
+        infoLabel.BackgroundTransparency = 1
+        infoLabel.Size = UDim2.new(1, 0, 1, 0)
+        infoLabel.Text = "黑脚本 V2.0"
+        infoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        infoLabel.Font = Enum.Font.GothamBold
+        infoLabel.TextSize = 10
+        infoLabel.ZIndex = 31
+        infoLabel.Parent = infoBox
+
+        local infoHue = 0
+        RunService.RenderStepped:Connect(function(delta)
+            infoHue = (infoHue + delta * 0.5) % 1
+            infoBorder.BackgroundColor3 = Color3.fromHSV(infoHue, 0.7, 1)
+        end)
+        task.spawn(function()
+            while infoBox.Parent do
+                local now = os.date("*t")
+                infoLabel.Text = "黑脚本 V2.0 | " .. now.month .. "月" .. now.day .. "日 " .. string.format("%02d:%02d:%02d", now.hour, now.min, now.sec)
+                task.wait(1)
+            end
+        end)
+
+        -- 黄色管理员框
+        local adminBox = Instance.new("Frame")
+        adminBox.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+        adminBox.BorderSizePixel = 0
+        adminBox.Position = UDim2.new(0, 354, 0, 4)
+        adminBox.Size = UDim2.new(0, 90, 0, 26)
+        adminBox.ZIndex = 30
+        adminBox.Parent = tb
+        Instance.new("UICorner", adminBox).CornerRadius = UDim.new(0, 6)
+
+        local adminBorder = Instance.new("Frame")
+        adminBorder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        adminBorder.BorderSizePixel = 0
+        adminBorder.Position = UDim2.new(0, -1.5, 0, -1.5)
+        adminBorder.Size = UDim2.new(1, 3, 1, 3)
+        adminBorder.ZIndex = 29
+        adminBorder.Parent = adminBox
+        Instance.new("UICorner", adminBorder).CornerRadius = UDim.new(0, 8)
+
+        local adminLabel = Instance.new("TextLabel")
+        adminLabel.BackgroundTransparency = 1
+        adminLabel.Size = UDim2.new(1, 0, 1, 0)
+        adminLabel.Text = "👑 管理员"
+        adminLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+        adminLabel.Font = Enum.Font.GothamBold
+        adminLabel.TextSize = 10
+        adminLabel.ZIndex = 31
+        adminLabel.Parent = adminBox
+
+        local adminHue = 0
+        RunService.RenderStepped:Connect(function(delta)
+            adminHue = (adminHue + delta * 0.4) % 1
+            adminBorder.BackgroundColor3 = Color3.fromHSV(adminHue, 0.8, 1)
+        end)
+    end
+end
+
 -- ============ 页面构建器 ============
-local CW = 430
+local CW = 380
 local PAD = 8
 local CARD_H = 42
 local CARD_GAP = 6
 
-local function makeScrollFrame(page)
+local function makeScrollFrame(parent)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, 0, 1, 0)
     scroll.BackgroundTransparency = 1
@@ -1156,7 +1173,7 @@ local function makeScrollFrame(page)
     scroll.ScrollBarImageColor3 = Color3.fromRGB(180, 180, 180)
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    scroll.Parent = page
+    scroll.Parent = parent
     return scroll
 end
 
@@ -1165,16 +1182,15 @@ local function makeButtonCard(scroll, item, yPos)
     ui.createButton({
         parent = scroll, x = PAD, y = yPos, w = CW, h = CARD_H,
         layout = "card",
-        text = item.icon .. "  " .. item.name,
+        text = (item.icon or "") .. "  " .. (item.name or ""),
         icon = ">",
-        textSize = 12,
+        textSize = 11,
         onClick = function()
             if item.url == "teleport" or item.url == "follow" then
-                -- 玩家选择弹窗
                 local selectWin = ui.createPanel({
-                    w = 220, h = 300, title = item.url == "follow" and "选择跟随" or "选择玩家",
+                    w = 220, h = 300,
+                    title = item.url == "follow" and "选择跟随" or "选择玩家",
                     center = true, minimizable = false, showPlayer = false,
-                    onClose = function() if selectWin then selectWin:destroy() end end,
                 })
                 local pY = 8
                 for _, plr in ipairs(Players:GetPlayers()) do
@@ -1182,14 +1198,16 @@ local function makeButtonCard(scroll, item, yPos)
                         local target = plr
                         ui.createButton({
                             parent = selectWin.body, x = 8, y = pY, w = 204, h = 30,
-                            layout = "card", text = target.Name, icon = ">",
-                            textSize = 11,
+                            layout = "card", text = target.Name, icon = ">", textSize = 11,
                             onClick = function()
                                 if item.url == "follow" then
                                     followActive = true
                                     if followConnection then followConnection:Disconnect() end
                                     followConnection = RunService.RenderStepped:Connect(function()
-                                        if not followActive then followConnection:Disconnect(); followConnection = nil; return end
+                                        if not followActive then
+                                            if followConnection then followConnection:Disconnect(); followConnection = nil end
+                                            return
+                                        end
                                         local c = Players.LocalPlayer.Character
                                         local tc = target.Character
                                         if c and c:FindFirstChild("HumanoidRootPart") and tc and tc:FindFirstChild("HumanoidRootPart") then
@@ -1222,7 +1240,10 @@ local function makeButtonCard(scroll, item, yPos)
                         c.HumanoidRootPart.CFrame = homePosition
                     end
                 end
-            else
+            elseif item.url then
+                if item.name == "驾驶帝国" then
+                    pcall(function() getgenv().XiaoPi = "皮脚本-驾驶帝国" end)
+                end
                 task.spawn(function()
                     pcall(function()
                         loadstring(game:HttpGet(item.url))()
@@ -1236,31 +1257,30 @@ end
 
 -- 开关卡片
 local function makeToggleCard(scroll, item, yPos)
-    -- 卡片背景
     local card = Instance.new("Frame")
     card.Size = UDim2.new(0, CW, 0, CARD_H)
     card.Position = UDim2.new(0, PAD, 0, yPos)
     card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
     card.BorderSizePixel = 0
     card.Parent = scroll
-    local cr = Instance.new("UICorner", card); cr.CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
     local st = Instance.new("UIStroke", card); st.Color = Color3.fromRGB(230, 230, 230)
 
     ui.createLabel({
-        parent = card, x = 10, y = 5, w = 260, h = 16,
-        text = item.icon .. "  " .. item.name,
+        parent = card, x = 10, y = 5, w = CW - 60, h = 16,
+        text = (item.icon or "") .. "  " .. (item.name or ""),
         textSize = 11, font = Enum.Font.GothamMedium,
     })
     ui.createLabel({
-        parent = card, x = 30, y = 22, w = 340, h = 14,
-        text = item.desc, textSize = 9,
+        parent = card, x = 30, y = 22, w = CW - 80, h = 14,
+        text = item.desc or "", textSize = 9,
         color = Color3.fromRGB(130, 130, 130),
     })
     ui.createToggle({
-        parent = card, x = CW - 46, y = 12, w = 36, h = 20,
+        parent = card, x = CW - 46, y = 11, w = 36, h = 20,
         value = false,
         onChange = function(v)
-            handleFeatureToggle(item.code, v)
+            pcall(handleFeatureToggle, item.code, v)
         end,
     })
     return yPos + CARD_H + CARD_GAP
@@ -1274,25 +1294,25 @@ local function makeInputCard(scroll, item, yPos)
     card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
     card.BorderSizePixel = 0
     card.Parent = scroll
-    local cr = Instance.new("UICorner", card); cr.CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
     local st = Instance.new("UIStroke", card); st.Color = Color3.fromRGB(230, 230, 230)
 
     ui.createLabel({
-        parent = card, x = 10, y = 5, w = 200, h = 16,
-        text = item.icon .. "  " .. item.name,
+        parent = card, x = 10, y = 5, w = CW - 140, h = 16,
+        text = (item.icon or "") .. "  " .. (item.name or ""),
         textSize = 11, font = Enum.Font.GothamMedium,
     })
     ui.createLabel({
-        parent = card, x = 30, y = 22, w = 240, h = 14,
-        text = item.desc .. " (默认" .. item.default .. ")",
+        parent = card, x = 30, y = 22, w = CW - 160, h = 14,
+        text = (item.desc or "") .. " (默认" .. tostring(item.default or "") .. ")",
         textSize = 9, color = Color3.fromRGB(130, 130, 130),
     })
     local tb = ui.createTextBox({
         parent = card, x = CW - 130, y = 10, w = 60, h = 22,
-        text = item.default, textSize = 11,
+        text = item.default or "", textSize = 11,
         align = Enum.TextXAlignment.Center,
     })
-    local setBtn = ui.createButton({
+    ui.createButton({
         parent = card, x = CW - 62, y = 10, w = 50, h = 22,
         text = "设置", textSize = 10,
         onClick = function()
@@ -1315,17 +1335,17 @@ local function makeMusicCard(scroll, item, yPos)
     card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
     card.BorderSizePixel = 0
     card.Parent = scroll
-    local cr = Instance.new("UICorner", card); cr.CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
     local st = Instance.new("UIStroke", card); st.Color = Color3.fromRGB(230, 230, 230)
 
     ui.createLabel({
-        parent = card, x = 10, y = 5, w = 260, h = 16,
-        text = item.icon .. "  " .. item.name,
+        parent = card, x = 10, y = 5, w = CW - 80, h = 16,
+        text = (item.icon or "") .. "  " .. (item.name or ""),
         textSize = 11, font = Enum.Font.GothamMedium,
     })
     ui.createLabel({
-        parent = card, x = 30, y = 22, w = 260, h = 14,
-        text = item.desc, textSize = 9,
+        parent = card, x = 30, y = 22, w = CW - 100, h = 14,
+        text = item.desc or "", textSize = 9,
         color = Color3.fromRGB(130, 130, 130),
     })
     local btn
@@ -1336,7 +1356,7 @@ local function makeMusicCard(scroll, item, yPos)
             if isPlaying then
                 if sound then sound:Stop(); sound:Destroy(); sound = nil end
                 isPlaying = false
-                btn.Text = "播放"
+                if btn then btn.Text = "播放" end
             else
                 sound = Instance.new("Sound")
                 sound.SoundId = "rbxassetid://" .. tostring(item.soundId)
@@ -1349,22 +1369,48 @@ local function makeMusicCard(scroll, item, yPos)
                     if btn then btn.Text = "播放" end
                 end)
                 isPlaying = true
-                btn.Text = "停止"
+                if btn then btn.Text = "停止" end
             end
         end,
     })
     return yPos + CARD_H + CARD_GAP
 end
 
--- 公告页
+-- 根据类型渲染 item
+local function renderItem(scroll, item, pageType, yPos)
+    local t = item.type or pageType
+    if t == "button" or t == "buttons" then
+        return makeButtonCard(scroll, item, yPos)
+    elseif t == "toggle" or t == "toggles" then
+        return makeToggleCard(scroll, item, yPos)
+    elseif t == "input" then
+        return makeInputCard(scroll, item, yPos)
+    elseif t == "music" then
+        return makeMusicCard(scroll, item, yPos)
+    end
+    return yPos
+end
+
+-- 公告页（含搜索框）
 local function buildAnnouncementPage(page)
-    local scroll = makeScrollFrame(page)
+    -- 搜索框
+    local searchTb = ui.createTextBox({
+        parent = page, x = PAD, y = 8, w = CW, h = 32,
+        placeholder = "🔍 搜索功能 (按回车搜索)",
+        textSize = 12,
+    })
+    -- 公告正文
     local timeLabel = ui.createLabel({
-        parent = scroll, x = PAD, y = 10, w = CW, h = 300,
+        parent = page, x = PAD, y = 50, w = CW, h = 280,
         text = "", textSize = 11,
         color = Color3.fromRGB(70, 70, 70),
         vAlign = Enum.TextYAlignment.Top, wrapped = true,
     })
+    -- 搜索结果容器
+    local resultScroll = makeScrollFrame(page)
+    resultScroll.Position = UDim2.new(0, 0, 0, 48)
+    resultScroll.Visible = false
+
     local function getTime()
         local n = os.date("*t")
         return n.year .. "年" .. n.month .. "月" .. n.day .. "日 " .. string.format("%02d:%02d:%02d", n.hour, n.min, n.sec)
@@ -1377,16 +1423,42 @@ local function buildAnnouncementPage(page)
             task.wait(1)
         end
     end)
+
+    searchTb.FocusLost:Connect(function(enterPressed)
+        if not enterPressed then return end
+        local q = string.lower(searchTb.Text or "")
+        for _, c in ipairs(resultScroll:GetChildren()) do c:Destroy() end
+        if q == "" then
+            resultScroll.Visible = false
+            timeLabel.Visible = true
+            return
+        end
+        timeLabel.Visible = false
+        resultScroll.Visible = true
+        local yPos = 4
+        for _, entry in ipairs(allSearchItems) do
+            local itm = entry.item
+            local nameMatch = itm.name and string.lower(itm.name):find(q, 1, true)
+            local descMatch = itm.desc and string.lower(itm.desc):find(q, 1, true)
+            if nameMatch or descMatch then
+                ui.createButton({
+                    parent = resultScroll, x = PAD, y = yPos, w = CW, h = CARD_H,
+                    layout = "card",
+                    text = (itm.icon or "") .. "  " .. (itm.name or "") .. "   (" .. entry.page .. ")",
+                    icon = ">",
+                    textSize = 11,
+                    onClick = function()
+                        local idx = findTabIndex(entry.page)
+                        if idx then mainWin:selectTab(idx) end
+                    end,
+                })
+                yPos = yPos + CARD_H + CARD_GAP
+            end
+        end
+    end)
 end
 
--- 遍历 pageContents
-local function findTabIndex(name)
-    for i, n in ipairs(TAB_NAMES) do
-        if n == name then return i end
-    end
-    return nil
-end
-
+-- ============ 遍历页面构建 ============
 for pageName, contentData in pairs(pageContents) do
     local idx = findTabIndex(pageName)
     if idx and mainWin.tabs[idx] then
@@ -1398,133 +1470,123 @@ for pageName, contentData in pairs(pageContents) do
             local yPos = 8
             local items = contentData.items or {}
             for _, item in ipairs(items) do
-                if item.type == "button" then
-                    yPos = makeButtonCard(scroll, item, yPos)
-                elseif item.type == "toggle" then
-                    yPos = makeToggleCard(scroll, item, yPos)
-                elseif item.type == "input" then
-                    yPos = makeInputCard(scroll, item, yPos)
-                elseif item.type == "music" then
-                    yPos = makeMusicCard(scroll, item, yPos)
-                end
+                yPos = renderItem(scroll, item, contentData.type, yPos)
             end
         end
     end
 end
 
 -- ============ 设置页 ============
-local settingsIdx = findTabIndex("设置")
-if settingsIdx and mainWin.tabs[settingsIdx] then
-    local page = mainWin.tabs[settingsIdx]
-    local scroll = makeScrollFrame(page)
-    local yPos = 8
+do
+    local settingsIdx = findTabIndex("设置")
+    if settingsIdx and mainWin.tabs[settingsIdx] then
+        local page = mainWin.tabs[settingsIdx]
+        local scroll = makeScrollFrame(page)
+        local yPos = 8
 
-    -- 边框颜色
-    local colorNames = {"金色", "红色", "蓝色", "绿色", "紫色", "粉色", "青色", "白色"}
-    local colorValues = {
-        Color3.fromRGB(255, 215, 0), Color3.fromRGB(255, 0, 0),
-        Color3.fromRGB(0, 150, 255), Color3.fromRGB(0, 255, 100),
-        Color3.fromRGB(200, 0, 255), Color3.fromRGB(255, 100, 200),
-        Color3.fromRGB(0, 255, 255), Color3.fromRGB(255, 255, 255),
-    }
-    local colorCard = Instance.new("Frame")
-    colorCard.Size = UDim2.new(0, CW, 0, 100)
-    colorCard.Position = UDim2.new(0, PAD, 0, yPos)
-    colorCard.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
-    colorCard.BorderSizePixel = 0
-    colorCard.Parent = scroll
-    local ccr = Instance.new("UICorner", colorCard); ccr.CornerRadius = UDim.new(0, 10)
-    local cst = Instance.new("UIStroke", colorCard); cst.Color = Color3.fromRGB(230, 230, 230)
-    ui.createLabel({
-        parent = colorCard, x = 10, y = 6, w = 260, h = 16,
-        text = "🎨  边框颜色", textSize = 11, font = Enum.Font.GothamMedium,
-    })
-    ui.createLabel({
-        parent = colorCard, x = 30, y = 24, w = 380, h = 14,
-        text = "点击色块切换面板边框颜色", textSize = 9,
-        color = Color3.fromRGB(130, 130, 130),
-    })
-    local palette = {}
-    for i, c in ipairs(colorValues) do palette[i] = c end
-    local cp = ui.createColorPicker({
-        parent = colorCard, x = 15, y = 44,
-        size = 22, gap = 6, cols = 8, value = 1,
-        palette = palette, names = colorNames,
-        onChange = function(col, idx, name)
-            local pframe = mainWin.frame
-            for _, d in ipairs(pframe:GetDescendants()) do
-                if d:IsA("UIStroke") then
-                    d.Color = col
-                end
-            end
-        end,
-    })
-    yPos = yPos + 100 + CARD_GAP
+        -- 边框颜色
+        do
+            local colorNames = {"金色", "红色", "蓝色", "绿色", "紫色", "粉色", "青色", "白色"}
+            local colorValues = {
+                Color3.fromRGB(255, 215, 0), Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(0, 150, 255), Color3.fromRGB(0, 255, 100),
+                Color3.fromRGB(200, 0, 255), Color3.fromRGB(255, 100, 200),
+                Color3.fromRGB(0, 255, 255), Color3.fromRGB(255, 255, 255),
+            }
+            local card = Instance.new("Frame")
+            card.Size = UDim2.new(0, CW, 0, 100)
+            card.Position = UDim2.new(0, PAD, 0, yPos)
+            card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
+            card.BorderSizePixel = 0
+            card.Parent = scroll
+            Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
+            local cst = Instance.new("UIStroke", card); cst.Color = Color3.fromRGB(230, 230, 230)
+            ui.createLabel({
+                parent = card, x = 10, y = 6, w = CW - 20, h = 16,
+                text = "🎨  边框颜色", textSize = 11, font = Enum.Font.GothamMedium,
+            })
+            ui.createLabel({
+                parent = card, x = 30, y = 24, w = CW - 40, h = 14,
+                text = "点击色块切换面板边框颜色", textSize = 9,
+                color = Color3.fromRGB(130, 130, 130),
+            })
+            ui.createColorPicker({
+                parent = card, x = 15, y = 44,
+                size = 22, gap = 6, cols = 8, value = 1,
+                palette = colorValues, names = colorNames,
+                onChange = function(col, idx, name)
+                    local pframe = mainWin.frame
+                    for _, d in ipairs(pframe:GetDescendants()) do
+                        if d:IsA("UIStroke") then
+                            pcall(function() d.Color = col end)
+                        end
+                    end
+                end,
+            })
+            yPos = yPos + 100 + CARD_GAP
+        end
 
-    -- 面板比例
-    local sizeCard = Instance.new("Frame")
-    sizeCard.Size = UDim2.new(0, CW, 0, 60)
-    sizeCard.Position = UDim2.new(0, PAD, 0, yPos)
-    sizeCard.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
-    sizeCard.BorderSizePixel = 0
-    sizeCard.Parent = scroll
-    local scr = Instance.new("UICorner", sizeCard); scr.CornerRadius = UDim.new(0, 10)
-    local sst = Instance.new("UIStroke", sizeCard); sst.Color = Color3.fromRGB(230, 230, 230)
-    ui.createLabel({
-        parent = sizeCard, x = 10, y = 6, w = 260, h = 16,
-        text = "📱  面板比例", textSize = 11, font = Enum.Font.GothamMedium,
-    })
-    ui.createLabel({
-        parent = sizeCard, x = 30, y = 24, w = 380, h = 14,
-        text = "切换平板 / 手机尺寸", textSize = 9,
-        color = Color3.fromRGB(130, 130, 130),
-    })
-    ui.createButton({
-        parent = sizeCard, x = CW - 160, y = 16, w = 70, h = 28,
-        text = "平板", textSize = 10,
-        onClick = function()
-            mainWin:setSize(580, 440)
-        end,
-    })
-    ui.createButton({
-        parent = sizeCard, x = CW - 82, y = 16, w = 70, h = 28,
-        text = "手机", textSize = 10,
-        onClick = function()
-            mainWin:setSize(500, 340)
-        end,
-    })
-    yPos = yPos + 60 + CARD_GAP
+        -- 面板比例
+        do
+            local card = Instance.new("Frame")
+            card.Size = UDim2.new(0, CW, 0, 60)
+            card.Position = UDim2.new(0, PAD, 0, yPos)
+            card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
+            card.BorderSizePixel = 0
+            card.Parent = scroll
+            Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
+            local sst = Instance.new("UIStroke", card); sst.Color = Color3.fromRGB(230, 230, 230)
+            ui.createLabel({
+                parent = card, x = 10, y = 6, w = CW - 20, h = 16,
+                text = "📱  面板比例", textSize = 11, font = Enum.Font.GothamMedium,
+            })
+            ui.createLabel({
+                parent = card, x = 30, y = 24, w = CW - 40, h = 14,
+                text = "切换平板 / 手机尺寸", textSize = 9,
+                color = Color3.fromRGB(130, 130, 130),
+            })
+            ui.createButton({
+                parent = card, x = CW - 150, y = 16, w = 66, h = 28,
+                text = "平板", textSize = 10,
+                onClick = function() mainWin:setSize(580, 440) end,
+            })
+            ui.createButton({
+                parent = card, x = CW - 78, y = 16, w = 66, h = 28,
+                text = "手机", textSize = 10,
+                onClick = function() mainWin:setSize(500, 340) end,
+            })
+            yPos = yPos + 60 + CARD_GAP
+        end
 
-    -- 透视作者
-    local authorCard = Instance.new("Frame")
-    authorCard.Size = UDim2.new(0, CW, 0, CARD_H)
-    authorCard.Position = UDim2.new(0, PAD, 0, yPos)
-    authorCard.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
-    authorCard.BorderSizePixel = 0
-    authorCard.Parent = scroll
-    local acr = Instance.new("UICorner", authorCard); acr.CornerRadius = UDim.new(0, 10)
-    local ast = Instance.new("UIStroke", authorCard); ast.Color = Color3.fromRGB(230, 230, 230)
-    ui.createLabel({
-        parent = authorCard, x = 10, y = 5, w = 260, h = 16,
-        text = "👑  透视作者", textSize = 11, font = Enum.Font.GothamMedium,
-    })
-    ui.createLabel({
-        parent = authorCard, x = 30, y = 22, w = 340, h = 14,
-        text = "开启或关闭作者 ESP 高亮", textSize = 9,
-        color = Color3.fromRGB(130, 130, 130),
-    })
-    ui.createToggle({
-        parent = authorCard, x = CW - 46, y = 12, w = 36, h = 20,
-        value = authorEspEnabled,
-        onChange = function(v)
-            if v then
-                enableAuthorESP()
-            else
-                disableAuthorESP()
-            end
-        end,
-    })
-    yPos = yPos + CARD_H + CARD_GAP
+        -- 透视作者
+        do
+            local card = Instance.new("Frame")
+            card.Size = UDim2.new(0, CW, 0, CARD_H)
+            card.Position = UDim2.new(0, PAD, 0, yPos)
+            card.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
+            card.BorderSizePixel = 0
+            card.Parent = scroll
+            Instance.new("UICorner", card).CornerRadius = UDim.new(0, 10)
+            local ast = Instance.new("UIStroke", card); ast.Color = Color3.fromRGB(230, 230, 230)
+            ui.createLabel({
+                parent = card, x = 10, y = 5, w = CW - 60, h = 16,
+                text = "👑  透视作者", textSize = 11, font = Enum.Font.GothamMedium,
+            })
+            ui.createLabel({
+                parent = card, x = 30, y = 22, w = CW - 80, h = 14,
+                text = "开启或关闭作者 ESP 高亮", textSize = 9,
+                color = Color3.fromRGB(130, 130, 130),
+            })
+            ui.createToggle({
+                parent = card, x = CW - 46, y = 11, w = 36, h = 20,
+                value = authorEspEnabled,
+                onChange = function(v)
+                    if v then enableAuthorESP() else disableAuthorESP() end
+                end,
+            })
+            yPos = yPos + CARD_H + CARD_GAP
+        end
+    end
 end
 
 print("[黑脚本·管理员版 V2.0] 已加载（LUMEN UI 版）")
