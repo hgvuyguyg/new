@@ -48,10 +48,8 @@ local function resolveParent(cfg) return (cfg and cfg.parent) or uiGui end
 
 local function createLabel(parent, cfg)
     local lbl = Instance.new("TextLabel")
-    lbl.BackgroundTransparency=1
-    lbl.Text=cfg.text or ""
-    lbl.TextColor3=cfg.color or Theme.TEXT
-    lbl.TextSize=cfg.textSize or 12
+    lbl.BackgroundTransparency=1; lbl.Text=cfg.text or ""
+    lbl.TextColor3=cfg.color or Theme.TEXT; lbl.TextSize=cfg.textSize or 12
     lbl.Font=cfg.font or FONT_REG
     lbl.TextXAlignment=cfg.align or Enum.TextXAlignment.Left
     lbl.TextYAlignment=cfg.vAlign or Enum.TextYAlignment.Center
@@ -59,12 +57,10 @@ local function createLabel(parent, cfg)
     lbl.TextTruncate=Enum.TextTruncate.AtEnd
     lbl.Position=UDim2.new(0,cfg.x or 0,0,cfg.y or 0)
     lbl.Size=UDim2.new(0,cfg.w or 100,0,cfg.h or 20)
-    lbl.ZIndex=cfg.zIndex or 5
-    lbl.Parent=parent
+    lbl.ZIndex=cfg.zIndex or 5; lbl.Parent=parent
     return lbl
 end
 
--- ============ createPanel ============
 local function createPanel(parent, cfg)
     cfg = cfg or {}
     local W, H = cfg.w or 460, cfg.h or 340
@@ -87,12 +83,12 @@ local function createPanel(parent, cfg)
     end
     local X, Y
     if useCenter then
-        X = math.floor((vp.X - W) / 2)
-        Y = math.floor((vp.Y - H) / 2)
+        X = math.floor((vp.X - W) / 2); Y = math.floor((vp.Y - H) / 2)
     else
         X = cfg.x or 0; Y = cfg.y or 0
     end
 
+    -- 阴影
     local shadow = nil
     if cfg.shadow ~= false then
         shadow = Instance.new("Frame")
@@ -109,7 +105,8 @@ local function createPanel(parent, cfg)
     panel.Position=UDim2.new(0,X,0,Y)
     panel.Size=UDim2.new(0,W,0,H)
     panel.ZIndex=Z; panel.ClipsDescendants=true
-    corner(panel,RADIUS); stroke(panel,cfg.borderColor or Theme.BORDER,1)
+    corner(panel,RADIUS)
+    local panelStroke = stroke(panel,cfg.borderColor or Theme.BORDER,1)
     panel.Parent=parent
 
     local function syncShadow()
@@ -158,7 +155,7 @@ local function createPanel(parent, cfg)
         end)
         b.MouseLeave:Connect(function()
             tw(b,EASE,{TextColor3=Theme.TEXT_MUTED})
-            task.delay(0.22,function() b.BackgroundTransparency=1 end)
+            task.delay(0.22,function() if b then b.BackgroundTransparency=1 end end)
         end)
         b.MouseButton1Click:Connect(onClick)
         return b
@@ -238,6 +235,11 @@ local function createPanel(parent, cfg)
                 Position=UDim2.new(0,8,0,btn.Position.Y.Offset),
                 Size=UDim2.new(0,SIDEBAR_W-16,0,btn.Size.Y.Offset),
             })
+            -- 让tabHl把滚动的tab带入视野
+            local navScroll = btn.Parent
+            if navScroll and navScroll:IsA("ScrollingFrame") then
+                tw(navScroll, EASE, { CanvasPosition = Vector2.new(0, math.max(btn.Position.Y.Offset - 100, 0)) })
+            end
         end
         for i,b in ipairs(tabButtons) do
             local t = (i==index) and Theme.PRIMARY_DK or Theme.TEXT_MUTED
@@ -310,19 +312,33 @@ local function createPanel(parent, cfg)
         sideLine.BorderSizePixel=0; sideLine.AnchorPoint=Vector2.new(1,0)
         sideLine.Position=UDim2.new(1,0,0,0); sideLine.Size=UDim2.new(0,1,1,0)
         sideLine.ZIndex=Z+4; sideLine.Parent=sidebar
+
         local ITEM_H=cfg.tabHeight or 32
         local ITEM_PAD_X=8; local ITEM_START_Y=10
         local ITEM_W=SIDEBAR_W-ITEM_PAD_X*2
+
+        -- ★ 侧栏滚动容器（底部留出 playerBar 空间）
+        local navScroll = Instance.new("ScrollingFrame")
+        navScroll.Size = UDim2.new(1, 0, 1, -(showPlayer and 60 or 0))
+        navScroll.BackgroundTransparency = 1
+        navScroll.BorderSizePixel = 0
+        navScroll.ScrollBarThickness = 3
+        navScroll.ScrollBarImageColor3 = Color3.fromRGB(180, 180, 180)
+        navScroll.CanvasSize = UDim2.new(0, 0, 0, ITEM_START_Y + #tabNames * (ITEM_H + 4) + 10)
+        navScroll.ZIndex = Z + 4
+        navScroll.Parent = sidebar
+
         tabHl=Instance.new("Frame")
         tabHl.BackgroundColor3=Theme.HOVER_BG; tabHl.BorderSizePixel=0
         tabHl.Position=UDim2.new(0,ITEM_PAD_X,0,ITEM_START_Y)
         tabHl.Size=UDim2.new(0,ITEM_W,0,ITEM_H)
-        tabHl.ZIndex=Z+3; corner(tabHl,8); tabHl.Parent=sidebar
+        tabHl.ZIndex=Z+3; corner(tabHl,8); tabHl.Parent=navScroll
         local tabHlBar=Instance.new("Frame")
         tabHlBar.BackgroundColor3=Theme.PRIMARY; tabHlBar.BorderSizePixel=0
         tabHlBar.AnchorPoint=Vector2.new(0,0.5); tabHlBar.Position=UDim2.new(0,0,0.5,0)
         tabHlBar.Size=UDim2.new(0,3,0,14); tabHlBar.ZIndex=Z+4
         corner(tabHlBar,2); tabHlBar.Parent=tabHl
+
         for i,name in ipairs(tabNames) do
             local btn=Instance.new("TextButton")
             btn.BackgroundColor3=Theme.WHITE; btn.BackgroundTransparency=1
@@ -332,7 +348,7 @@ local function createPanel(parent, cfg)
             btn.AutoButtonColor=false; btn.TextXAlignment=Enum.TextXAlignment.Left
             btn.Position=UDim2.new(0,ITEM_PAD_X,0,ITEM_START_Y+(i-1)*(ITEM_H+4))
             btn.Size=UDim2.new(0,ITEM_W,0,ITEM_H)
-            btn.ZIndex=Z+5; corner(btn,8); btn.Parent=sidebar
+            btn.ZIndex=Z+5; corner(btn,8); btn.Parent=navScroll
             local pad=Instance.new("UIPadding")
             pad.PaddingLeft=UDim.new(0,14); pad.Parent=btn
             local capture=i
@@ -347,7 +363,7 @@ local function createPanel(parent, cfg)
                 if currentTab~=capture then
                     tw(btn,EASE,{TextColor3=Theme.TEXT_MUTED})
                     task.delay(0.22,function()
-                        if currentTab~=capture then btn.BackgroundTransparency=1 end
+                        if currentTab~=capture and btn then btn.BackgroundTransparency=1 end
                     end)
                 end
             end)
@@ -356,6 +372,7 @@ local function createPanel(parent, cfg)
             end)
             tabButtons[i]=btn
         end
+
         pageContainer=Instance.new("Frame")
         pageContainer.BackgroundTransparency=1
         pageContainer.Position=UDim2.new(0,SIDEBAR_W,0,TITLE_H)
@@ -383,36 +400,44 @@ local function createPanel(parent, cfg)
         body.ZIndex=Z+1; body.Parent=panel
     end
 
+    -- 追踪本 panel 拥有的所有外部节点，用于彻底销毁
+    local ownedExternals = {}
+    if shadow then table.insert(ownedExternals, shadow) end
+
     return {
         frame=panel, body=body, titleBar=titleBar, sidebar=sidebar,
         playerBar=playerBar, tabs=pages, selectTab=selectTab,
+        panelStroke=panelStroke,
         getCurrentTab=function() return currentTab end,
         toggleMinimize=toggleMinimize,
         setPosition=function(nx,ny) panel.Position=UDim2.new(0,nx,0,ny) end,
         setSize=function(nw,nh) panel.Size=UDim2.new(0,nw,0,nh) end,
         destroy=function()
-            if shadow then shadow:Destroy() end
-            panel:Destroy()
+            -- 彻底清理：panel + 所有追踪的外部节点 + 中断下拉
+            if activeDropdownClose then
+                pcall(activeDropdownClose); activeDropdownClose = nil
+            end
+            for _, ext in ipairs(ownedExternals) do
+                pcall(function() if ext and ext.Parent then ext:Destroy() end end)
+            end
+            pcall(function() if panel then panel:Destroy() end end)
         end,
     }
 end
 
--- ============ Button（支持 card 布局） ============
 local function createButton(parent, cfg)
     local isCard = cfg.layout == "card"
     local W = cfg.w or 120
     local H = cfg.h or (isCard and 42 or 34)
     local X = cfg.x or 0
     local Y = cfg.y or 0
-
     local btn = Instance.new("TextButton")
     btn.BackgroundColor3 = cfg.bgColor or Theme.WHITE
     btn.BorderSizePixel = 0
     btn.Text = isCard and "" or (cfg.text or "Button")
     btn.TextColor3 = cfg.textColor or Theme.PRIMARY
     btn.TextSize = cfg.textSize or 12
-    btn.Font = FONT_MED
-    btn.AutoButtonColor = false
+    btn.Font = FONT_MED; btn.AutoButtonColor = false
     btn.Position = UDim2.new(0, X, 0, Y)
     btn.Size = UDim2.new(0, W, 0, H)
     btn.ZIndex = cfg.zIndex or 5
@@ -425,27 +450,18 @@ local function createButton(parent, cfg)
     local baseTx = cfg.textColor or Theme.PRIMARY
     local baseBd = cfg.borderColor or Theme.PRIMARY
 
-    -- card 布局：左文字 + 右图标
     local iconLabel = nil
     if isCard then
         createLabel(btn, {
-            text = cfg.text or "",
-            x = cfg.paddingLeft or 14, y = 0,
-            w = W - 46, h = H,
-            textSize = cfg.textSize or 12,
-            color = cfg.textColor or Theme.TEXT,
-            font = FONT_MED,
-            align = Enum.TextXAlignment.Left,
-            zIndex = 6,
+            text = cfg.text or "", x = cfg.paddingLeft or 14, y = 0,
+            w = W - 46, h = H, textSize = cfg.textSize or 12,
+            color = cfg.textColor or Theme.TEXT, font = FONT_MED,
+            align = Enum.TextXAlignment.Left, zIndex = 6,
         })
         iconLabel = createLabel(btn, {
-            text = cfg.icon or ">",
-            x = W - 30, y = 0, w = 20, h = H,
-            textSize = cfg.iconSize or 16,
-            color = cfg.iconColor or Theme.PRIMARY,
-            font = FONT_MED,
-            align = Enum.TextXAlignment.Center,
-            zIndex = 6,
+            text = cfg.icon or ">", x = W - 30, y = 0, w = 20, h = H,
+            textSize = cfg.iconSize or 16, color = cfg.iconColor or Theme.PRIMARY,
+            font = FONT_MED, align = Enum.TextXAlignment.Center, zIndex = 6,
         })
     end
 
@@ -454,7 +470,6 @@ local function createButton(parent, cfg)
         if not isCard then btn.TextColor3 = Theme.DISABLED_FG end
         st.Color = Theme.BORDER
     end
-
     btn.MouseEnter:Connect(function()
         if not enabled then return end
         tw(btn, EASE_FAST, {
@@ -550,7 +565,6 @@ local function createToggle(parent, cfg)
     return {container=container,getValue=function() return state end}
 end
 
--- ============ Slider（右侧数值点击可编辑） ============
 local function createSlider(parent, cfg)
     local W = cfg.w or 220
     local H = cfg.h or 26
@@ -564,7 +578,6 @@ local function createSlider(parent, cfg)
     local decimals = cfg.decimals or 0
     local valueW = cfg.valueWidth or 46
     local gap = 8
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency=1
     container.Position=UDim2.new(0,cfg.x or 0,0,cfg.y or 0)
@@ -572,12 +585,10 @@ local function createSlider(parent, cfg)
     container.ZIndex=cfg.zIndex or 5
     container.Parent=parent
     local sliderW = showValue and math.max(W-valueW-gap, 40) or W
-
     local function formatValue(v)
         if decimals>0 then return string.format("%."..decimals.."f",v) end
         return tostring(math.floor(v+0.5))
     end
-
     local trackH=4
     local track=Instance.new("Frame")
     track.BackgroundColor3=Theme.TRACK; track.BorderSizePixel=0
@@ -594,7 +605,6 @@ local function createSlider(parent, cfg)
     knob.AnchorPoint=Vector2.new(0.5,0.5); knob.Position=UDim2.new(0,0,0.5,0)
     knob.Size=UDim2.new(0,knobSize,0,knobSize)
     corner(knob,knobSize/2); knob.ZIndex=7; knob.Parent=container
-
     local valueBtn, valueInput
     if showValue then
         valueBtn = Instance.new("TextButton")
@@ -658,7 +668,6 @@ local function createSlider(parent, cfg)
             valueBtn.Visible=true
         end)
     end
-
     local function ratio()
         if maxV==minV then return 0 end
         return math.clamp((value-minV)/(maxV-minV),0,1)
@@ -682,7 +691,6 @@ local function createSlider(parent, cfg)
         if valueBtn then valueBtn.Text=formatValue(value) end
         if changed and not silent and onChange then onChange(value) end
     end
-
     local dragging=false
     local function fromAbsX(absX)
         local sx=track.AbsolutePosition.X
@@ -750,7 +758,7 @@ local function createTextBox(parent, cfg)
     tb.TextColor3=cfg.textColor or Theme.TEXT
     tb.TextSize=cfg.textSize or 12; tb.Font=FONT_REG
     tb.ClearTextOnFocus=false
-    tb.TextXAlignment=Enum.TextXAlignment.Left
+    tb.TextXAlignment=cfg.align or Enum.TextXAlignment.Left
     tb.TextYAlignment=Enum.TextYAlignment.Center
     tb.Position=UDim2.new(0,10,0,0)
     tb.Size=UDim2.new(1,-20,1,0)
@@ -837,8 +845,7 @@ local function createColorPicker(parent, cfg)
     container.Parent=parent
     local selectedIndex=cfg.value or 1
     local onChange=cfg.onChange
-    local swatches={}
-    local strokes={}
+    local swatches={}; local strokes={}
     local function refresh(animate)
         for i,sw in ipairs(swatches) do
             local so=strokes[i]
@@ -890,8 +897,7 @@ local function createDescriptionBox(parent, cfg)
     local layout=Instance.new("UIListLayout")
     layout.FillDirection=Enum.FillDirection.Vertical
     layout.SortOrder=Enum.SortOrder.LayoutOrder
-    layout.Padding=UDim.new(0,6)
-    layout.Parent=box
+    layout.Padding=UDim.new(0,6); layout.Parent=box
     local pad=Instance.new("UIPadding")
     pad.PaddingTop=UDim.new(0,padY); pad.PaddingBottom=UDim.new(0,padY)
     pad.PaddingLeft=UDim.new(0,padX); pad.PaddingRight=UDim.new(0,padX)
@@ -900,12 +906,10 @@ local function createDescriptionBox(parent, cfg)
         local title=Instance.new("TextLabel")
         title.BackgroundTransparency=1; title.Text=cfg.title
         title.TextColor3=cfg.titleColor or Theme.TEXT
-        title.TextSize=cfg.titleSize or 12
-        title.Font=FONT_MED
+        title.TextSize=cfg.titleSize or 12; title.Font=FONT_MED
         title.TextXAlignment=Enum.TextXAlignment.Left
         title.TextYAlignment=Enum.TextYAlignment.Top
-        title.LayoutOrder=1
-        title.Size=UDim2.new(1,0,0,18)
+        title.LayoutOrder=1; title.Size=UDim2.new(1,0,0,18)
         title.ZIndex=6; title.Parent=box
     end
     local body=Instance.new("TextLabel")
@@ -915,8 +919,7 @@ local function createDescriptionBox(parent, cfg)
     body.TextXAlignment=Enum.TextXAlignment.Left
     body.TextYAlignment=Enum.TextYAlignment.Top
     body.TextWrapped=true
-    body.LayoutOrder=2
-    body.Size=UDim2.new(1,0,0,0)
+    body.LayoutOrder=2; body.Size=UDim2.new(1,0,0,0)
     body.AutomaticSize=Enum.AutomaticSize.Y
     body.ZIndex=6; body.Parent=box
     return box
@@ -927,8 +930,7 @@ local function createDropdownBase(parent, cfg, multi)
     local H=cfg.h or 30
     local items=cfg.items or {}
     local ITEM_H=cfg.itemHeight or 24
-    local LIST_GAP=18
-    local LIST_PAD=4
+    local LIST_GAP=18; local LIST_PAD=4
     local container=Instance.new("Frame")
     container.BackgroundTransparency=1
     container.Position=UDim2.new(0,cfg.x or 0,0,cfg.y or 0)
