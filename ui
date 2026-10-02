@@ -128,7 +128,6 @@ local toastContainer = Instance.new("Frame")
 toastContainer.AnchorPoint = Vector2.new(1, 1); toastContainer.Position = UDim2.new(1, -20, 1, -20)
 toastContainer.Size = UDim2.new(0, 0, 0, 0); toastContainer.BackgroundTransparency = 1
 toastContainer.ZIndex = 250; toastContainer.Parent = uiGui
-
 local TOAST_W = 300; local TOAST_H = 82; local TOAST_GAP = 10
 local toastList = {}
 local TOAST_STYLE = {
@@ -234,11 +233,9 @@ end
 -- ============ Favorites ============
 local favorites = {}
 local favoriteModeEnabled = false
-local function toggleFavorite(id)
-    favorites[id] = not favorites[id]; return favorites[id]
-end
+local function toggleFavorite(id) favorites[id] = not favorites[id]; return favorites[id] end
 
--- ============ Badge 标签框 ============
+-- ============ Badge ============
 local BADGE_COLORS = {
     green  = { bg = Color3.fromRGB(76,175,80),  fg = Color3.fromRGB(255,255,255) },
     blue   = { bg = Color3.fromRGB(37,99,235),  fg = Color3.fromRGB(255,255,255) },
@@ -249,77 +246,46 @@ local BADGE_COLORS = {
 }
 local badgeCount = 0
 local MAX_BADGES = 3
-
 local function resolveBadgeSpec(c, customFg)
-    if type(c) == "table" then
-        return { bg = c, fg = customFg or Color3.fromRGB(255,255,255) }
-    end
+    if type(c) == "table" then return { bg = c, fg = customFg or Color3.fromRGB(255,255,255) } end
     local s = BADGE_COLORS[c or "blue"] or BADGE_COLORS.blue
     return { bg = s.bg, fg = customFg or s.fg }
 end
-
 local function createBadge(parent, cfg)
     if badgeCount >= MAX_BADGES then
-        warn("[LUMEN] 标签框最多只能创建 " .. MAX_BADGES .. " 个")
-        return nil
+        warn("[LUMEN] 标签框最多只能创建 " .. MAX_BADGES .. " 个"); return nil
     end
     badgeCount = badgeCount + 1
-
     local h = cfg.h or 26
     local padding = cfg.padding or 12
     local fontSize = cfg.textSize or 10
     local font = cfg.font or FONT_MED
     local spec = resolveBadgeSpec(cfg.color, cfg.textColor)
-
-    -- 测量文字宽度
     local textStr = cfg.text or ""
     local measured = TextService:GetTextSize(textStr, fontSize, font, Vector2.new(10000, h))
     local targetW = math.ceil(measured.X) + padding * 2
-
     local badge = Instance.new("Frame")
-    badge.Name = "Badge"
-    badge.BackgroundColor3 = spec.bg
-    badge.BorderSizePixel = 0
+    badge.BackgroundColor3 = spec.bg; badge.BorderSizePixel = 0
     badge.AnchorPoint = cfg.anchor or Vector2.new(0, 0)
     badge.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     badge.Size = UDim2.new(0, targetW, 0, h)
-    badge.ZIndex = cfg.zIndex or 30
-    badge.Parent = parent
+    badge.ZIndex = cfg.zIndex or 30; badge.Parent = parent
     corner(badge, cfg.radius or 6)
-
-    -- 微阴影
     local shadow = Instance.new("Frame")
-    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    shadow.BackgroundTransparency = 0.92
-    shadow.BorderSizePixel = 0
-    shadow.Position = UDim2.new(0, 0, 0, 2)
-    shadow.Size = UDim2.new(1, 0, 1, 0)
-    shadow.ZIndex = badge.ZIndex - 1
-    corner(shadow, cfg.radius or 6)
-    shadow.Parent = badge
-
+    shadow.BackgroundColor3 = Color3.fromRGB(0,0,0); shadow.BackgroundTransparency = 0.92
+    shadow.BorderSizePixel = 0; shadow.Position = UDim2.new(0, 0, 0, 2)
+    shadow.Size = UDim2.new(1, 0, 1, 0); shadow.ZIndex = badge.ZIndex - 1
+    corner(shadow, cfg.radius or 6); shadow.Parent = badge
     local lbl = Instance.new("TextLabel")
-    lbl.BackgroundTransparency = 1
-    lbl.Text = textStr
-    lbl.TextColor3 = spec.fg
-    lbl.Font = font
-    lbl.TextSize = fontSize
-    lbl.TextXAlignment = Enum.TextXAlignment.Center
-    lbl.TextYAlignment = Enum.TextYAlignment.Center
-    lbl.Size = UDim2.new(1, 0, 1, 0)
-    lbl.ZIndex = badge.ZIndex + 1
-    lbl.Parent = badge
-
-    -- 入场动画：从 0 宽度弹性展开
-    badge.Size = UDim2.new(0, 0, 0, h)
-    lbl.TextTransparency = 1
-    badge.BackgroundTransparency = 1
+    lbl.BackgroundTransparency = 1; lbl.Text = textStr
+    lbl.TextColor3 = spec.fg; lbl.Font = font; lbl.TextSize = fontSize
+    lbl.TextXAlignment = Enum.TextXAlignment.Center; lbl.TextYAlignment = Enum.TextYAlignment.Center
+    lbl.Size = UDim2.new(1, 0, 1, 0); lbl.ZIndex = badge.ZIndex + 1; lbl.Parent = badge
+    badge.Size = UDim2.new(0, 0, 0, h); lbl.TextTransparency = 1; badge.BackgroundTransparency = 1
     tw(badge, EASE_BACK, { Size = UDim2.new(0, targetW, 0, h), BackgroundTransparency = 0 })
     tw(lbl, EASE, { TextTransparency = 0 })
-
     return {
-        frame = badge,
-        label = lbl,
+        frame = badge, label = lbl,
         setText = function(newText)
             newText = newText or ""
             local m = TextService:GetTextSize(newText, fontSize, font, Vector2.new(10000, h))
@@ -341,7 +307,6 @@ local function createBadge(parent, cfg)
     }
 end
 
--- ============ createLabel ============
 local function createLabel(parent, cfg)
     local lbl = Instance.new("TextLabel")
     lbl.BackgroundTransparency=1; lbl.Text=cfg.text or ""
@@ -357,7 +322,6 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
--- ============ 收藏星标 ============
 local allStars = {}
 local function createStar(parent, id, x, y)
     local btn = Instance.new("TextButton")
@@ -506,11 +470,11 @@ local function createPanel(parent, cfg)
             if body then tw(body, EASE_FAST, { GroupTransparency = 1 }) end
             if playerBar then tw(playerBar, EASE_FAST, { BackgroundTransparency = 1 }) end
             tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, MINIMIZED_W, 0, panel.Size.Y.Offset),
+                Size = UDim2.new(0, panel.Size.X.Offset, 0, TITLE_H),
             })
             task.delay(0.22, function()
                 if not panel or not panel.Parent then return end
-                tw(panel, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                     Size = UDim2.new(0, MINIMIZED_W, 0, TITLE_H),
                 })
             end)
@@ -518,7 +482,7 @@ local function createPanel(parent, cfg)
         else
             minimized = false
             tw(panel, TweenInfo.new(0.20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, MINIMIZED_W, 0, H),
+                Size = UDim2.new(0, W, 0, TITLE_H),
             })
             task.delay(0.20, function()
                 if not panel or not panel.Parent then return end
@@ -680,7 +644,7 @@ local function createPanel(parent, cfg)
         tabHlBar.Size=UDim2.new(0,3,0,14); tabHlBar.ZIndex=Z+4
         corner(tabHlBar,2); tabHlBar.Parent=tabHl
 
-        -- 展开菜单树
+        -- 展开成扁平列表
         local flatList = {}
         for _, entry in ipairs(tabConfig) do
             if type(entry) == "string" then
@@ -695,6 +659,9 @@ local function createPanel(parent, cfg)
                 end
             end
         end
+
+        -- ★ 关键：先声明 relayoutMenu 变量（闭包提前捕获）
+        local relayoutMenu
 
         local tabIndexCounter = 0
         for i, item in ipairs(flatList) do
@@ -717,16 +684,15 @@ local function createPanel(parent, cfg)
                 glbl.Font = FONT_MED; glbl.TextXAlignment = Enum.TextXAlignment.Left
                 glbl.Position = UDim2.new(0, 24, 0, 0); glbl.Size = UDim2.new(1, -30, 1, 0)
                 glbl.ZIndex = Z+6; glbl.Parent = gBtn
-                item.arrow = arrow; item.button = gBtn
+                item.arrow = arrow; item.button = gBtn; item.label = glbl
 
-                local gname = item.name
                 gBtn.MouseButton1Click:Connect(function()
-                    local state = groupStates[gname]
+                    local state = groupStates[item.name]
                     if not state then return end
                     state.expanded = not state.expanded
                     item.expanded = state.expanded
                     arrow.Text = state.expanded and "▾" or "▸"
-                    relayoutMenu(true)
+                    if relayoutMenu then relayoutMenu(true) end
                 end)
                 gBtn.MouseEnter:Connect(function()
                     tw(glbl, EASE_FAST, { TextColor3 = Theme.PRIMARY })
@@ -771,7 +737,8 @@ local function createPanel(parent, cfg)
             end
         end
 
-        local function relayoutMenu(animate)
+        -- ★ 现在给 relayoutMenu 赋值
+        relayoutMenu = function(animate)
             local y = ITEM_START_Y
             for _, item in ipairs(flatList) do
                 if item.kind == "group" then
@@ -790,7 +757,9 @@ local function createPanel(parent, cfg)
                     end
                     if hidden then
                         item.targetY = y
-                        if item.button then item.button.Visible = false end
+                        if item.button then
+                            item.button.Visible = false
+                        end
                     else
                         item.targetY = y
                         y = y + ITEM_H + 4
@@ -805,8 +774,6 @@ local function createPanel(parent, cfg)
             navScroll.CanvasSize = UDim2.new(0, 0, 0, y + 10)
         end
         relayoutMenu(false)
-        -- 暴露重排函数给外部
-        _G._lumenRelayoutMenu = relayoutMenu
 
         pageContainer=Instance.new("Frame")
         pageContainer.BackgroundTransparency=1
