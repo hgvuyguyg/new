@@ -118,7 +118,6 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
---=================== Panel（左侧菜单 + 左下玩家信息 + − ×） ===================
 local function createPanel(parent, cfg)
     cfg = cfg or {}
     local W, H = cfg.w or 360, cfg.h or 260
@@ -375,7 +374,6 @@ local function createPanel(parent, cfg)
         end
     end
 
-    --====== 玩家信息（左下角，始终添加） ======
     if showPlayer then
         local PB_H = 42
         local PB_PAD = 10
@@ -429,13 +427,6 @@ local function createPanel(parent, cfg)
         userText.Size = UDim2.new(1, -(avatarSize + 16), 0, 14)
         userText.ZIndex = Z + 7
         userText.Parent = playerBar
-
-        player:GetPropertyChangedSignal("DisplayName"):Connect(function()
-            nameText.Text = player.DisplayName
-        end)
-        player:GetPropertyChangedSignal("Name"):Connect(function()
-            userText.Text = "@" .. player.Name
-        end)
     end
 
     if hasTabs then
@@ -590,11 +581,9 @@ local function createPanel(parent, cfg)
     }
 end
 
---=================== Button ===================
 local function createButton(parent, cfg)
     local W, H = cfg.w or 120, cfg.h or 34
     local X, Y = cfg.x or 0, cfg.y or 0
-
     local btn = Instance.new("TextButton")
     btn.BackgroundColor3 = cfg.bgColor or Theme.WHITE
     btn.BorderSizePixel = 0
@@ -603,6 +592,7 @@ local function createButton(parent, cfg)
     btn.TextSize = cfg.textSize or 12
     btn.Font = FONT_MED
     btn.AutoButtonColor = false
+    btn.TextWrapped = cfg.textWrapped or false
     btn.Position = UDim2.new(0, X, 0, Y)
     btn.Size = UDim2.new(0, W, 0, H)
     btn.ZIndex = cfg.zIndex or 5
@@ -614,13 +604,11 @@ local function createButton(parent, cfg)
     local baseBg = cfg.bgColor or Theme.WHITE
     local baseTx = cfg.textColor or Theme.PRIMARY
     local baseBd = cfg.borderColor or Theme.PRIMARY
-
     if not enabled then
-        btn.BackgroundColor3 = Theme.DISABLED_BG
-        btn.TextColor3 = Theme.DISABLED_FG
-        st.Color = Theme.BORDER
+        btn.BackgroundColor3 = cfg.disabledBg or Theme.DISABLED_BG
+        btn.TextColor3 = cfg.disabledTx or Theme.TEXT
+        st.Color = cfg.disabledBd or Theme.BORDER
     end
-
     btn.MouseEnter:Connect(function()
         if not enabled then return end
         tw(btn, EASE_FAST, {
@@ -673,17 +661,14 @@ local function createButton(parent, cfg)
     return btn
 end
 
---=================== Toggle ===================
 local function createToggle(parent, cfg)
     local W, H = cfg.w or 36, cfg.h or 20
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
-
     local track = Instance.new("Frame")
     track.BackgroundColor3 = Theme.TRACK
     track.BorderSizePixel = 0
@@ -691,7 +676,6 @@ local function createToggle(parent, cfg)
     corner(track, H / 2)
     track.ZIndex = 5
     track.Parent = container
-
     local knobSize = H - 4
     local knob = Instance.new("Frame")
     knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -701,22 +685,17 @@ local function createToggle(parent, cfg)
     corner(knob, knobSize / 2)
     knob.ZIndex = 6
     knob.Parent = container
-
     local state = cfg.value or false
     local onChange = cfg.onChange
     local onColor = cfg.onColor or Theme.PRIMARY
     local offColor = cfg.offColor or Theme.TRACK
-
     local function apply(animate, elastic)
         local info = animate and (elastic and EASE_BACK or EASE) or EASE_NONE
-        tw(track, animate and EASE or EASE_NONE, {
-            BackgroundColor3 = state and onColor or offColor,
-        })
+        tw(track, animate and EASE or EASE_NONE, { BackgroundColor3 = state and onColor or offColor })
         local targetX = state and (W - knobSize - 2) or 2
         tw(knob, info, { Position = UDim2.new(0, targetX, 0, 2) })
     end
     apply(false, false)
-
     local click = Instance.new("TextButton")
     click.BackgroundTransparency = 1
     click.Text = ""
@@ -724,37 +703,26 @@ local function createToggle(parent, cfg)
     click.Size = UDim2.new(1, 0, 1, 0)
     click.ZIndex = 7
     click.Parent = container
-
-    click.MouseButton1Down:Connect(function()
-        tw(container, EASE_FAST, { Size = UDim2.new(0, W - 2, 0, H - 2) })
-    end)
-    click.MouseButton1Up:Connect(function()
-        tw(container, EASE_BACK, { Size = UDim2.new(0, W, 0, H) })
-    end)
     click.MouseButton1Click:Connect(function()
         state = not state
         apply(true, true)
         if onChange then onChange(state) end
     end)
-
     return { container = container, getValue = function() return state end }
 end
 
---=================== Slider ===================
 local function createSlider(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 22
     local minV, maxV = cfg.min or 0, cfg.max or 100
     local value = cfg.value or minV
     local onChange = cfg.onChange
     local primaryColor = cfg.color or Theme.PRIMARY
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
-
     local trackH = 4
     local track = Instance.new("Frame")
     track.BackgroundColor3 = Theme.TRACK
@@ -765,7 +733,6 @@ local function createSlider(parent, cfg)
     corner(track, trackH / 2)
     track.ZIndex = 5
     track.Parent = container
-
     local fill = Instance.new("Frame")
     fill.BackgroundColor3 = primaryColor
     fill.BorderSizePixel = 0
@@ -773,7 +740,6 @@ local function createSlider(parent, cfg)
     corner(fill, trackH / 2)
     fill.ZIndex = 6
     fill.Parent = track
-
     local knobSize = 14
     local knob = Instance.new("Frame")
     knob.BackgroundColor3 = primaryColor
@@ -784,12 +750,10 @@ local function createSlider(parent, cfg)
     corner(knob, knobSize / 2)
     knob.ZIndex = 7
     knob.Parent = container
-
     local function ratio()
         if maxV == minV then return 0 end
         return math.clamp((value - minV) / (maxV - minV), 0, 1)
     end
-
     local function applyVisual(animate)
         local r = ratio()
         local trackW = track.AbsoluteSize.X
@@ -797,7 +761,6 @@ local function createSlider(parent, cfg)
         tw(fill, animate and EASE_FAST or EASE_NONE, { Size = UDim2.new(r, 0, 1, 0) })
         tw(knob, animate and EASE_FAST or EASE_NONE, { Position = UDim2.new(0, r * trackW, 0.5, 0) })
     end
-
     local function setValue(v, silent)
         v = math.clamp(v, minV, maxV)
         if v ~= value then
@@ -806,7 +769,6 @@ local function createSlider(parent, cfg)
             if not silent and onChange then onChange(value) end
         end
     end
-
     local dragging = false
     local function fromAbsX(absX)
         local sx = track.AbsolutePosition.X
@@ -815,7 +777,6 @@ local function createSlider(parent, cfg)
         local r = math.clamp((absX - sx) / w, 0, 1)
         setValue(minV + r * (maxV - minV))
     end
-
     local hit = Instance.new("TextButton")
     hit.BackgroundTransparency = 1
     hit.Text = ""
@@ -823,15 +784,6 @@ local function createSlider(parent, cfg)
     hit.Size = UDim2.new(1, 0, 1, 0)
     hit.ZIndex = 8
     hit.Parent = container
-
-    hit.MouseEnter:Connect(function()
-        if dragging then return end
-        tw(knob, EASE_FAST, { Size = UDim2.new(0, knobSize + 4, 0, knobSize + 4) })
-    end)
-    hit.MouseLeave:Connect(function()
-        if dragging then return end
-        tw(knob, EASE, { Size = UDim2.new(0, knobSize, 0, knobSize) })
-    end)
     hit.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1
            or input.UserInputType == Enum.UserInputType.Touch then
@@ -855,21 +807,13 @@ local function createSlider(parent, cfg)
             end
         end
     end)
-
     task.defer(function() task.wait(0.05); applyVisual(false) end)
-
-    return {
-        container = container,
-        getValue = function() return value end,
-        setValue = setValue,
-    }
+    return { container = container, getValue = function() return value end, setValue = setValue }
 end
 
---=================== TextBox ===================
 local function createTextBox(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 28
     local X, Y = cfg.x or 0, cfg.y or 0
-
     local container = Instance.new("Frame")
     container.BackgroundColor3 = cfg.bgColor or Theme.WHITE
     container.BorderSizePixel = 0
@@ -879,7 +823,6 @@ local function createTextBox(parent, cfg)
     corner(container, cfg.radius or 6)
     local st = stroke(container, cfg.borderColor or Theme.BORDER, 1)
     container.Parent = parent
-
     local tb = Instance.new("TextBox")
     tb.BackgroundTransparency = 1
     tb.Text = cfg.text or ""
@@ -895,7 +838,6 @@ local function createTextBox(parent, cfg)
     tb.Size = UDim2.new(1, -20, 1, 0)
     tb.ZIndex = 6
     tb.Parent = container
-
     tb.Focused:Connect(function()
         tw(st, EASE_FAST, { Color = Theme.PRIMARY, Thickness = 1.5 })
         tw(container, EASE_FAST, { Size = UDim2.new(0, W + 2, 0, H + 2), Position = UDim2.new(0, X - 1, 0, Y - 1) })
@@ -905,23 +847,19 @@ local function createTextBox(parent, cfg)
         tw(container, EASE, { Size = UDim2.new(0, W, 0, H), Position = UDim2.new(0, X, 0, Y) })
         if cfg.onChange then cfg.onChange(tb.Text) end
     end)
-
     return tb
 end
 
---=================== Checkbox ===================
 local function createCheckbox(parent, cfg)
     local W, H = cfg.w or 200, cfg.h or 20
     local boxSize = cfg.boxSize or 16
     local checkColor = cfg.color or Theme.PRIMARY
-
     local container = Instance.new("Frame")
     container.BackgroundTransparency = 1
     container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
     container.Size = UDim2.new(0, W, 0, H)
     container.ZIndex = cfg.zIndex or 5
     container.Parent = parent
-
     local box = Instance.new("Frame")
     box.BackgroundColor3 = Theme.WHITE
     box.BorderSizePixel = 0
@@ -932,7 +870,6 @@ local function createCheckbox(parent, cfg)
     corner(box, 4)
     local boxStroke = stroke(box, Theme.BORDER, 1.5)
     box.Parent = container
-
     local mark = Instance.new("Frame")
     mark.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     mark.BorderSizePixel = 0
@@ -943,7 +880,6 @@ local function createCheckbox(parent, cfg)
     corner(mark, 2)
     mark.BackgroundTransparency = 1
     mark.Parent = box
-
     createLabel(container, {
         text = cfg.label or "",
         x = boxSize + 8, y = 0,
@@ -952,27 +888,20 @@ local function createCheckbox(parent, cfg)
         color = Theme.TEXT,
         zIndex = 6,
     })
-
     local state = cfg.value or false
     local onChange = cfg.onChange
-
     local function apply(animate)
         if state then
             tw(box, animate and EASE or EASE_NONE, { BackgroundColor3 = checkColor })
             tw(boxStroke, animate and EASE or EASE_NONE, { Color = checkColor })
-            tw(mark, animate and EASE_BACK or EASE_NONE, {
-                Size = UDim2.new(0, 6, 0, 6), BackgroundTransparency = 0,
-            })
+            tw(mark, animate and EASE_BACK or EASE_NONE, { Size = UDim2.new(0, 6, 0, 6), BackgroundTransparency = 0 })
         else
             tw(box, animate and EASE or EASE_NONE, { BackgroundColor3 = Theme.WHITE })
             tw(boxStroke, animate and EASE or EASE_NONE, { Color = Theme.BORDER })
-            tw(mark, animate and EASE_IN or EASE_NONE, {
-                Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1,
-            })
+            tw(mark, animate and EASE_IN or EASE_NONE, { Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1 })
         end
     end
     apply(false)
-
     local click = Instance.new("TextButton")
     click.BackgroundTransparency = 1
     click.Text = ""
@@ -980,26 +909,191 @@ local function createCheckbox(parent, cfg)
     click.Size = UDim2.new(1, 0, 1, 0)
     click.ZIndex = 8
     click.Parent = container
-
     click.MouseButton1Click:Connect(function()
         state = not state
-        tapPulse(box, "Size",
-            UDim2.new(0, boxSize, 0, boxSize),
-            UDim2.new(0, boxSize * 0.85, 0, boxSize * 0.85), 0.06)
         apply(true)
         if onChange then onChange(state) end
     end)
-
     return { container = container, getValue = function() return state end }
 end
 
---=================== Dropdown（列表离按钮更远） ===================
+-- ★★★ 颜色选择器（带蓝框选中） ★★★
+local function createColorPicker(parent, cfg)
+    local palette = cfg.palette or {
+        Color3.fromRGB(37, 99, 235),
+        Color3.fromRGB(220, 38, 38),
+        Color3.fromRGB(16, 185, 129),
+        Color3.fromRGB(245, 158, 11),
+        Color3.fromRGB(139, 92, 246),
+        Color3.fromRGB(20, 184, 166),
+        Color3.fromRGB(236, 72, 153),
+        Color3.fromRGB(31, 41, 55),
+    }
+    local names = cfg.names or {
+        "静谧蓝", "国庆红", "薄荷绿", "琥珀橙",
+        "紫罗兰", "青绿", "玫瑰", "石墨",
+    }
+    local size = cfg.size or 32
+    local gap = cfg.gap or 10
+    local cols = cfg.cols or 8
+    local rows = math.ceil(#palette / cols)
+    local W = cols * size + (cols - 1) * gap
+    local H = rows * size + (rows - 1) * gap
+
+    local container = Instance.new("Frame")
+    container.BackgroundTransparency = 1
+    container.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
+    container.Size = UDim2.new(0, W, 0, H)
+    container.ZIndex = cfg.zIndex or 5
+    container.Parent = parent
+
+    local selectedIndex = cfg.value or 1
+    local onChange = cfg.onChange
+    local swatches = {}
+    local strokes = {}
+
+    local function refresh(animate, pulsed)
+        for i, sw in ipairs(swatches) do
+            local so = strokes[i]
+            if i == selectedIndex then
+                tw(sw, animate and EASE_FAST or EASE_NONE, {
+                    Size = UDim2.new(0, size + 4, 0, size + 4),
+                })
+                tw(so, animate and EASE_FAST or EASE_NONE, {
+                    Thickness = 3, Color = Theme.PRIMARY, Transparency = 0,
+                })
+            else
+                tw(sw, animate and EASE or EASE_NONE, {
+                    Size = UDim2.new(0, size, 0, size),
+                })
+                tw(so, animate and EASE or EASE_NONE, {
+                    Thickness = 1, Color = Theme.BORDER, Transparency = 0.5,
+                })
+            end
+        end
+        if pulsed and swatches[pulsed] then
+            tapPulse(swatches[pulsed], "Size",
+                UDim2.new(0, size + 4, 0, size + 4),
+                UDim2.new(0, size + 10, 0, size + 10),
+                0.08)
+        end
+    end
+
+    for i, col in ipairs(palette) do
+        local c = (i - 1) % cols
+        local r = math.floor((i - 1) / cols)
+        local sw = Instance.new("TextButton")
+        sw.BackgroundColor3 = col
+        sw.BorderSizePixel = 0
+        sw.Text = ""
+        sw.AutoButtonColor = false
+        sw.AnchorPoint = Vector2.new(0.5, 0.5)
+        sw.Position = UDim2.new(0, c * (size + gap) + size / 2, 0, r * (size + gap) + size / 2)
+        sw.Size = UDim2.new(0, size, 0, size)
+        sw.ZIndex = 5
+        corner(sw, 6)
+        local s = stroke(sw, Theme.BORDER, 1)
+        sw.Parent = container
+
+        local capture = i
+        sw.MouseEnter:Connect(function()
+            if selectedIndex ~= capture then
+                tw(sw, EASE_FAST, { Size = UDim2.new(0, size + 4, 0, size + 4) })
+            end
+        end)
+        sw.MouseLeave:Connect(function()
+            if selectedIndex ~= capture then
+                tw(sw, EASE, { Size = UDim2.new(0, size, 0, size) })
+            end
+        end)
+        sw.MouseButton1Click:Connect(function()
+            selectedIndex = capture
+            refresh(true, capture)
+            if onChange then
+                onChange(palette[capture], capture, names[capture])
+            end
+        end)
+
+        swatches[i] = sw
+        strokes[i] = s
+    end
+
+    refresh(false)
+    return {
+        container = container,
+        getValue = function() return palette[selectedIndex], selectedIndex end,
+    }
+end
+
+-- ★★★ 描述框（左上角黑字，自动高度） ★★★
+local function createDescriptionBox(parent, cfg)
+    local W = cfg.w or 300
+    local padX = cfg.padX or 14
+    local padY = cfg.padY or 12
+
+    local box = Instance.new("Frame")
+    box.BackgroundColor3 = cfg.bgColor or Theme.PANEL_SOFT
+    box.BorderSizePixel = 0
+    box.Position = UDim2.new(0, cfg.x or 0, 0, cfg.y or 0)
+    box.Size = UDim2.new(0, W, 0, 0)
+    box.AutomaticSize = Enum.AutomaticSize.Y
+    box.ZIndex = cfg.zIndex or 5
+    corner(box, 8)
+    stroke(box, cfg.borderColor or Theme.BORDER, 1)
+    box.Parent = parent
+
+    local layout = Instance.new("UIListLayout")
+    layout.FillDirection = Enum.FillDirection.Vertical
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 6)
+    layout.Parent = box
+
+    local pad = Instance.new("UIPadding")
+    pad.PaddingTop = UDim.new(0, padY)
+    pad.PaddingBottom = UDim.new(0, padY)
+    pad.PaddingLeft = UDim.new(0, padX)
+    pad.PaddingRight = UDim.new(0, padX)
+    pad.Parent = box
+
+    if cfg.title then
+        local title = Instance.new("TextLabel")
+        title.BackgroundTransparency = 1
+        title.Text = cfg.title
+        title.TextColor3 = cfg.titleColor or Theme.TEXT
+        title.TextSize = cfg.titleSize or 12
+        title.Font = FONT_MED
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.TextYAlignment = Enum.TextYAlignment.Top
+        title.LayoutOrder = 1
+        title.Size = UDim2.new(1, 0, 0, 18)
+        title.ZIndex = 6
+        title.Parent = box
+    end
+
+    local body = Instance.new("TextLabel")
+    body.BackgroundTransparency = 1
+    body.Text = cfg.text or ""
+    body.TextColor3 = cfg.textColor or Theme.TEXT
+    body.TextSize = cfg.textSize or 11
+    body.Font = FONT_REG
+    body.TextXAlignment = Enum.TextXAlignment.Left
+    body.TextYAlignment = Enum.TextYAlignment.Top
+    body.TextWrapped = true
+    body.LayoutOrder = 2
+    body.Size = UDim2.new(1, 0, 0, 0)
+    body.AutomaticSize = Enum.AutomaticSize.Y
+    body.ZIndex = 6
+    body.Parent = box
+
+    return box
+end
+
 local function createDropdownBase(parent, cfg, multi)
     local W = cfg.w or 200
     local H = cfg.h or 30
     local items = cfg.items or {}
     local ITEM_H = cfg.itemHeight or 24
-    local LIST_GAP = 10     -- ★ 从 4 加到 10，列表离按钮更远
+    local LIST_GAP = 18     -- ★★★ 再往下加大 ★★★
     local LIST_PAD = 4
 
     local container = Instance.new("Frame")
@@ -1148,16 +1242,12 @@ local function createDropdownBase(parent, cfg, multi)
         local btnSize = btn.AbsoluteSize
         local listH = #items * ITEM_H + LIST_PAD * 2
         local listW = btnSize.X
-
-        -- ★ 强制向下，间距 10px
         local posY = btnPos.Y + btnSize.Y + LIST_GAP
-
         list.Position = UDim2.new(0, btnPos.X, 0, posY)
         list.Size = UDim2.new(0, listW, 0, 0)
         list.Visible = true
         isOpen = true
         interceptLayer.Visible = true
-
         tw(list, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, listW, 0, listH),
         })
@@ -1275,62 +1365,22 @@ local function createDropdownBase(parent, cfg, multi)
 end
 
 local ui = {}
-
 ui.Theme = Theme
 ui.ScreenGui = uiGui
-ui.Ease = {
-    NORMAL = EASE, FAST = EASE_FAST, BACK = EASE_BACK, IN = EASE_IN,
-}
+ui.Ease = { NORMAL = EASE, FAST = EASE_FAST, BACK = EASE_BACK, IN = EASE_IN }
 
-function ui.createPanel(cfg)
-    cfg = cfg or {}
-    return createPanel(resolveParent(cfg), cfg)
-end
-
-function ui.createLabel(cfg)
-    cfg = cfg or {}
-    return createLabel(resolveParent(cfg), cfg)
-end
-
-function ui.createButton(cfg)
-    cfg = cfg or {}
-    return createButton(resolveParent(cfg), cfg)
-end
-
-function ui.createToggle(cfg)
-    cfg = cfg or {}
-    return createToggle(resolveParent(cfg), cfg)
-end
-
-function ui.createSlider(cfg)
-    cfg = cfg or {}
-    return createSlider(resolveParent(cfg), cfg)
-end
-
-function ui.createTextBox(cfg)
-    cfg = cfg or {}
-    return createTextBox(resolveParent(cfg), cfg)
-end
-
-function ui.createCheckbox(cfg)
-    cfg = cfg or {}
-    return createCheckbox(resolveParent(cfg), cfg)
-end
-
-function ui.createDropdown(cfg)
-    cfg = cfg or {}
-    return createDropdownBase(resolveParent(cfg), cfg, false)
-end
-
-function ui.createMultiDropdown(cfg)
-    cfg = cfg or {}
-    return createDropdownBase(resolveParent(cfg), cfg, true)
-end
-
-function ui.destroy()
-    uiGui:Destroy()
-end
+function ui.createPanel(cfg) cfg = cfg or {}; return createPanel(resolveParent(cfg), cfg) end
+function ui.createLabel(cfg) cfg = cfg or {}; return createLabel(resolveParent(cfg), cfg) end
+function ui.createButton(cfg) cfg = cfg or {}; return createButton(resolveParent(cfg), cfg) end
+function ui.createToggle(cfg) cfg = cfg or {}; return createToggle(resolveParent(cfg), cfg) end
+function ui.createSlider(cfg) cfg = cfg or {}; return createSlider(resolveParent(cfg), cfg) end
+function ui.createTextBox(cfg) cfg = cfg or {}; return createTextBox(resolveParent(cfg), cfg) end
+function ui.createCheckbox(cfg) cfg = cfg or {}; return createCheckbox(resolveParent(cfg), cfg) end
+function ui.createColorPicker(cfg) cfg = cfg or {}; return createColorPicker(resolveParent(cfg), cfg) end
+function ui.createDescriptionBox(cfg) cfg = cfg or {}; return createDescriptionBox(resolveParent(cfg), cfg) end
+function ui.createDropdown(cfg) cfg = cfg or {}; return createDropdownBase(resolveParent(cfg), cfg, false) end
+function ui.createMultiDropdown(cfg) cfg = cfg or {}; return createDropdownBase(resolveParent(cfg), cfg, true) end
+function ui.destroy() uiGui:Destroy() end
 
 _G.ui = ui
-
-print("[LUMEN UI] 已加载。使用 ui.createPanel / createButton / createSlider ... 创建组件。")
+print("[LUMEN UI] 已加载。")
