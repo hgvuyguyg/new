@@ -1,8 +1,14 @@
 --!nonstrict
 -- ==========================================================
---  LUMEN UI - 完整修复版（内联源码 + 多源回退）
---  修复：折叠菜单箭头/动画、最小化头像残留、叉号被盖
+--  LUMEN UI 完整版（库 + 修复 + 示例，一次性执行）
 -- ==========================================================
+
+-- ===== 防重复：整段脚本只允许执行一次 =====
+if _G.__LUMEN_BOOTED then
+    warn("[LUMEN] 已运行过，跳过重复执行")
+    return
+end
+_G.__LUMEN_BOOTED = true
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -10,6 +16,13 @@ local UserInputService = game:GetService("UserInputService")
 local TextService = game:GetService("TextService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+
+-- 清掉旧的 LumenUI（防止上次残留）
+for _, c in ipairs(playerGui:GetChildren()) do
+    if c.Name == "LumenUI" then
+        pcall(function() c:Destroy() end)
+    end
+end
 
 local Theme = {
     WHITE=Color3.fromRGB(255,255,255), PRIMARY=Color3.fromRGB(37,99,235),
@@ -250,7 +263,7 @@ local BADGE_COLORS = {
     cyan   = { bg = Color3.fromRGB(20,184,166), fg = Color3.fromRGB(255,255,255) },
 }
 local badgeCount = 0
-local MAX_BADGES = 3
+local MAX_BADGES = 30
 local function resolveBadgeSpec(c, customFg)
     if type(c) == "table" then return { bg = c, fg = customFg or Color3.fromRGB(255,255,255) } end
     local s = BADGE_COLORS[c or "blue"] or BADGE_COLORS.blue
@@ -503,7 +516,6 @@ local function createPanel(parent, cfg)
 
     local function toggleMinimize()
         if not minimized then
-            -- ===== 收窄 =====
             minimized = true
             if body then tw(body, EASE_FAST, { GroupTransparency = 1 }) end
 
@@ -516,7 +528,6 @@ local function createPanel(parent, cfg)
                     end
                 end
             end
-            -- 整块隐藏玩家信息栏（头像 / 昵称 / @用户名 / 光环全没）
             if playerBar then playerBar.Visible = false end
 
             tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -544,27 +555,21 @@ local function createPanel(parent, cfg)
             end)
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 1 }) end
         else
-            -- ===== 展开 =====
             minimized = false
-
             tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, W, 0, TITLE_H),
             })
-
             task.delay(0.24, function()
                 if not panel or not panel.Parent then return end
                 tw(panel, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                     Size = UDim2.new(0, W, 0, H),
                 })
             end)
-
             restoreHidden(hiddenTitleNodes)
             hiddenTitleNodes = {}
-
             if titleLabel then
                 titleLabel.Size = UDim2.new(0, W - 100, 0, TITLE_H)
             end
-
             if titleLine then tw(titleLine, EASE, { BackgroundTransparency = 0 }) end
             if body then tw(body, EASE, { GroupTransparency = 0 }) end
             if playerBar then playerBar.Visible = true end
@@ -745,7 +750,6 @@ local function createPanel(parent, cfg)
                 gBtn.Size = UDim2.new(0, ITEM_W, 0, GROUP_H)
                 gBtn.Position = UDim2.new(0, ITEM_PAD_X, 0, ITEM_START_Y)
                 gBtn.ZIndex = Z+5; gBtn.Parent = navScroll
-                -- 修复：用 ASCII 字符，手机端 100% 能显示
                 local arrow = Instance.new("TextLabel")
                 arrow.BackgroundTransparency = 1; arrow.Text = item.expanded and "v" or ">"
                 arrow.TextColor3 = Theme.TEXT_MUTED; arrow.TextSize = 12
@@ -765,7 +769,6 @@ local function createPanel(parent, cfg)
                     if not state then return end
                     state.expanded = not state.expanded
                     item.expanded = state.expanded
-                    -- 箭头旋转动画
                     tw(arrow, EASE_SINE, { TextColor3 = state.expanded and Theme.PRIMARY or Theme.TEXT_MUTED })
                     arrow.Text = state.expanded and "v" or ">"
                     if relayoutMenu then relayoutMenu(true) end
@@ -815,7 +818,6 @@ local function createPanel(parent, cfg)
             end
         end
 
-        -- 修复：折叠/展开时子项淡入淡出 + 位置过渡
         relayoutMenu = function(animate)
             local y = ITEM_START_Y
             for _, item in ipairs(flatList) do
@@ -840,7 +842,6 @@ local function createPanel(parent, cfg)
                         local wasVisible = btn.Visible
                         if shouldShow then
                             if not wasVisible then
-                                -- 从隐藏变显示：先放到目标位置、文字透明，再淡入
                                 btn.Position = UDim2.new(0, ITEM_PAD_X, 0, item.targetY)
                                 btn.Visible = true
                                 btn.TextTransparency = 1
@@ -858,7 +859,6 @@ local function createPanel(parent, cfg)
                             if wasVisible then
                                 if animate then
                                     tw(btn, EASE_IN, { TextTransparency = 1 })
-                                    -- 结束后才隐藏，避免闪烁
                                     task.delay(0.18, function()
                                         if btn and btn.Parent then
                                             local gs = item.group and groupStates[item.group]
@@ -1516,99 +1516,3 @@ function ui.setFavoriteMode(v) setFavoriteMode(v) end
 function ui.destroy() uiGui:Destroy() end
 
 _G.ui = ui
-
--- ==========================================================
---  示例
--- ==========================================================
-local panel = ui.createPanel({
-    title = "Lumen UI 演示",
-    w = 520, h = 400,
-    x = 180, y = 100,
-    tabs = {
-        "首页",
-        "设置",
-        { name = "更多", items = { "颜色", "下拉框", "关于" }, expanded = true },
-    },
-    onClose = function()
-        panel.frame.Visible = false
-    end,
-})
-
--- 标题栏右侧卡片
-local titleBadge = ui.createBadge({
-    parent   = panel.titleBar,
-    text     = "NEW",
-    color    = "green",
-    x        = 118, y = 7, h = 20, textSize = 10, zIndex = 60,
-})
-
-local tab1, tab2, tab3, tab4, tab5 = panel.tabs[1], panel.tabs[2], panel.tabs[3], panel.tabs[4], panel.tabs[5]
-
--- 首页
-ui.createButton({
-    parent = tab1, x = 18, y = 20, w = 110, h = 34, text = "成功提示",
-    onClick = function()
-        ui.notify({ type = "success", title = "成功", message = "操作成功", duration = 2 })
-        titleBadge.setText("v1.2.1"); titleBadge.setColor("blue")
-    end,
-})
-ui.createButton({
-    parent = tab1, x = 136, y = 20, w = 110, h = 34, text = "错误提示",
-    onClick = function()
-        ui.notify({ type = "error", title = "失败", message = "出错了", duration = 2 })
-    end,
-})
-ui.createToggle({
-    parent = tab1, x = 18, y = 70, w = 40, h = 22, value = false,
-    onChange = function(v) print("toggle:", v) end,
-})
-ui.createSlider({
-    parent = tab1, x = 18, y = 108, w = 260, h = 26,
-    min = 0, max = 100, value = 50, step = 1,
-    onChange = function(v) print("slider:", v) end,
-})
-
--- 设置
-ui.createTextBox({
-    parent = tab2, x = 18, y = 20, w = 280, h = 30,
-    placeholder = "请输入内容…",
-    onChange = function(t) print("text:", t) end,
-})
-ui.createCheckbox({
-    parent = tab2, x = 18, y = 64, w = 240, h = 20,
-    label = "选项一", value = false,
-    onChange = function(v) print("check:", v) end,
-})
-
--- 颜色
-ui.createColorPicker({
-    parent = tab3, x = 18, y = 20, cols = 8, size = 30, gap = 8,
-    onChange = function(c, i, n)
-        ui.notify({ type = "info", title = "颜色", message = tostring(n), duration = 1.5 })
-    end,
-})
-
--- 下拉框
-ui.createDropdown({
-    parent = tab4, x = 18, y = 20, w = 200, h = 30,
-    items = { "A", "B", "C" },
-    onChange = function(v) print("dropdown:", v) end,
-})
-ui.createMultiDropdown({
-    parent = tab4, x = 18, y = 62, w = 200, h = 30,
-    items = { "苹果", "香蕉", "橙子" },
-    onChange = function(list) print("multi:", table.concat(list, ",")) end,
-})
-
--- 关于
-ui.createDescriptionBox({
-    parent = tab5, x = 18, y = 20, w = 400,
-    title = "关于",
-    text = "Lumen UI 完整修复版\n· 折叠菜单箭头改为 v/>\n· 展开/收起带淡入淡出动画\n· 最小化隐藏头像栏\n· 叉号和减号永远可见",
-})
-
-task.delay(0.3, function()
-    ui.notify({ type = "info", title = "Lumen UI", message = "已加载", duration = 3 })
-end)
-
-print("[LUMEN UI] 完整版已加载。")
