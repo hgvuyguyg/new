@@ -118,6 +118,7 @@ local function createLabel(parent, cfg)
     return lbl
 end
 
+--=================== Panel（左侧菜单 + 左下玩家信息 + − ×） ===================
 local function createPanel(parent, cfg)
     cfg = cfg or {}
     local W, H = cfg.w or 360, cfg.h or 260
@@ -129,6 +130,7 @@ local function createPanel(parent, cfg)
     local tabNames = cfg.tabs
     local hasTabs = type(tabNames) == "table" and #tabNames > 0
     local SIDEBAR_W = hasTabs and (cfg.sidebarWidth or 110) or 0
+    local showPlayer = cfg.showPlayer ~= false
 
     local shadow = nil
     if cfg.shadow ~= false then
@@ -163,6 +165,7 @@ local function createPanel(parent, cfg)
     panel:GetPropertyChangedSignal("Size"):Connect(syncShadow)
 
     local titleBar = nil
+    local titleLine = nil
     if hasTitle then
         titleBar = Instance.new("Frame")
         titleBar.BackgroundColor3 = cfg.titleBgColor or (cfg.bgColor or Theme.WHITE)
@@ -179,14 +182,14 @@ local function createPanel(parent, cfg)
             font = FONT_MED, zIndex = Z + 5,
         })
 
-        local line = Instance.new("Frame")
-        line.BackgroundColor3 = cfg.borderColor or Theme.BORDER
-        line.BorderSizePixel = 0
-        line.AnchorPoint = Vector2.new(0, 1)
-        line.Position = UDim2.new(0, 0, 1, 0)
-        line.Size = UDim2.new(1, 0, 0, 1)
-        line.ZIndex = Z + 5
-        line.Parent = titleBar
+        titleLine = Instance.new("Frame")
+        titleLine.BackgroundColor3 = cfg.borderColor or Theme.BORDER
+        titleLine.BorderSizePixel = 0
+        titleLine.AnchorPoint = Vector2.new(0, 1)
+        titleLine.Position = UDim2.new(0, 0, 1, 0)
+        titleLine.Size = UDim2.new(1, 0, 0, 1)
+        titleLine.ZIndex = Z + 5
+        titleLine.Parent = titleBar
     end
 
     local ICON = 24
@@ -232,6 +235,7 @@ local function createPanel(parent, cfg)
 
     local sidebar = nil
     local pageContainer = nil
+    local playerBar = nil
     local pages = {}
     local tabButtons = {}
     local tabHl = nil
@@ -240,6 +244,7 @@ local function createPanel(parent, cfg)
     local function setContentVisible(v)
         if sidebar then sidebar.Visible = v end
         if pageContainer then pageContainer.Visible = v end
+        if playerBar then playerBar.Visible = v end
         if not hasTabs then
             local bh = panel:FindFirstChild("BodyHolder")
             if bh then bh.Visible = v end
@@ -258,6 +263,9 @@ local function createPanel(parent, cfg)
             Size = UDim2.new(0, panel.Size.X.Offset, 0, targetH),
         })
         setContentVisible(not minimized)
+        if titleLine then
+            tw(titleLine, EASE, { BackgroundTransparency = minimized and 1 or 0 })
+        end
         if cfg.onMinimize then cfg.onMinimize(minimized) end
     end
 
@@ -367,15 +375,77 @@ local function createPanel(parent, cfg)
         end
     end
 
+    --====== 玩家信息（左下角，始终添加） ======
+    if showPlayer then
+        local PB_H = 42
+        local PB_PAD = 10
+
+        playerBar = Instance.new("Frame")
+        playerBar.Name = "PlayerBar"
+        playerBar.BackgroundColor3 = Theme.WHITE
+        playerBar.BackgroundTransparency = 0.0
+        playerBar.BorderSizePixel = 0
+        playerBar.AnchorPoint = Vector2.new(0, 1)
+        playerBar.Position = UDim2.new(0, PB_PAD, 1, -PB_PAD)
+        playerBar.Size = UDim2.new(0, SIDEBAR_W > 0 and (SIDEBAR_W - PB_PAD * 2) or 180, 0, PB_H)
+        playerBar.ZIndex = Z + 6
+        corner(playerBar, 8)
+        playerBar.Parent = panel
+
+        local avatarSize = 30
+        local avatar = Instance.new("ImageLabel")
+        avatar.BackgroundColor3 = Theme.HOVER_BG
+        avatar.BorderSizePixel = 0
+        avatar.AnchorPoint = Vector2.new(0, 0.5)
+        avatar.Position = UDim2.new(0, 6, 0.5, 0)
+        avatar.Size = UDim2.new(0, avatarSize, 0, avatarSize)
+        avatar.ZIndex = Z + 7
+        avatar.Image = "rbxthumb://type=AvatarHeadShot&id=" .. player.UserId .. "&w=60&h=60"
+        corner(avatar, avatarSize / 2)
+        avatar.Parent = playerBar
+
+        local nameText = Instance.new("TextLabel")
+        nameText.BackgroundTransparency = 1
+        nameText.Text = player.DisplayName
+        nameText.TextColor3 = Theme.TEXT
+        nameText.TextSize = 11
+        nameText.Font = FONT_MED
+        nameText.TextXAlignment = Enum.TextXAlignment.Left
+        nameText.TextTruncate = Enum.TextTruncate.AtEnd
+        nameText.Position = UDim2.new(0, avatarSize + 12, 0, 6)
+        nameText.Size = UDim2.new(1, -(avatarSize + 16), 0, 14)
+        nameText.ZIndex = Z + 7
+        nameText.Parent = playerBar
+
+        local userText = Instance.new("TextLabel")
+        userText.BackgroundTransparency = 1
+        userText.Text = "@" .. player.Name
+        userText.TextColor3 = Theme.TEXT_MUTED
+        userText.TextSize = 10
+        userText.Font = FONT_REG
+        userText.TextXAlignment = Enum.TextXAlignment.Left
+        userText.TextTruncate = Enum.TextTruncate.AtEnd
+        userText.Position = UDim2.new(0, avatarSize + 12, 0, 21)
+        userText.Size = UDim2.new(1, -(avatarSize + 16), 0, 14)
+        userText.ZIndex = Z + 7
+        userText.Parent = playerBar
+
+        player:GetPropertyChangedSignal("DisplayName"):Connect(function()
+            nameText.Text = player.DisplayName
+        end)
+        player:GetPropertyChangedSignal("Name"):Connect(function()
+            userText.Text = "@" .. player.Name
+        end)
+    end
+
     if hasTabs then
-        --===== 侧栏：加 UICorner 与面板圆角对齐 =====
         sidebar = Instance.new("Frame")
         sidebar.BackgroundColor3 = cfg.bgColor or Theme.WHITE
         sidebar.BorderSizePixel = 0
         sidebar.Position = UDim2.new(0, 0, 0, TITLE_H)
         sidebar.Size = UDim2.new(0, SIDEBAR_W, 1, -TITLE_H)
         sidebar.ZIndex = Z + 3
-        corner(sidebar, RADIUS)   -- ★ 修复"正方形"
+        corner(sidebar, RADIUS)
         sidebar.Parent = panel
 
         local sideLine = Instance.new("Frame")
@@ -502,6 +572,7 @@ local function createPanel(parent, cfg)
         body = body,
         titleBar = titleBar,
         sidebar = sidebar,
+        playerBar = playerBar,
         tabs = pages,
         selectTab = selectTab,
         getCurrentTab = function() return currentTab end,
@@ -519,6 +590,7 @@ local function createPanel(parent, cfg)
     }
 end
 
+--=================== Button ===================
 local function createButton(parent, cfg)
     local W, H = cfg.w or 120, cfg.h or 34
     local X, Y = cfg.x or 0, cfg.y or 0
@@ -601,6 +673,7 @@ local function createButton(parent, cfg)
     return btn
 end
 
+--=================== Toggle ===================
 local function createToggle(parent, cfg)
     local W, H = cfg.w or 36, cfg.h or 20
 
@@ -667,6 +740,7 @@ local function createToggle(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
+--=================== Slider ===================
 local function createSlider(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 22
     local minV, maxV = cfg.min or 0, cfg.max or 100
@@ -791,6 +865,7 @@ local function createSlider(parent, cfg)
     }
 end
 
+--=================== TextBox ===================
 local function createTextBox(parent, cfg)
     local W, H = cfg.w or 220, cfg.h or 28
     local X, Y = cfg.x or 0, cfg.y or 0
@@ -834,6 +909,7 @@ local function createTextBox(parent, cfg)
     return tb
 end
 
+--=================== Checkbox ===================
 local function createCheckbox(parent, cfg)
     local W, H = cfg.w or 200, cfg.h or 20
     local boxSize = cfg.boxSize or 16
@@ -917,13 +993,13 @@ local function createCheckbox(parent, cfg)
     return { container = container, getValue = function() return state end }
 end
 
---=================== Dropdown（强制向下展开） ===================
+--=================== Dropdown（列表离按钮更远） ===================
 local function createDropdownBase(parent, cfg, multi)
     local W = cfg.w or 200
     local H = cfg.h or 30
     local items = cfg.items or {}
     local ITEM_H = cfg.itemHeight or 24
-    local LIST_GAP = 4
+    local LIST_GAP = 10     -- ★ 从 4 加到 10，列表离按钮更远
     local LIST_PAD = 4
 
     local container = Instance.new("Frame")
@@ -1073,7 +1149,7 @@ local function createDropdownBase(parent, cfg, multi)
         local listH = #items * ITEM_H + LIST_PAD * 2
         local listW = btnSize.X
 
-        -- ★ 永远在按钮正下方展开，不再向上回退
+        -- ★ 强制向下，间距 10px
         local posY = btnPos.Y + btnSize.Y + LIST_GAP
 
         list.Position = UDim2.new(0, btnPos.X, 0, posY)
