@@ -115,7 +115,7 @@ local function showTooltip(target, text, x, y)
     tw(lbl, EASE, { TextTransparency = 0 })
 end
 
--- ============ Toast ============
+-- ============ Toast（去掉左侧竖条） ============
 local toastContainer = Instance.new("Frame")
 toastContainer.Name = "ToastContainer"
 toastContainer.AnchorPoint = Vector2.new(1, 1)
@@ -187,28 +187,10 @@ local function createToast(cfg)
     corner(card, 12)
     local cardStroke = stroke(card, Color3.fromRGB(229, 231, 235), 1)
 
-    -- ★ 左侧彩色渐变装饰条
-    local accent = Instance.new("Frame")
-    accent.AnchorPoint = Vector2.new(0, 0)
-    accent.Position = UDim2.new(0, 0, 0, 0)
-    accent.Size = UDim2.new(0, 4, 1, 0)
-    accent.BackgroundColor3 = style.color
-    accent.BorderSizePixel = 0
-    accent.ZIndex = 252
-    accent.Parent = card
-    local accentCorner = Instance.new("UICorner", accent)
-    accentCorner.CornerRadius = UDim.new(0, 2)
-    local accentGrad = Instance.new("UIGradient", accent)
-    accentGrad.Rotation = 90
-    accentGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, style.color),
-        ColorSequenceKeypoint.new(1, style.c2),
-    })
-
     -- 图标（圆形渐变底）
     local iconCircle = Instance.new("Frame")
     iconCircle.AnchorPoint = Vector2.new(0, 0)
-    iconCircle.Position = UDim2.new(0, 14, 0, 16)
+    iconCircle.Position = UDim2.new(0, 16, 0, 16)
     iconCircle.Size = UDim2.new(0, 32, 0, 32)
     iconCircle.BackgroundColor3 = style.color
     iconCircle.BorderSizePixel = 0
@@ -245,8 +227,8 @@ local function createToast(cfg)
     titleLbl.Font = Enum.Font.GothamBold; titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.TextTruncate = Enum.TextTruncate.AtEnd
-    titleLbl.Position = UDim2.new(0, 56, 0, 14)
-    titleLbl.Size = UDim2.new(1, -92, 0, 16)
+    titleLbl.Position = UDim2.new(0, 58, 0, 14)
+    titleLbl.Size = UDim2.new(1, -94, 0, 16)
     titleLbl.ZIndex = 252; titleLbl.Parent = card
 
     -- 正文
@@ -256,11 +238,11 @@ local function createToast(cfg)
     msgLbl.Font = Enum.Font.Gotham; msgLbl.TextSize = 10
     msgLbl.TextXAlignment = Enum.TextXAlignment.Left
     msgLbl.TextWrapped = true; msgLbl.TextTruncate = Enum.TextTruncate.AtEnd
-    msgLbl.Position = UDim2.new(0, 56, 0, 34)
-    msgLbl.Size = UDim2.new(1, -72, 0, 30)
+    msgLbl.Position = UDim2.new(0, 58, 0, 34)
+    msgLbl.Size = UDim2.new(1, -74, 0, 30)
     msgLbl.ZIndex = 252; msgLbl.Parent = card
 
-    -- ★ 关闭按钮：用普通 × (U+00D7)，不用 ✕
+    -- 关闭按钮（普通 ×）
     local closeBtn = Instance.new("TextButton")
     closeBtn.AnchorPoint = Vector2.new(1, 0)
     closeBtn.Position = UDim2.new(1, -8, 0, 8)
@@ -288,7 +270,7 @@ local function createToast(cfg)
         end)
     end)
 
-    -- ★ 进度条：从卡片底部往里缩 4px，两端不齐平，明显精致
+    -- 进度条
     local progressBg = Instance.new("Frame")
     progressBg.AnchorPoint = Vector2.new(0, 1)
     progressBg.Position = UDim2.new(0, 8, 1, -6)
@@ -324,7 +306,7 @@ end
 
 -- ============ Favorites ============
 local favorites = {}
-local favoriteModeEnabled = false  -- ★ 收藏模式总开关
+local favoriteModeEnabled = false
 
 local function toggleFavorite(id)
     favorites[id] = not favorites[id]
@@ -336,18 +318,18 @@ end
 
 -- ============ 深色模式 ============
 local currentDark = false
-local darkThemeListeners = {}  -- 所有等待主题切换的回调
+local themeListeners = {}
 
 local function addThemeListener(fn)
-    table.insert(darkThemeListeners, fn)
-    if currentDark then pcall(fn, true) end
+    table.insert(themeListeners, fn)
+    pcall(fn, currentDark)
 end
 
 local function applyTheme(dark)
     currentDark = dark
     local src = dark and DarkTheme or Theme
     for k, v in pairs(src) do Theme[k] = v end
-    for _, fn in ipairs(darkThemeListeners) do
+    for _, fn in ipairs(themeListeners) do
         pcall(fn, dark)
     end
 end
@@ -365,7 +347,6 @@ local function createLabel(parent, cfg)
     lbl.Position=UDim2.new(0,cfg.x or 0,0,cfg.y or 0)
     lbl.Size=UDim2.new(0,cfg.w or 100,0,cfg.h or 20)
     lbl.ZIndex=cfg.zIndex or 5; lbl.Parent=parent
-    -- ★ 自动跟随主题：label 颜色存起来，主题切换时改
     if not cfg.color then
         addThemeListener(function(dark)
             if lbl and lbl.Parent then
@@ -377,6 +358,8 @@ local function createLabel(parent, cfg)
 end
 
 -- ============ 收藏星标 ============
+local allStars = {}
+
 local function createStar(parent, id, x, y)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 20, 0, 20)
@@ -388,9 +371,10 @@ local function createStar(parent, id, x, y)
     btn.BackgroundTransparency = 1
     btn.BorderSizePixel = 0
     btn.AutoButtonColor = false
-    btn.Visible = favoriteModeEnabled  -- ★ 只在收藏模式下可见
+    btn.Visible = favoriteModeEnabled
     btn.ZIndex = 8
     btn.Parent = parent
+    table.insert(allStars, btn)
 
     local function refresh(v)
         btn.Text = v and "★" or "☆"
@@ -407,17 +391,12 @@ local function createStar(parent, id, x, y)
         local v = toggleFavorite(id)
         refresh(v)
     end)
-
-    -- 监听收藏模式开关
-    _G._lumenStarButtons = _G._lumenStarButtons or {}
-    table.insert(_G._lumenStarButtons, btn)
-
     return btn
 end
 
-function _G.setFavoriteMode(v)
+local function setFavoriteMode(v)
     favoriteModeEnabled = v
-    for _, btn in ipairs(_G._lumenStarButtons or {}) do
+    for _, btn in ipairs(allStars) do
         if btn and btn.Parent then
             btn.Visible = v
             if v then
@@ -484,12 +463,6 @@ local function createPanel(parent, cfg)
     panel:GetPropertyChangedSignal("Position"):Connect(syncShadow)
     panel:GetPropertyChangedSignal("Size"):Connect(syncShadow)
 
-    -- ★ 收集所有子元素，主题切换时统一刷新
-    local themedElements = {}
-    local function reg(elem, kind, key)
-        table.insert(themedElements, { e = elem, kind = kind, key = key })
-    end
-
     local titleBar, titleLine, titleLabel
     if hasTitle then
         titleBar = Instance.new("Frame")
@@ -499,11 +472,9 @@ local function createPanel(parent, cfg)
         titleBar.Size=UDim2.new(1,0,0,TITLE_H)
         titleBar.ZIndex=Z+4
         corner(titleBar,RADIUS); titleBar.Parent=panel
-        reg(titleBar, "bg", "WHITE")
         titleLabel = createLabel(titleBar,{text=cfg.title,x=16,y=0,w=W-100,h=TITLE_H,
             textSize=cfg.titleSize or 13,color=cfg.titleColor or Theme.TEXT,
             font=FONT_MED,zIndex=Z+5})
-        reg(titleLabel, "text", "TEXT")
         titleLine = Instance.new("Frame")
         titleLine.BackgroundColor3=cfg.borderColor or Theme.BORDER
         titleLine.BorderSizePixel=0
@@ -511,7 +482,6 @@ local function createPanel(parent, cfg)
         titleLine.Position=UDim2.new(0,0,1,0)
         titleLine.Size=UDim2.new(1,0,0,1)
         titleLine.ZIndex=Z+5; titleLine.Parent=titleBar
-        reg(titleLine, "bg", "BORDER")
     end
 
     local ICON=24; local ICON_PAD=8; local ICON_GAP=4
@@ -525,7 +495,11 @@ local function createPanel(parent, cfg)
         b.Position=UDim2.new(1,-(ICON_PAD+(orderFromRight-1)*(ICON+ICON_GAP)),0,(hasTitle and TITLE_H or 20)/2)
         b.Size=UDim2.new(0,ICON,0,ICON); b.ZIndex=Z+6
         corner(b,6); b.Parent=titleBar or panel
-        reg(b, "text", "TEXT_MUTED")
+        addThemeListener(function(dark)
+            if b and b.Parent then
+                b.TextColor3 = dark and DarkTheme.TEXT_MUTED or Theme.TEXT_MUTED
+            end
+        end)
         b.MouseEnter:Connect(function()
             b.BackgroundTransparency=0
             tw(b,EASE_FAST,{BackgroundColor3=Theme.HOVER_BG,TextColor3=Theme.PRIMARY_DK})
@@ -541,7 +515,7 @@ local function createPanel(parent, cfg)
 
     local minimized=false; local savedH=H
     local sidebar, pageContainer, playerBar
-    local pages, tabButtons, tabHl = {}, {}, nil
+    local pages, tabButtons, tabHl, tabHlBar = {}, {}, nil, nil
     local currentTab = 1
 
     local function setContentVisible(v)
@@ -651,7 +625,6 @@ local function createPanel(parent, cfg)
         playerBar.Position=UDim2.new(0,PB_PAD,1,-PB_PAD)
         playerBar.Size=UDim2.new(0,SIDEBAR_W>0 and (SIDEBAR_W-PB_PAD*2) or 180,0,PB_H)
         playerBar.ZIndex=Z+6; corner(playerBar,8); playerBar.Parent=panel
-        reg(playerBar, "bg", "WHITE")
         local avatarSize=30
         local avatar=Instance.new("ImageLabel")
         avatar.BackgroundColor3=Theme.HOVER_BG; avatar.BorderSizePixel=0
@@ -667,7 +640,6 @@ local function createPanel(parent, cfg)
         nameText.Position=UDim2.new(0,avatarSize+12,0,6)
         nameText.Size=UDim2.new(1,-(avatarSize+16),0,14); nameText.ZIndex=Z+7
         nameText.Parent=playerBar
-        reg(nameText, "text", "TEXT")
         local userText=Instance.new("TextLabel")
         userText.BackgroundTransparency=1; userText.Text="@"..player.Name
         userText.TextColor3=Theme.TEXT_MUTED; userText.TextSize=10; userText.Font=FONT_REG
@@ -676,7 +648,6 @@ local function createPanel(parent, cfg)
         userText.Position=UDim2.new(0,avatarSize+12,0,21)
         userText.Size=UDim2.new(1,-(avatarSize+16),0,14); userText.ZIndex=Z+7
         userText.Parent=playerBar
-        reg(userText, "text", "TEXT_MUTED")
     end
 
     if hasTabs then
@@ -686,13 +657,11 @@ local function createPanel(parent, cfg)
         sidebar.Position=UDim2.new(0,0,0,TITLE_H)
         sidebar.Size=UDim2.new(0,SIDEBAR_W,1,-TITLE_H)
         sidebar.ZIndex=Z+3; corner(sidebar,RADIUS); sidebar.Parent=panel
-        reg(sidebar, "bg", "WHITE")
         local sideLine=Instance.new("Frame")
         sideLine.BackgroundColor3=cfg.borderColor or Theme.BORDER
         sideLine.BorderSizePixel=0; sideLine.AnchorPoint=Vector2.new(1,0)
         sideLine.Position=UDim2.new(1,0,0,0); sideLine.Size=UDim2.new(0,1,1,0)
         sideLine.ZIndex=Z+4; sideLine.Parent=sidebar
-        reg(sideLine, "bg", "BORDER")
 
         local ITEM_H=cfg.tabHeight or 32
         local ITEM_PAD_X=8; local ITEM_START_Y=10
@@ -713,13 +682,11 @@ local function createPanel(parent, cfg)
         tabHl.Position=UDim2.new(0,ITEM_PAD_X,0,ITEM_START_Y)
         tabHl.Size=UDim2.new(0,ITEM_W,0,ITEM_H)
         tabHl.ZIndex=Z+3; corner(tabHl,8); tabHl.Parent=navScroll
-        reg(tabHl, "bg", "HOVER_BG")
-        local tabHlBar=Instance.new("Frame")
+        tabHlBar=Instance.new("Frame")
         tabHlBar.BackgroundColor3=Theme.PRIMARY; tabHlBar.BorderSizePixel=0
         tabHlBar.AnchorPoint=Vector2.new(0,0.5); tabHlBar.Position=UDim2.new(0,0,0.5,0)
         tabHlBar.Size=UDim2.new(0,3,0,14); tabHlBar.ZIndex=Z+4
         corner(tabHlBar,2); tabHlBar.Parent=tabHl
-        reg(tabHlBar, "bg", "PRIMARY")
 
         for i,name in ipairs(tabNames) do
             local btn=Instance.new("TextButton")
@@ -731,7 +698,6 @@ local function createPanel(parent, cfg)
             btn.Position=UDim2.new(0,ITEM_PAD_X,0,ITEM_START_Y+(i-1)*(ITEM_H+4))
             btn.Size=UDim2.new(0,ITEM_W,0,ITEM_H)
             btn.ZIndex=Z+5; corner(btn,8); btn.Parent=navScroll
-            reg(btn, "navText", nil)
             local pad=Instance.new("UIPadding")
             pad.PaddingLeft=UDim.new(0,14); pad.Parent=btn
             local capture=i
@@ -783,30 +749,25 @@ local function createPanel(parent, cfg)
         body.ZIndex=Z+1; body.Parent=panel
     end
 
-    -- ★ 主题切换刷新（只改 tracked 的元素）
-    local function refreshTheme()
-        local src = currentDark and DarkTheme or Theme
-        for _, item in ipairs(themedElements) do
-            local e, kind, key = item.e, item.kind, item.key
-            if e and e.Parent then
-                if kind == "bg" then
-                    e.BackgroundColor3 = src[key]
-                elseif kind == "text" then
-                    e.TextColor3 = src[key]
-                elseif kind == "navText" then
-                    local isSel = false
-                    for i, b in ipairs(tabButtons) do
-                        if b == e and i == currentTab then isSel = true; break end
-                    end
-                    e.TextColor3 = isSel and src.PRIMARY_DK or src.TEXT_MUTED
-                end
+    -- ★ 主题切换时刷新面板相关元素的颜色
+    addThemeListener(function(dark)
+        local src = dark and DarkTheme or Theme
+        if panel and panel.Parent then panel.BackgroundColor3 = src.WHITE end
+        if panelStroke then panelStroke.Color = src.BORDER end
+        if shadow then shadow.BackgroundColor3 = src.SHADOW end
+        if titleBar and titleBar.Parent then titleBar.BackgroundColor3 = src.WHITE end
+        if titleLine and titleLine.Parent then titleLine.BackgroundColor3 = src.BORDER end
+        if sidebar and sidebar.Parent then sidebar.BackgroundColor3 = src.WHITE end
+        if playerBar and playerBar.Parent then playerBar.BackgroundColor3 = src.WHITE end
+        if tabHl and tabHl.Parent then tabHl.BackgroundColor3 = src.HOVER_BG end
+        if tabHlBar and tabHlBar.Parent then tabHlBar.BackgroundColor3 = src.PRIMARY end
+        -- 侧栏菜单文字
+        for i, b in ipairs(tabButtons) do
+            if b and b.Parent then
+                b.TextColor3 = (i == currentTab) and src.PRIMARY_DK or src.TEXT_MUTED
             end
         end
-        panel.BackgroundColor3 = src.WHITE
-        panelStroke.Color = src.BORDER
-        if shadow then shadow.BackgroundColor3 = src.SHADOW end
-    end
-    addThemeListener(refreshTheme)
+    end)
 
     local ownedExternals = {}
     if shadow then table.insert(ownedExternals, shadow) end
@@ -831,7 +792,7 @@ local function createPanel(parent, cfg)
     }
 end
 
--- ============ Button ============
+-- ============ Button（关键修复：主题切换时同步刷新所有颜色 + hover 基准） ============
 local function createButton(parent, cfg)
     local isCard = cfg.layout == "card"
     local W = cfg.w or 120
@@ -839,29 +800,44 @@ local function createButton(parent, cfg)
     local X = cfg.x or 0
     local Y = cfg.y or 0
     local btn = Instance.new("TextButton")
-    btn.BackgroundColor3 = cfg.bgColor or Theme.WHITE
+    local customBg = cfg.bgColor
+    local customTx = cfg.textColor
+    local customBd = cfg.borderColor
+    btn.BackgroundColor3 = customBg or Theme.WHITE
     btn.BorderSizePixel = 0
     btn.Text = isCard and "" or (cfg.text or "Button")
-    btn.TextColor3 = cfg.textColor or Theme.PRIMARY
+    btn.TextColor3 = customTx or Theme.PRIMARY
     btn.TextSize = cfg.textSize or 12
     btn.Font = FONT_MED; btn.AutoButtonColor = false
     btn.Position = UDim2.new(0, X, 0, Y)
     btn.Size = UDim2.new(0, W, 0, H)
     btn.ZIndex = cfg.zIndex or 5
     corner(btn, cfg.radius or 6)
-    local st = stroke(btn, cfg.borderColor or Theme.PRIMARY, 1)
+    local st = stroke(btn, customBd or Theme.PRIMARY, 1)
     btn.Parent = parent
     local enabled = cfg.enabled ~= false
-    local baseBg = cfg.bgColor or Theme.WHITE
-    local baseTx = cfg.textColor or Theme.PRIMARY
-    local baseBd = cfg.borderColor or Theme.PRIMARY
+
+    -- 使用"当前主题基准色"函数，确保 hover/leave 拿到的是最新值
+    local function currentBaseBg()
+        if customBg then return customBg end
+        return currentDark and DarkTheme.WHITE or Theme.WHITE
+    end
+    local function currentBaseTx()
+        if customTx then return customTx end
+        return currentDark and DarkTheme.PRIMARY or Theme.PRIMARY
+    end
+    local function currentBaseBd()
+        if customBd then return customBd end
+        return currentDark and DarkTheme.PRIMARY or Theme.PRIMARY
+    end
+
     local iconLabel = nil
     local titleLabel = nil
     if isCard then
         titleLabel = createLabel(btn, {
             text = cfg.text or "", x = cfg.paddingLeft or 14, y = 0,
             w = W - 46, h = H, textSize = cfg.textSize or 12,
-            color = cfg.textColor or Theme.TEXT, font = FONT_MED,
+            color = customTx or Theme.TEXT, font = FONT_MED,
             align = Enum.TextXAlignment.Left, zIndex = 6,
         })
         iconLabel = createLabel(btn, {
@@ -870,6 +846,7 @@ local function createButton(parent, cfg)
             font = FONT_MED, align = Enum.TextXAlignment.Center, zIndex = 6,
         })
     end
+
     if not enabled then
         btn.BackgroundColor3 = Theme.DISABLED_BG
         if not isCard then btn.TextColor3 = Theme.DISABLED_FG end
@@ -887,42 +864,44 @@ local function createButton(parent, cfg)
         btn.MouseLeave:Connect(function() hideTooltip() end)
     end
 
-    -- ★ 深色模式跟随
-    local baseBgFunc = cfg.bgColor
-    if not cfg.bgColor then
-        addThemeListener(function(dark)
-            if not btn or not btn.Parent then return end
-            if not enabled then
-                btn.BackgroundColor3 = dark and DarkTheme.DISABLED_BG or Theme.DISABLED_BG
-            else
-                btn.BackgroundColor3 = dark and DarkTheme.WHITE or Theme.WHITE
-            end
-            if not isCard then
-                btn.TextColor3 = dark and DarkTheme.PRIMARY or Theme.PRIMARY
-            end
-            st.Color = dark and DarkTheme.PRIMARY or Theme.PRIMARY
-        end)
-    end
+    -- ★ 主题切换刷新按钮外观
+    addThemeListener(function(dark)
+        if not btn or not btn.Parent then return end
+        local src = dark and DarkTheme or Theme
+        if not enabled then
+            btn.BackgroundColor3 = src.DISABLED_BG
+            if not isCard then btn.TextColor3 = src.DISABLED_FG end
+            st.Color = src.BORDER
+        else
+            btn.BackgroundColor3 = customBg or src.WHITE
+            if not isCard then btn.TextColor3 = customTx or src.PRIMARY end
+            st.Color = customBd or src.PRIMARY
+            if titleLabel then titleLabel.TextColor3 = customTx or src.TEXT end
+            if iconLabel then iconLabel.TextColor3 = src.PRIMARY end
+        end
+    end)
 
     btn.MouseEnter:Connect(function()
         if not enabled then return end
+        local src = currentDark and DarkTheme or Theme
         tw(btn, EASE_FAST, {
-            BackgroundColor3 = Theme.HOVER_BG,
-            TextColor3 = Theme.PRIMARY_DK,
+            BackgroundColor3 = src.HOVER_BG,
+            TextColor3 = src.PRIMARY_DK,
             Position = UDim2.new(0, X, 0, Y - 1),
         })
-        tw(st, EASE_FAST, { Color = Theme.PRIMARY_DK })
-        if iconLabel then tw(iconLabel, EASE_FAST, { TextColor3 = Theme.PRIMARY_DK }) end
+        tw(st, EASE_FAST, { Color = src.PRIMARY_DK })
+        if iconLabel then tw(iconLabel, EASE_FAST, { TextColor3 = src.PRIMARY_DK }) end
     end)
     btn.MouseLeave:Connect(function()
         if not enabled then return end
+        -- ★ 用 currentBase* 拿实时颜色，避免切完主题后 hover 又变回旧色
         tw(btn, EASE, {
-            BackgroundColor3 = baseBg,
-            TextColor3 = baseTx,
+            BackgroundColor3 = currentBaseBg(),
+            TextColor3 = currentBaseTx(),
             Position = UDim2.new(0, X, 0, Y),
         })
-        tw(st, EASE, { Color = baseBd })
-        if iconLabel then tw(iconLabel, EASE, { TextColor3 = Theme.PRIMARY }) end
+        tw(st, EASE, { Color = currentBaseBd() })
+        if iconLabel then tw(iconLabel, EASE, { TextColor3 = currentBaseTx() }) end
     end)
     btn.MouseButton1Down:Connect(function()
         if not enabled then return end
@@ -941,15 +920,16 @@ local function createButton(parent, cfg)
     btn.MouseButton1Up:Connect(function()
         if not enabled then return end
         if btn:IsMouseOver() then
+            local src = currentDark and DarkTheme or Theme
             tw(btn, EASE, {
-                BackgroundColor3 = Theme.HOVER_BG,
-                TextColor3 = Theme.PRIMARY_DK,
+                BackgroundColor3 = src.HOVER_BG,
+                TextColor3 = src.PRIMARY_DK,
                 Position = UDim2.new(0, X, 0, Y - 1),
             })
         else
             tw(btn, EASE, {
-                BackgroundColor3 = baseBg,
-                TextColor3 = baseTx,
+                BackgroundColor3 = currentBaseBg(),
+                TextColor3 = currentBaseTx(),
                 Position = UDim2.new(0, X, 0, Y),
             })
         end
@@ -981,15 +961,22 @@ local function createToggle(parent, cfg)
     corner(knob,knobSize/2); knob.ZIndex=6; knob.Parent=container
     local state=cfg.value or false
     local onChange=cfg.onChange
-    local onColor=cfg.onColor or Theme.PRIMARY
-    local offColor=cfg.offColor or Theme.TRACK
     local function apply(animate,elastic)
         local info=animate and (elastic and EASE_BACK or EASE) or EASE_NONE
-        tw(track,animate and EASE or EASE_NONE,{BackgroundColor3=state and onColor or offColor})
+        local onC = cfg.onColor or (currentDark and DarkTheme.PRIMARY or Theme.PRIMARY)
+        local offC = cfg.offColor or (currentDark and DarkTheme.TRACK or Theme.TRACK)
+        tw(track,animate and EASE or EASE_NONE,{BackgroundColor3=state and onC or offC})
         local targetX=state and (W-knobSize-2) or 2
         tw(knob,info,{Position=UDim2.new(0,targetX,0,2)})
     end
     apply(false,false)
+    addThemeListener(function()
+        local onC = cfg.onColor or (currentDark and DarkTheme.PRIMARY or Theme.PRIMARY)
+        local offC = cfg.offColor or (currentDark and DarkTheme.TRACK or Theme.TRACK)
+        if track and track.Parent then
+            track.BackgroundColor3 = state and onC or offC
+        end
+    end)
     local click=Instance.new("TextButton")
     click.BackgroundTransparency=1; click.Text=""; click.AutoButtonColor=false
     click.Size=UDim2.new(1,0,1,0); click.ZIndex=7; click.Parent=container
@@ -1009,7 +996,6 @@ local function createSlider(parent, cfg)
     local value = cfg.value or minV
     local step = cfg.step or 0
     local onChange = cfg.onChange
-    local primaryColor = cfg.color or Theme.PRIMARY
     local showValue = cfg.showValue ~= false
     local decimals = cfg.decimals or 0
     local valueW = cfg.valueWidth or 46
@@ -1031,6 +1017,7 @@ local function createSlider(parent, cfg)
     track.AnchorPoint=Vector2.new(0,0.5); track.Position=UDim2.new(0,0,0.5,0)
     track.Size=UDim2.new(0,sliderW,0,trackH)
     corner(track,trackH/2); track.ZIndex=5; track.Parent=container
+    local primaryColor = cfg.color or Theme.PRIMARY
     local fill=Instance.new("Frame")
     fill.BackgroundColor3=primaryColor; fill.BorderSizePixel=0
     fill.Size=UDim2.new(0,0,1,0); corner(fill,trackH/2)
@@ -1041,6 +1028,16 @@ local function createSlider(parent, cfg)
     knob.AnchorPoint=Vector2.new(0.5,0.5); knob.Position=UDim2.new(0,0,0.5,0)
     knob.Size=UDim2.new(0,knobSize,0,knobSize)
     corner(knob,knobSize/2); knob.ZIndex=7; knob.Parent=container
+    addThemeListener(function()
+        if not cfg.color then
+            local c = currentDark and DarkTheme.PRIMARY or Theme.PRIMARY
+            fill.BackgroundColor3 = c
+            knob.BackgroundColor3 = c
+        end
+        if track and track.Parent then
+            track.BackgroundColor3 = currentDark and DarkTheme.TRACK or Theme.TRACK
+        end
+    end)
     local valueBtn, valueInput
     if showValue then
         valueBtn = Instance.new("TextButton")
@@ -1140,14 +1137,6 @@ local function createSlider(parent, cfg)
     hit.Position=UDim2.new(0,0,0,0)
     hit.Size=UDim2.new(0,sliderW,1,0)
     hit.ZIndex=7; hit.Parent=container
-    hit.MouseEnter:Connect(function()
-        if dragging then return end
-        tw(knob,EASE_FAST,{Size=UDim2.new(0,knobSize+4,0,knobSize+4)})
-    end)
-    hit.MouseLeave:Connect(function()
-        if dragging then return end
-        tw(knob,EASE,{Size=UDim2.new(0,knobSize,0,knobSize)})
-    end)
     hit.InputBegan:Connect(function(input)
         if input.UserInputType==Enum.UserInputType.MouseButton1
            or input.UserInputType==Enum.UserInputType.Touch then
@@ -1200,6 +1189,12 @@ local function createTextBox(parent, cfg)
     tb.Position=UDim2.new(0,10,0,0)
     tb.Size=UDim2.new(1,-20,1,0)
     tb.ZIndex=6; tb.Parent=container
+    addThemeListener(function(dark)
+        if not cfg.bgColor then container.BackgroundColor3 = dark and DarkTheme.WHITE or Theme.WHITE end
+        if not cfg.borderColor then st.Color = dark and DarkTheme.BORDER or Theme.BORDER end
+        if not cfg.textColor then tb.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT end
+        if not cfg.placeholderColor then tb.PlaceholderColor3 = dark and DarkTheme.TEXT_MUTED or Theme.TEXT_MUTED end
+    end)
     tb.Focused:Connect(function()
         tw(st,EASE_FAST,{Color=Theme.PRIMARY,Thickness=1.5})
     end)
@@ -1214,7 +1209,6 @@ end
 local function createCheckbox(parent, cfg)
     local W, H = cfg.w or 200, cfg.h or 20
     local boxSize = cfg.boxSize or 16
-    local checkColor = cfg.color or Theme.PRIMARY
     local container=Instance.new("Frame")
     container.BackgroundTransparency=1
     container.Position=UDim2.new(0,cfg.x or 0,0,cfg.y or 0)
@@ -1240,17 +1234,28 @@ local function createCheckbox(parent, cfg)
     local state=cfg.value or false
     local onChange=cfg.onChange
     local function apply(animate)
+        local ck = cfg.color or (currentDark and DarkTheme.PRIMARY or Theme.PRIMARY)
         if state then
-            tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=checkColor})
-            tw(boxStroke,animate and EASE or EASE_NONE,{Color=checkColor})
+            tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=ck})
+            tw(boxStroke,animate and EASE or EASE_NONE,{Color=ck})
             tw(mark,animate and EASE_BACK or EASE_NONE,{Size=UDim2.new(0,6,0,6),BackgroundTransparency=0})
         else
-            tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=Theme.WHITE})
-            tw(boxStroke,animate and EASE or EASE_NONE,{Color=Theme.BORDER})
+            tw(box,animate and EASE or EASE_NONE,{BackgroundColor3=(currentDark and DarkTheme.WHITE or Theme.WHITE)})
+            tw(boxStroke,animate and EASE or EASE_NONE,{Color=(currentDark and DarkTheme.BORDER or Theme.BORDER)})
             tw(mark,animate and EASE_IN or EASE_NONE,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1})
         end
     end
     apply(false)
+    addThemeListener(function()
+        if state then
+            local ck = cfg.color or (currentDark and DarkTheme.PRIMARY or Theme.PRIMARY)
+            box.BackgroundColor3 = ck
+            boxStroke.Color = ck
+        else
+            box.BackgroundColor3 = currentDark and DarkTheme.WHITE or Theme.WHITE
+            boxStroke.Color = currentDark and DarkTheme.BORDER or Theme.BORDER
+        end
+    end)
     local click=Instance.new("TextButton")
     click.BackgroundTransparency=1; click.Text=""; click.AutoButtonColor=false
     click.Size=UDim2.new(1,0,1,0); click.ZIndex=8; click.Parent=container
@@ -1332,7 +1337,8 @@ local function createDescriptionBox(parent, cfg)
     box.Size=UDim2.new(0,W,0,0)
     box.AutomaticSize=Enum.AutomaticSize.Y
     box.ZIndex=cfg.zIndex or 5
-    corner(box,8); stroke(box,cfg.borderColor or Theme.BORDER,1)
+    corner(box,8)
+    local bs = stroke(box,cfg.borderColor or Theme.BORDER,1)
     box.Parent=parent
     local layout=Instance.new("UIListLayout")
     layout.FillDirection=Enum.FillDirection.Vertical
@@ -1364,9 +1370,10 @@ local function createDescriptionBox(parent, cfg)
     body.AutomaticSize=Enum.AutomaticSize.Y
     body.ZIndex=6; body.Parent=box
     addThemeListener(function(dark)
-        box.BackgroundColor3 = dark and DarkTheme.PANEL_SOFT or Theme.PANEL_SOFT
-        if title then title.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT end
-        body.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT
+        if not cfg.bgColor then box.BackgroundColor3 = dark and DarkTheme.PANEL_SOFT or Theme.PANEL_SOFT end
+        if not cfg.borderColor then bs.Color = dark and DarkTheme.BORDER or Theme.BORDER end
+        if title and not cfg.titleColor then title.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT end
+        if not cfg.textColor then body.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT end
     end)
     return box
 end
@@ -1565,157 +1572,16 @@ local function createDropdownBase(parent, cfg, multi)
     btn.MouseLeave:Connect(function()
         if not isOpen then tw(btnStroke,EASE,{Color=Theme.BORDER}) end
     end)
+    addThemeListener(function(dark)
+        if btn and btn.Parent then btn.BackgroundColor3 = dark and DarkTheme.WHITE or Theme.WHITE end
+        if btnStroke and not isOpen then btnStroke.Color = dark and DarkTheme.BORDER or Theme.BORDER end
+        if valueLabel then valueLabel.TextColor3 = dark and DarkTheme.TEXT or Theme.TEXT end
+        if arrow then arrow.TextColor3 = dark and DarkTheme.TEXT_MUTED or Theme.TEXT_MUTED end
+        if list then list.BackgroundColor3 = dark and DarkTheme.WHITE or Theme.WHITE end
+    end)
     return {container=container,getValue=function() return state end,
         setValue=function(v) state=v; refreshLabel(); refreshMarks() end,
         closeList=closeList}
-end
-
--- ============ 状态 HUD（渐变胶囊） ============
-local hudGui = Instance.new("ScreenGui")
-hudGui.Name = "LumenHUD"
-hudGui.ResetOnSpawn = false
-hudGui.IgnoreGuiInset = true
-hudGui.DisplayOrder = 101
-hudGui.Parent = playerGui
-
-local hudContainer = Instance.new("Frame")
-hudContainer.Name = "HUDContainer"
-hudContainer.AnchorPoint = Vector2.new(0, 0)
-hudContainer.Position = UDim2.new(0, 12, 0, 100)
-hudContainer.Size = UDim2.new(0, 230, 0, 0)
-hudContainer.AutomaticSize = Enum.AutomaticSize.Y
-hudContainer.BackgroundTransparency = 1
-hudContainer.ZIndex = 240
-hudContainer.Parent = hudGui
-
-local hudLayout = Instance.new("UIListLayout", hudContainer)
-hudLayout.Padding = UDim.new(0, 6)
-hudLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-local hudItems = {}
-local hudEnabled = false
-
-local function refreshHud()
-    if not hudEnabled then hudContainer.Visible = false; return end
-    hudContainer.Visible = true
-    local y = 0
-    for _, item in pairs(hudItems) do
-        if item.visible then
-            item.frame.LayoutOrder = y
-            item.frame.Visible = true
-            y = y + 1
-        else
-            item.frame.Visible = false
-        end
-    end
-end
-
-local function hudAdd(id, text, color, color2)
-    color = color or Color3.fromRGB(37, 99, 235)
-    color2 = color2 or color:Lerp(Color3.fromRGB(0, 0, 0), 0.25)
-    if hudItems[id] then
-        hudItems[id].label.Text = text
-        if hudItems[id].grad then
-            hudItems[id].grad.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, color),
-                ColorSequenceKeypoint.new(1, color2),
-            })
-        end
-        hudItems[id].visible = true
-        refreshHud()
-        return
-    end
-    -- 卡片外框（带白色底色 + 彩色渐变左边条）
-    local frame = Instance.new("Frame")
-    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    frame.BorderSizePixel = 0
-    frame.Size = UDim2.new(1, 0, 0, 30)
-    frame.ZIndex = 241
-    frame.Parent = hudContainer
-    corner(frame, 8)
-    local fs = stroke(frame, Color3.fromRGB(230, 230, 230), 1)
-
-    -- 左侧渐变色条
-    local accent = Instance.new("Frame")
-    accent.AnchorPoint = Vector2.new(0, 0)
-    accent.Position = UDim2.new(0, 0, 0, 0)
-    accent.Size = UDim2.new(0, 4, 1, 0)
-    accent.BackgroundColor3 = color
-    accent.BorderSizePixel = 0
-    accent.ZIndex = 242
-    accent.Parent = frame
-    local ac = Instance.new("UICorner", accent)
-    ac.CornerRadius = UDim.new(0, 2)
-    local accentGrad = Instance.new("UIGradient", accent)
-    accentGrad.Rotation = 90
-    accentGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, color),
-        ColorSequenceKeypoint.new(1, color2),
-    })
-
-    -- 图标圆点（纯色 + 一个小白点做"脉冲"感）
-    local dot = Instance.new("Frame")
-    dot.AnchorPoint = Vector2.new(0, 0.5)
-    dot.Position = UDim2.new(0, 14, 0.5, 0)
-    dot.Size = UDim2.new(0, 8, 0, 8)
-    dot.BackgroundColor3 = color
-    dot.BorderSizePixel = 0
-    dot.ZIndex = 242
-    dot.Parent = frame
-    corner(dot, 4)
-    local dotGrad = Instance.new("UIGradient", dot)
-    dotGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, color),
-        ColorSequenceKeypoint.new(1, color2),
-    })
-
-    -- 文本
-    local lbl = Instance.new("TextLabel")
-    lbl.BackgroundTransparency = 1
-    lbl.Text = text
-    lbl.TextColor3 = Color3.fromRGB(31, 41, 55)
-    lbl.Font = Enum.Font.GothamBold
-    lbl.TextSize = 11
-    lbl.Position = UDim2.new(0, 28, 0, 0)
-    lbl.Size = UDim2.new(1, -36, 1, 0)
-    lbl.TextXAlignment = Enum.TextXAlignment.Left
-    lbl.ZIndex = 242
-    lbl.Parent = frame
-
-    hudItems[id] = { frame = frame, label = lbl, visible = true, grad = accentGrad, dotGrad = dotGrad, dot = dot }
-    refreshHud()
-
-    -- ★ 入场：从左侧滑入
-    frame.Position = UDim2.new(0, -240, 0, 0)
-    tw(frame, TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0, 0, 0, 0),
-    })
-
-    -- ★ 小圆点脉冲
-    task.spawn(function()
-        while hudItems[id] and hudItems[id].dot and hudItems[id].dot.Parent do
-            tw(dot, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                Size = UDim2.new(0, 11, 0, 11),
-            })
-            task.wait(0.4)
-            if hudItems[id] and hudItems[id].dot and hudItems[id].dot.Parent then
-                tw(dot, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                    Size = UDim2.new(0, 8, 0, 8),
-                })
-            end
-            task.wait(0.4)
-        end
-    end)
-end
-
-local function hudRemove(id)
-    if hudItems[id] then
-        local f = hudItems[id].frame
-        hudItems[id] = nil
-        tw(f, EASE_IN, { Position = UDim2.new(0, -240, 0, 0) })
-        task.delay(0.3, function() pcall(function() f:Destroy() end) end)
-        refreshHud()
-    end
 end
 
 -- ============ 交错入场 ============
@@ -1767,16 +1633,9 @@ function ui.isDarkMode() return currentDark end
 function ui.getFavorites() return favorites end
 function ui.toggleFavorite(id) return toggleFavorite(id) end
 function ui.stagger(parent, delay) staggerChildren(parent, delay) end
-function ui.setFavoriteMode(v) _G.setFavoriteMode(v) end
+function ui.setFavoriteMode(v) setFavoriteMode(v) end
 
-function ui.hudSetEnabled(v) hudEnabled = v; refreshHud() end
-function ui.hudAdd(id, text, color, color2) hudAdd(id, text, color, color2) end
-function ui.hudRemove(id) hudRemove(id) end
-function ui.hudClear()
-    for id, _ in pairs(hudItems) do hudRemove(id) end
-end
-
-function ui.destroy() uiGui:Destroy(); hudGui:Destroy() end
+function ui.destroy() uiGui:Destroy() end
 
 _G.ui = ui
 print("[LUMEN UI] 已加载。")
