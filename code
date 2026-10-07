@@ -1405,7 +1405,7 @@ local function buildAnnouncementPage(page)
                     "📅 创建日期：2026年7月10日\n" ..
                     "🔄 此脚本一直更新\n\n" ..
                     "📊 您目前已经执行了 " .. globalExecCount .. " 次，感谢您的支持！\n" ..
-                    "\n🇨🇳金秋十月，喜迎国庆！山河锦绣，国泰民安。\n\n✨感谢各位一直以来支持黑脚本。\n\n🎉愿大家假期愉快，万事顺遂！"
+                    "国庆结束了，收收心吧😭 黑脚本继续停更"
             end)
             task.wait(1)
         end
