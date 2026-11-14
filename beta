@@ -1,5 +1,5 @@
---[[DTKD V18.4.725S | GUARD:DTP_k5yus7g5i6_mwfvdddr]]
-local _GUARD_TAG="DTP_k5yus7g5i6_mwfvdddr"
+--[[DTKD V18.4.725S | GUARD:DTP_ssh4loskbb_mwfvfkat]]
+local _GUARD_TAG="DTP_ssh4loskbb_mwfvfkat"
 
 local _AHG=(function()
   local _p=pcall local _e=error local _t=type local _ts=tostring
@@ -14,7 +14,7 @@ local _AHG=(function()
       if _okJ and _t(_jid)=="string" then _IN_RBX=true end
     end
   end
-  local function _ddtnNVc(tag)
+  local function _dQniekf(tag)
     local _msg="[DTKD] E"
     _p(_e,_msg,0)
     if _IN_RBX then
@@ -33,8 +33,8 @@ local _AHG=(function()
   local _CRIT={{"string.byte",string.byte},{"string.sub",string.sub},{"string.char",string.char},{"string.find",string.find},{"string.match",string.match},{"string.gsub",string.gsub},{"string.gmatch",string.gmatch},{"string.dump",string.dump},{"table.concat",table.concat},{"math.floor",math.floor},{"pcall",pcall},{"xpcall",xpcall},{"error",error},{"assert",assert},{"type",type},{"tostring",tostring},{"tonumber",tonumber},{"select",select},{"rawget",rawget},{"rawset",rawset},{"rawequal",rawequal},{"rawlen",rawlen},{"setmetatable",setmetatable},{"getmetatable",getmetatable},{"pairs",pairs},{"ipairs",ipairs},{"next",next},{"load",load},{"loadstring",loadstring},{"getfenv",getfenv},{"setfenv",setfenv}}
   local _hooked={}
   for i=1,#_CRIT do local nm,fn=_CRIT[i][1],_CRIT[i][2] if fn~=nil and _is_cfunc(fn)==false then _hooked[#_hooked+1]=nm end end
-  if #_hooked>0 then _ddtnNVc("CRITICAL_HOOKED:".._concat(_hooked,",")) end
-  if _t(_d)=="table" and _t(_d.gethook)=="function" then local ok,hk=_p(_d.gethook) if ok and hk~=nil then _ddtnNVc("DEBUG_HOOK_ACTIVE") end end
+  if #_hooked>0 then _dQniekf("CRITICAL_HOOKED:".._concat(_hooked,",")) end
+  if _t(_d)=="table" and _t(_d.gethook)=="function" then local ok,hk=_p(_d.gethook) if ok and hk~=nil then _dQniekf("DEBUG_HOOK_ACTIVE") end end
   
 local _PURGE={"getloadedmodules","getsourcelocals","getscripts","dumpstring","getscriptbytecode","getscriptclosure","getrunningscripts","getinstances","getnilinstances","decompile","getreg","getsenv","getscripthash","getconnections","hookmetamethod","getstack","setstack","getupvalue","setupvalue","getconstants","setconstant","getproto","getprotos","getsandbox","getloadedbatch","getfunctionbytecode","getcallbackvalue","isourclosure","replaceclosure","detour_function","getloaded","getsourceclocal","getallthreads","dump"}
 local _gg=nil pcall(function() if _t(getgenv)=="function" then _gg=getgenv() end end)
@@ -43,7 +43,7 @@ if _IN_RBX and _gg then for _i=1,#_PURGE do local _k=_PURGE[_i] local _ex=false 
 if _IN_RBX and _t(getfenv)=="function" then pcall(function() local _f0=getfenv(0) if _t(_f0)=="table" then for _i=1,#_PURGE do local _k=_PURGE[_i] pcall(function() if _f0[_k]~=nil then _f0[_k]=nil end end) end end end) end
 
   local _DUMP_FILES={"output.lua","dump.lua","deobf.lua","source.lua"}
-  if _t(isfile)=="function" then for _i=1,#_DUMP_FILES do local _fn=_DUMP_FILES[_i] local _ok,_ex=pcall(isfile,_fn) if _ok and _ex then _ddtnNVc("DUMP_FILE:".._fn) end end end
+  if _t(isfile)=="function" then for _i=1,#_DUMP_FILES do local _fn=_DUMP_FILES[_i] local _ok,_ex=pcall(isfile,_fn) if _ok and _ex then _dQniekf("DUMP_FILE:".._fn) end end end
   if _t(_s)=="table" and _t(_s.dump)=="function" then pcall(function() _s.dump=function() return "" end end) end
   if _t(_d)=="table" then
     if _t(_d.getupvalue)=="function" then pcall(function() _d.getupvalue=function() return nil end end) end
@@ -52,7 +52,7 @@ if _IN_RBX and _t(getfenv)=="function" then pcall(function() local _f0=getfenv(0
     if _t(_d.setlocal)=="function" then pcall(function() _d.setlocal=function() return nil end end) end
     if _t(_d.getregistry)=="function" then pcall(function() _d.getregistry=function() return {} end end) end
   end
-  return {ok=true,is_cfunc=_is_cfunc,hard_die=_ddtnNVc,inRoblox=_IN_RBX}
+  return {ok=true,is_cfunc=_is_cfunc,hard_die=_dQniekf,inRoblox=_IN_RBX}
 end)()
 if not _AHG.ok then
   local _nil=nil
@@ -91,25 +91,25 @@ end
 local _FLOOR=function(x) if type(x)~="number" then return 0 end return x-x%1 end
 local _LOG=function() end
 local _ERR_BASE=(type(warn)=="function" and warn) or (type(print)=="function" and print) or function() end
-local _rPTzIoW, _rBJSzZR, _mGjIMII, _mZahIGB, _hppeoKP, _rvumnRv, _ragQpHH, _rdSrJBJ, _rIQSNXb, _oFhxQqu, _cNrxqPX, _gtcmhRX, _radpNQr
-local _hZMUMMl, _hPPjxFK, _hKPihIs, _pTusjeE, _oMFVaVq, _plkDauW, _piFGcNw, _pqnFNTT, _xkyJuKC
-local CONST, STRS, PROTO, _oTunbAD, _kRICyJU, _ftWtcIk, _self_check
+local _rATiOMW, _ronDGRu, _mxeouIO, _mKOmYyU, _hmDsVVp, _rIszJzY, _rJBIrjk, _rMcrRlJ, _rstmUNG, _oUDsBFF, _cETOSMV, _grlRepM, _rETduVS
+local _hYMmuLm, _hIFYksi, _hKdbxPm, _pbqWQkQ, _oKEzMxZ, _pqHJWbq, _pMIjckZ, _pbMaCyj, _xymJNcz
+local CONST, STRS, PROTO, _okHFvRe, _krDUtvp, _fUbDkgx, _self_check
 local _R3OFS=0
-local _cCymltk={}
+local _cfNKvoN={}
 
 local _INTEGRITY_FAILED=false
-local function _dEpUbJJ(tag)
+local function _daVtQEJ(tag)
   if _INTEGRITY_FAILED then return end
   _INTEGRITY_FAILED=true
   pcall(function()
-    if _xkyJuKC and #_xkyJuKC==256 then
-      for i=1,256 do local j=(i*131+i*7)%256+1 _xkyJuKC[i],_xkyJuKC[j]=_xkyJuKC[j],_xkyJuKC[i] end
+    if _xymJNcz and #_xymJNcz==256 then
+      for i=1,256 do local j=(i*131+i*7)%256+1 _xymJNcz[i],_xymJNcz[j]=_xymJNcz[j],_xymJNcz[i] end
     end
-    if _hppeoKP then
+    if _hmDsVVp then
       for op=33,75,3 do
-        local orig=_hppeoKP[op]
+        local orig=_hmDsVVp[op]
         if orig then
-          _hppeoKP[op]=function(v,ins,a,b,c)
+          _hmDsVVp[op]=function(v,ins,a,b,c)
             orig(v,ins,a,b,c)
             if v and v.R and ins and ins[2] then v.R[ins[2]]=(v.R[ins[2]] or 0)+1 end
           end
@@ -127,25 +127,25 @@ local function _xbxslow(a,b) a=_xu32(a) b=_xu32(b) local r=0 local p=1 for k=1,3
 local _xbx=_XHAS_B32 and function(a,b) return bit32.bxor(a,b) end or _xbxslow
 local _xsmix=function(l,s) local x=_xbx(_xu32(s),_xu32(l)) x=_xbx(x,_xu32(x*8192)) x=_xbx(x,_FLOOR(x/131072)) x=_xbx(x,_xu32(x*32)) x=x%2147483647 if x<1 then x=1 end return x end
 local function _probe_hash() local h=5381 local function mix(s) for i=1,#s do h=(h*33+string.byte(s,i))%4294967296 end end mix("A"..tostring(string.byte("A"))) mix("abc"..((string.sub("abc",2,2)=="b") and "2b" or "XX")) mix("A"..tostring(string.char(65))) local _ok,_e=pcall(function() error("DTKD_PROBE") end) mix((_ok and "ok" or "err")..((type(_e)=="string" and string.find(_e,"DTKD_PROBE",1,true)) and "DTKD" or "NO")) mix(table.concat({"a","b"})) mix("num"..type(0)) mix("tab"..type({})) mix("fn"..type(print)) mix("nil"..tostring(nil)) mix("yes"..tostring(select("#",1,2,3))) mix("k1"..tostring(next({k=1}))) mix("raw"..tostring(rawget({a=1},"a"))) return h%2147483647 end
-local _gCIUsXq
-do local function _tryg(g) if type(g)=="table" and (g["print"]~=nil or g["warn"]~=nil or g["game"]~=nil) then return g end return nil end if type(getgenv)=="function" then pcall(function() local r=_tryg(getgenv()) if r then _gCIUsXq=r end end) end if _gCIUsXq==nil and type(_ENV)=="table" then local r=_tryg(_ENV) if r then _gCIUsXq=r end end if _gCIUsXq==nil and type(_G)=="table" then local r=_tryg(_G) if r then _gCIUsXq=r end end if _gCIUsXq==nil then _gCIUsXq=(type(_ENV)=="table" and _ENV) or (type(_G)=="table" and _G) or {} end end
-local _nmrMMtS={print=print,warn=warn,error=error,assert=assert,tostring=tostring,tonumber=tonumber,type=type,pcall=pcall,xpcall=xpcall,pairs=pairs,ipairs=ipairs,next=next,select=select,unpack=table and (table.unpack or unpack),string=string,table=table,math=math,os=os,coroutine=coroutine,debug=debug}
-pcall(function() _nmrMMtS.game=game end)
-pcall(function() _nmrMMtS.tick=tick end)
-local _mDSAPQy={{1,0,0,5},{114,147,160,0},{0,0,0,95},{0,0,69,0}}
-local _mkdTsuY={{1,0,229,0},{250,155,162,160},{0,0,0,141},{0,0,159,0}}
-local _lCfHIhP,_lfXwUFU,_lPLfdOY
+local _gXGetqL
+do local function _tryg(g) if type(g)=="table" and (g["print"]~=nil or g["warn"]~=nil or g["game"]~=nil) then return g end return nil end if type(getgenv)=="function" then pcall(function() local r=_tryg(getgenv()) if r then _gXGetqL=r end end) end if _gXGetqL==nil and type(_ENV)=="table" then local r=_tryg(_ENV) if r then _gXGetqL=r end end if _gXGetqL==nil and type(_G)=="table" then local r=_tryg(_G) if r then _gXGetqL=r end end if _gXGetqL==nil then _gXGetqL=(type(_ENV)=="table" and _ENV) or (type(_G)=="table" and _G) or {} end end
+local _nKsumSt={print=print,warn=warn,error=error,assert=assert,tostring=tostring,tonumber=tonumber,type=type,pcall=pcall,xpcall=xpcall,pairs=pairs,ipairs=ipairs,next=next,select=select,unpack=table and (table.unpack or unpack),string=string,table=table,math=math,os=os,coroutine=coroutine,debug=debug}
+pcall(function() _nKsumSt.game=game end)
+pcall(function() _nKsumSt.tick=tick end)
+local _mLAhiXR={{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0}}
+local _mRoBWnr={{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0}}
+local _lyuDwyB,_lUUnStP,_lWDjvLs
 local _T_LIMIT=49;local _STEP_HARD_LIMIT=10000000
 local _T_LIMIT_ACT=_T_LIMIT
-local _L1H="0100880101280103af01026a0100f5010c2201058901001a0106df01023101052f01058a0101350100840104b40106710105230107e80108860100a2010a340108ab0106b201098f01022f01081f0101a2010efe0105250103af01026a0101280100880107e80105230106710104b4020d02020d06020d04020e07020307020105020004020206010cb7010ccc010a3a0109cf0108c6000000"
+local _L1H="0102950103ed0101f60100bb01048d0101ce010c6401091301072d010d9d01032c010628010ba40104ab0107ea01069d01050c010e050108c70109d70102140105020108ab01032b010a9d0102ad01008601021e0100bb0101f60103ed0102950107ea01050c0104ab01069d020e0c020e0302010502020602030702000401082c010cdb010bd9010ccd010933010c9a000000"
 local L1P={}
 do local _n=#_L1H local _i=1 while _i+1<=_n do local _h1=string.byte(_L1H,_i) local _h2=string.byte(_L1H,_i+1) if _h1<=57 then _h1=_h1-48 else _h1=_h1-87 end if _h2<=57 then _h2=_h2-48 else _h2=_h2-87 end L1P[#L1P+1]=_h1*16+_h2 _i=_i+2 end end
-local _trBEtik={}
-for _i=0,15 do local _r={} for _j=0,15 do local a,b,rr,p=_i,_j,0,1 for _=1,4 do local x,y=a%2,b%2 if x~=y then rr=rr+p end a=(a-x)/2 b=(b-y)/2 p=p*2 end _r[_j]=rr end _trBEtik[_i]=_r end
-local function _bx(a,b) a=_FLOOR(tonumber(a) or 0) b=_FLOOR(tonumber(b) or 0) a=a%256 b=b%256 if a<0 then a=a+256 end if b<0 then b=b+256 end local al=a%16 local ah=(a-al)/16 local bl=b%16 local bh=(b-bl)/16 return _trBEtik[al][bl]+_trBEtik[ah][bh]*16 end
+local _tQBLeLM={}
+for _i=0,15 do local _r={} for _j=0,15 do local a,b,rr,p=_i,_j,0,1 for _=1,4 do local x,y=a%2,b%2 if x~=y then rr=rr+p end a=(a-x)/2 b=(b-y)/2 p=p*2 end _r[_j]=rr end _tQBLeLM[_i]=_r end
+local function _bx(a,b) a=_FLOOR(tonumber(a) or 0) b=_FLOOR(tonumber(b) or 0) a=a%256 b=b%256 if a<0 then a=a+256 end if b<0 then b=b+256 end local al=a%16 local ah=(a-al)/16 local bl=b%16 local bh=(b-bl)/16 return _tQBLeLM[al][bl]+_tQBLeLM[ah][bh]*16 end
 local function _L1X(P) local r={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} local pc=1 while true do local op=P[pc] if not op or op==0 then break end local a=(P[pc+1] or 0)%16+1 local v=P[pc+2] or 0 if op==1 then r[a]=_FLOOR(v)%256 elseif op==2 then local b=(v%16)+1 r[a]=_bx(r[a],r[b]) end pc=pc+3 end return _FLOOR(r[1]*16777216+r[2]*65536+r[3]*256+r[4]) end
 local _k2raw=_L1X(L1P)
-if _GUARD_TAG~="DTP_k5yus7g5i6_mwfvdddr" then _dEpUbJJ("GUARD_TAG") end
+if _GUARD_TAG~="DTP_ssh4loskbb_mwfvfkat" then _daVtQEJ("GUARD_TAG") end
 local _PROBE=_probe_hash()
 local k2=(_k2raw+_hf(_GUARD_TAG)+_PROBE)%2147483647
 if k2<1 then k2=k2+2147483647 end
@@ -164,9 +164,9 @@ local _now
 if type(os)=="table" and type(os.clock)=="function" then _now=os.clock elseif type(tick)=="function" then _now=tick else _now=function() return 0 end end
 local _TIMEOUT_HIT=false
 
-local _nktiLZG={sb=string.byte,ss=string.sub,sc=string.char,sf=string.find,sm=string.match,gs=string.gsub,pt=print,wr=warn,er=error,tc=tostring,tn=tonumber,ty=type,pca=pcall,xpca=xpcall,pr=pairs,ipr=ipairs,nx=next,sel=select,rawg=rawget,raws=rawset,rawe=rawequal,smt=setmetatable,gmt=getmetatable,mf=math.floor,tblc=table.concat,gethk=(type(debug)=="table" and type(debug.gethook)=="function") and debug.gethook or nil,sethk=(type(debug)=="table" and type(debug.sethook)=="function") and debug.sethook or nil,getin=(type(debug)=="table" and type(debug.getinfo)=="function") and debug.getinfo or nil,tb=(type(debug)=="table" and type(debug.traceback)=="function") and debug.traceback or nil,hf=(type(hookfunction)=="function") and hookfunction or nil,ncc=(type(newcclosure)=="function") and newcclosure or nil,gc=(type(getgenv)=="function") and getgenv or nil,ccl=(type(checkcaller)=="function") and checkcaller or nil,il=(type(islclosure)=="function") and islclosure or nil}
-local _RAWE=_nktiLZG.rawe or function(a,b) return a==b end
-local _nCfjQKO={}
+local _nvsRONj={sb=string.byte,ss=string.sub,sc=string.char,sf=string.find,sm=string.match,gs=string.gsub,pt=print,wr=warn,er=error,tc=tostring,tn=tonumber,ty=type,pca=pcall,xpca=xpcall,pr=pairs,ipr=ipairs,nx=next,sel=select,rawg=rawget,raws=rawset,rawe=rawequal,smt=setmetatable,gmt=getmetatable,mf=math.floor,tblc=table.concat,gethk=(type(debug)=="table" and type(debug.gethook)=="function") and debug.gethook or nil,sethk=(type(debug)=="table" and type(debug.sethook)=="function") and debug.sethook or nil,getin=(type(debug)=="table" and type(debug.getinfo)=="function") and debug.getinfo or nil,tb=(type(debug)=="table" and type(debug.traceback)=="function") and debug.traceback or nil,hf=(type(hookfunction)=="function") and hookfunction or nil,ncc=(type(newcclosure)=="function") and newcclosure or nil,gc=(type(getgenv)=="function") and getgenv or nil,ccl=(type(checkcaller)=="function") and checkcaller or nil,il=(type(islclosure)=="function") and islclosure or nil}
+local _RAWE=_nvsRONj.rawe or function(a,b) return a==b end
+local _ngHeZgu={}
 local _AD_step=0
 local _AD_birth=_now()
 local _AD_lastT=_AD_birth
@@ -175,142 +175,142 @@ local _AD_origProbe=_PROBE
 local function _check_env_strong()
   if _AHG and _AHG.is_cfunc then
     local _cc={"string.byte",string.byte,string.sub,string.sub,string.char,string.char,string.find,string.find,string.match,string.match,string.gsub,string.gsub,pcall,pcall,error,error,type,type,tostring,tostring,tonumber,tonumber,rawget,rawget,rawset,rawset,setmetatable,setmetatable,rawequal,rawequal,select,select}
-    for _i=1,#_cc,2 do if _AHG.is_cfunc(_cc[_i+1])==false then _dEpUbJJ("C_".._cc[_i]) end end
+    for _i=1,#_cc,2 do if _AHG.is_cfunc(_cc[_i+1])==false then _daVtQEJ("C_".._cc[_i]) end end
   end
   if _AHG and _AHG.inRoblox then
-    if type(hookfunction)~="function" then _dEpUbJJ("ENV_HF_GONE") end
-    if type(getgenv)~="function" then _dEpUbJJ("ENV_GG_GONE") end
+    if type(hookfunction)~="function" then _daVtQEJ("ENV_HF_GONE") end
+    if type(getgenv)~="function" then _daVtQEJ("ENV_GG_GONE") end
   end
-  local function _c(name, cur, snap) if cur~=snap then _dEpUbJJ("ENV_"..name) end end
-  _c("sb", string.byte, _nktiLZG.sb)_c("ss", string.sub, _nktiLZG.ss)_c("sc", string.char, _nktiLZG.sc)_c("sf", string.find, _nktiLZG.sf)_c("sm", string.match, _nktiLZG.sm)_c("gs", string.gsub, _nktiLZG.gs)_c("pca", pcall, _nktiLZG.pca)_c("xpca", xpcall, _nktiLZG.xpca)_c("ty", type, _nktiLZG.ty)_c("tc", tostring, _nktiLZG.tc)_c("tn", tonumber, _nktiLZG.tn)_c("er", error, _nktiLZG.er)_c("pr", pairs, _nktiLZG.pr)_c("ipr", ipairs, _nktiLZG.ipr)_c("nx", next, _nktiLZG.nx)_c("sel", select, _nktiLZG.sel)_c("rawg", rawget, _nktiLZG.rawg)_c("raws", rawset, _nktiLZG.raws)_c("rawe", rawequal, _nktiLZG.rawe)_c("smt", setmetatable, _nktiLZG.smt)_c("gmt", getmetatable, _nktiLZG.gmt)_c("mf", math.floor, _nktiLZG.mf)_c("tblc", table.concat, _nktiLZG.tblc)
-  if _nktiLZG.hf then if type(hookfunction)~="function" then _dEpUbJJ("ENV_HOOKFUNC_MISSING") end if hookfunction~=_nktiLZG.hf then _dEpUbJJ("ENV_hf") end end
-  if _nktiLZG.ncc then if type(newcclosure)~="function" then _dEpUbJJ("ENV_NEWCC_MISSING") end if newcclosure~=_nktiLZG.ncc then _dEpUbJJ("ENV_ncc") end end
-  if _nktiLZG.gc then if type(getgenv)~="function" then _dEpUbJJ("ENV_GETGENV_MISSING") end if getgenv~=_nktiLZG.gc then _dEpUbJJ("ENV_gc") end end
+  local function _c(name, cur, snap) if cur~=snap then _daVtQEJ("ENV_"..name) end end
+  _c("sb", string.byte, _nvsRONj.sb)_c("ss", string.sub, _nvsRONj.ss)_c("sc", string.char, _nvsRONj.sc)_c("sf", string.find, _nvsRONj.sf)_c("sm", string.match, _nvsRONj.sm)_c("gs", string.gsub, _nvsRONj.gs)_c("pca", pcall, _nvsRONj.pca)_c("xpca", xpcall, _nvsRONj.xpca)_c("ty", type, _nvsRONj.ty)_c("tc", tostring, _nvsRONj.tc)_c("tn", tonumber, _nvsRONj.tn)_c("er", error, _nvsRONj.er)_c("pr", pairs, _nvsRONj.pr)_c("ipr", ipairs, _nvsRONj.ipr)_c("nx", next, _nvsRONj.nx)_c("sel", select, _nvsRONj.sel)_c("rawg", rawget, _nvsRONj.rawg)_c("raws", rawset, _nvsRONj.raws)_c("rawe", rawequal, _nvsRONj.rawe)_c("smt", setmetatable, _nvsRONj.smt)_c("gmt", getmetatable, _nvsRONj.gmt)_c("mf", math.floor, _nvsRONj.mf)_c("tblc", table.concat, _nvsRONj.tblc)
+  if _nvsRONj.hf then if type(hookfunction)~="function" then _daVtQEJ("ENV_HOOKFUNC_MISSING") end if hookfunction~=_nvsRONj.hf then _daVtQEJ("ENV_hf") end end
+  if _nvsRONj.ncc then if type(newcclosure)~="function" then _daVtQEJ("ENV_NEWCC_MISSING") end if newcclosure~=_nvsRONj.ncc then _daVtQEJ("ENV_ncc") end end
+  if _nvsRONj.gc then if type(getgenv)~="function" then _daVtQEJ("ENV_GETGENV_MISSING") end if getgenv~=_nvsRONj.gc then _daVtQEJ("ENV_gc") end end
   if type(debug)=="table" then
-    if _nktiLZG.getin and debug.getinfo~=_nktiLZG.getin then _dEpUbJJ("ENV_getin") end
-    if _nktiLZG.sethk and debug.sethook~=_nktiLZG.sethk then _dEpUbJJ("ENV_sethk") end
-    if _nktiLZG.tb and debug.traceback~=_nktiLZG.tb then _dEpUbJJ("ENV_tb") end
-    if type(debug.gethook)=="function" then local ok, hk = _nktiLZG.pca(debug.gethook) if ok and hk~=nil then _dEpUbJJ("ENV_DEBUG_HOOK") end end
+    if _nvsRONj.getin and debug.getinfo~=_nvsRONj.getin then _daVtQEJ("ENV_getin") end
+    if _nvsRONj.sethk and debug.sethook~=_nvsRONj.sethk then _daVtQEJ("ENV_sethk") end
+    if _nvsRONj.tb and debug.traceback~=_nvsRONj.tb then _daVtQEJ("ENV_tb") end
+    if type(debug.gethook)=="function" then local ok, hk = _nvsRONj.pca(debug.gethook) if ok and hk~=nil then _daVtQEJ("ENV_DEBUG_HOOK") end end
   end
-  if _nktiLZG.sb and _nktiLZG.sb("A")~=65 then _dEpUbJJ("B_sb") end
-  if _nktiLZG.ss and _nktiLZG.ss("abcd",2,3)~="bc" then _dEpUbJJ("B_ss") end
-  if _nktiLZG.sc and _nktiLZG.sc(65)~="A" then _dEpUbJJ("B_sc") end
-  if _nktiLZG.tc and _nktiLZG.tc(1)~="1" then _dEpUbJJ("B_tc") end
-  if _nktiLZG.tn and _nktiLZG.tn("42")~=42 then _dEpUbJJ("B_tn") end
-  if _RAWE(1,2)~=false then _dEpUbJJ("B_rawe1") end
-  if _RAWE(1,1)~=true then _dEpUbJJ("B_rawe2") end
-  if _nktiLZG.pca and _nktiLZG.er then local okE = _nktiLZG.pca(_nktiLZG.er, "DTKD_X") if okE then _dEpUbJJ("B_er") end else _dEpUbJJ("B_er_missing") end
-  local okP, ph = _nktiLZG.pca(_probe_hash) if not okP then _dEpUbJJ("B_probe_err") elseif ph~=_AD_origProbe then _dEpUbJJ("B_probe") end
-  local okT, tNow = _nktiLZG.pca(_now) if okT and type(tNow)=="number" then local age = tNow - _AD_birth if age>1800 or age<-1 then _dEpUbJJ("B_age") end end
+  if _nvsRONj.sb and _nvsRONj.sb("A")~=65 then _daVtQEJ("B_sb") end
+  if _nvsRONj.ss and _nvsRONj.ss("abcd",2,3)~="bc" then _daVtQEJ("B_ss") end
+  if _nvsRONj.sc and _nvsRONj.sc(65)~="A" then _daVtQEJ("B_sc") end
+  if _nvsRONj.tc and _nvsRONj.tc(1)~="1" then _daVtQEJ("B_tc") end
+  if _nvsRONj.tn and _nvsRONj.tn("42")~=42 then _daVtQEJ("B_tn") end
+  if _RAWE(1,2)~=false then _daVtQEJ("B_rawe1") end
+  if _RAWE(1,1)~=true then _daVtQEJ("B_rawe2") end
+  if _nvsRONj.pca and _nvsRONj.er then local okE = _nvsRONj.pca(_nvsRONj.er, "DTKD_X") if okE then _daVtQEJ("B_er") end else _daVtQEJ("B_er_missing") end
+  local okP, ph = _nvsRONj.pca(_probe_hash) if not okP then _daVtQEJ("B_probe_err") elseif ph~=_AD_origProbe then _daVtQEJ("B_probe") end
+  local okT, tNow = _nvsRONj.pca(_now) if okT and type(tNow)=="number" then local age = tNow - _AD_birth if age>1800 or age<-1 then _daVtQEJ("B_age") end end
 end
 local function _check_vm_struct()
-  if type(_hppeoKP)~="table" then _dEpUbJJ("VM_H3_TBL") end
-  local h3n = 0 for op=33,75 do if type(_hppeoKP[op])=="function" then h3n=h3n+1 end end
-  if h3n < 40 then _dEpUbJJ("VM_H3_CNT_"..h3n) end
-  if type(_oMFVaVq)~="table" then _dEpUbJJ("VM_OPI_TBL") end
+  if type(_hmDsVVp)~="table" then _daVtQEJ("VM_H3_TBL") end
+  local h3n = 0 for op=33,75 do if type(_hmDsVVp[op])=="function" then h3n=h3n+1 end end
+  if h3n < 40 then _daVtQEJ("VM_H3_CNT_"..h3n) end
+  if type(_oKEzMxZ)~="table" then _daVtQEJ("VM_OPI_TBL") end
   local otn = 0
   for g=1,8 do
-    if type(_oMFVaVq[g])=="table" then
+    if type(_oKEzMxZ[g])=="table" then
       otn=otn+1
-      if #_oMFVaVq[g]~=16 then _dEpUbJJ("VM_OPI_ROW_"..g) end
+      if #_oKEzMxZ[g]~=16 then _daVtQEJ("VM_OPI_ROW_"..g) end
       local seen={}
-      for k=1,16 do local v=_oMFVaVq[g][k] if type(v)~="number" or v<0 or v>15 or seen[v] then _dEpUbJJ("VM_OPI_CELL_"..g.."_"..k) end seen[v]=true end
+      for k=1,16 do local v=_oKEzMxZ[g][k] if type(v)~="number" or v<0 or v>15 or seen[v] then _daVtQEJ("VM_OPI_CELL_"..g.."_"..k) end seen[v]=true end
     end
   end
-  if otn~=8 then _dEpUbJJ("VM_OPI_CNT_"..otn) end
-  if type(_hZMUMMl)~="table" then _dEpUbJJ("VM_H_TBL") end
-  local hn = 0 for i=1,40 do if type(_hZMUMMl[i])=="function" then hn=hn+1 end end
-  if hn < 40 then _dEpUbJJ("VM_H_CNT_"..hn) end
-  if type(_hPPjxFK)~="table" or #_hPPjxFK~=40 then _dEpUbJJ("VM_HIDX_LEN") end
+  if otn~=8 then _daVtQEJ("VM_OPI_CNT_"..otn) end
+  if type(_hYMmuLm)~="table" then _daVtQEJ("VM_H_TBL") end
+  local hn = 0 for i=1,40 do if type(_hYMmuLm[i])=="function" then hn=hn+1 end end
+  if hn < 40 then _daVtQEJ("VM_H_CNT_"..hn) end
+  if type(_hIFYksi)~="table" or #_hIFYksi~=40 then _daVtQEJ("VM_HIDX_LEN") end
   local hs={}
-  for i=1,40 do local v=_hPPjxFK[i] if type(v)~="number" or v<1 or v>40 or hs[v] then _dEpUbJJ("VM_HIDX_CELL_"..i) end hs[v]=true end
-  if type(_pTusjeE)~="table" or #_pTusjeE~=32 then _dEpUbJJ("VM_PIDX_LEN") end
+  for i=1,40 do local v=_hIFYksi[i] if type(v)~="number" or v<1 or v>40 or hs[v] then _daVtQEJ("VM_HIDX_CELL_"..i) end hs[v]=true end
+  if type(_pbqWQkQ)~="table" or #_pbqWQkQ~=32 then _daVtQEJ("VM_PIDX_LEN") end
   local ps={}
-  for i=1,32 do local v=_pTusjeE[i] if type(v)~="number" or v<1 or v>32 or ps[v] then _dEpUbJJ("VM_PIDX_CELL_"..i) end ps[v]=true end
-  if type(_plkDauW)~="table" or type(_piFGcNw)~="table" or type(_pqnFNTT)~="table" then _dEpUbJJ("VM_PROG2_TBL") end
-  if type(_xkyJuKC)~="table" or #_xkyJuKC~=256 then _dEpUbJJ("VM_SBOX_LEN") end
+  for i=1,32 do local v=_pbqWQkQ[i] if type(v)~="number" or v<1 or v>32 or ps[v] then _daVtQEJ("VM_PIDX_CELL_"..i) end ps[v]=true end
+  if type(_pqHJWbq)~="table" or type(_pMIjckZ)~="table" or type(_pbMaCyj)~="table" then _daVtQEJ("VM_PROG2_TBL") end
+  if type(_xymJNcz)~="table" or #_xymJNcz~=256 then _daVtQEJ("VM_SBOX_LEN") end
   local ss={}
-  for i=1,256 do local v=_xkyJuKC[i] if type(v)~="number" or v<0 or v>255 or ss[v] then _dEpUbJJ("VM_SBOX_CELL_"..i) end ss[v]=true end
-  if type(CONST)~="table" or #CONST<1 then _dEpUbJJ("VM_CONST_TBL") end
-  if type(STRS)~="table" or #STRS<1 then _dEpUbJJ("VM_STRS_TBL") end
+  for i=1,256 do local v=_xymJNcz[i] if type(v)~="number" or v<0 or v>255 or ss[v] then _daVtQEJ("VM_SBOX_CELL_"..i) end ss[v]=true end
+  if type(CONST)~="table" or #CONST<1 then _daVtQEJ("VM_CONST_TBL") end
+  if type(STRS)~="table" or #STRS<1 then _daVtQEJ("VM_STRS_TBL") end
   for i=1,#STRS do
     local row=STRS[i]
-    if type(row)~="table" or #row<1 then _dEpUbJJ("VM_STRS_ROW_"..i) end
+    if type(row)~="table" or #row<1 then _daVtQEJ("VM_STRS_ROW_"..i) end
     for k=1,#row do
       local frag=row[k]
-      if type(frag)~="table" or #frag~=4 then _dEpUbJJ("VM_STRS_FRAG_"..i.."_"..k) end
-      for m=1,4 do if type(frag[m])~="string" or #frag[m]<2 then _dEpUbJJ("VM_STRS_CELL_"..i.."_"..k.."_"..m) end end
+      if type(frag)~="table" or #frag~=4 then _daVtQEJ("VM_STRS_FRAG_"..i.."_"..k) end
+      for m=1,4 do if type(frag[m])~="string" or #frag[m]<2 then _daVtQEJ("VM_STRS_CELL_"..i.."_"..k.."_"..m) end end
     end
   end
-  if type(PROTO)~="table" or #PROTO<1 then _dEpUbJJ("VM_PROTO_TBL") end
+  if type(PROTO)~="table" or #PROTO<1 then _daVtQEJ("VM_PROTO_TBL") end
   for i=1,#PROTO do
     local p=PROTO[i]
-    if type(p)~="table" or p[1]~="S" then _dEpUbJJ("VM_PROTO_ROW_"..i) end
-    if type(p[6])~="table" or type(p[7])~="table" or type(p[9])~="table" or type(p[10])~="table" then _dEpUbJJ("VM_PROTO_META_"..i) end
-    if #p[7]<1 then _dEpUbJJ("VM_PROTO_ORD_"..i) end
+    if type(p)~="table" or p[1]~="S" then _daVtQEJ("VM_PROTO_ROW_"..i) end
+    if type(p[6])~="table" or type(p[7])~="table" or type(p[9])~="table" or type(p[10])~="table" then _daVtQEJ("VM_PROTO_META_"..i) end
+    if #p[7]<1 then _daVtQEJ("VM_PROTO_ORD_"..i) end
   end
-  if type(_oTunbAD)~="table" or #_oTunbAD<1 then _dEpUbJJ("VM_OFC_TBL") end
-  if type(_mZahIGB)~="function" then _dEpUbJJ("VM_M2R") end
-  if type(_mGjIMII)~="function" then _dEpUbJJ("VM_M2A") end
-  if type(_rvumnRv)~="function" then _dEpUbJJ("VM_RIRAW") end
-  if type(_cNrxqPX)~="function" then _dEpUbJJ("VM_COMPILE") end
-  if type(_gtcmhRX)~="function" then _dEpUbJJ("VM_GETMAP") end
-  if type(_radpNQr)~="function" then _dEpUbJJ("VM_REBUILD") end
-  if type(_oFhxQqu)~="function" then _dEpUbJJ("VM_OM2") end
-  if type(_rdSrJBJ)~="function" then _dEpUbJJ("VM_RORAW") end
-  if type(_rBJSzZR)~="function" then _dEpUbJJ("VM_ROFWD") end
-  if type(_rPTzIoW)~="function" then _dEpUbJJ("VM_RIFWD") end
+  if type(_okHFvRe)~="table" or #_okHFvRe<1 then _daVtQEJ("VM_OFC_TBL") end
+  if type(_mKOmYyU)~="function" then _daVtQEJ("VM_M2R") end
+  if type(_mxeouIO)~="function" then _daVtQEJ("VM_M2A") end
+  if type(_rIszJzY)~="function" then _daVtQEJ("VM_RIRAW") end
+  if type(_cETOSMV)~="function" then _daVtQEJ("VM_COMPILE") end
+  if type(_grlRepM)~="function" then _daVtQEJ("VM_GETMAP") end
+  if type(_rETduVS)~="function" then _daVtQEJ("VM_REBUILD") end
+  if type(_oUDsBFF)~="function" then _daVtQEJ("VM_OM2") end
+  if type(_rMcrRlJ)~="function" then _daVtQEJ("VM_RORAW") end
+  if type(_ronDGRu)~="function" then _daVtQEJ("VM_ROFWD") end
+  if type(_rATiOMW)~="function" then _daVtQEJ("VM_RIFWD") end
 end
 local function _check_refs()
   if _AHG and _AHG.is_cfunc then
-    if _AHG.is_cfunc(string.byte)==true and not _RAWE(_nktiLZG.sb,string.byte) then _dEpUbJJ("SNAP2_SB") end
-    if _AHG.is_cfunc(string.sub)==true and not _RAWE(_nktiLZG.ss,string.sub) then _dEpUbJJ("SNAP2_SS") end
-    if _AHG.is_cfunc(pcall)==true and not _RAWE(_nktiLZG.pca,pcall) then _dEpUbJJ("SNAP2_PCA") end
-    if _AHG.is_cfunc(error)==true and not _RAWE(_nktiLZG.er,error) then _dEpUbJJ("SNAP2_ER") end
+    if _AHG.is_cfunc(string.byte)==true and not _RAWE(_nvsRONj.sb,string.byte) then _daVtQEJ("SNAP2_SB") end
+    if _AHG.is_cfunc(string.sub)==true and not _RAWE(_nvsRONj.ss,string.sub) then _daVtQEJ("SNAP2_SS") end
+    if _AHG.is_cfunc(pcall)==true and not _RAWE(_nvsRONj.pca,pcall) then _daVtQEJ("SNAP2_PCA") end
+    if _AHG.is_cfunc(error)==true and not _RAWE(_nvsRONj.er,error) then _daVtQEJ("SNAP2_ER") end
   end
-  if _nCfjQKO.h3 and not _RAWE(_nCfjQKO.h3,_hppeoKP) then _dEpUbJJ("REF_H3") end
-  if _nCfjQKO.m2r and not _RAWE(_nCfjQKO.m2r,_mZahIGB) then _dEpUbJJ("REF_M2R") end
-  if _nCfjQKO.m2a and not _RAWE(_nCfjQKO.m2a,_mGjIMII) then _dEpUbJJ("REF_M2A") end
-  if _nCfjQKO.cmp and not _RAWE(_nCfjQKO.cmp,_cNrxqPX) then _dEpUbJJ("REF_CMP") end
-  if _nCfjQKO.slot and not _RAWE(_nCfjQKO.slot,_gtcmhRX) then _dEpUbJJ("REF_SLOT") end
-  if _nCfjQKO.reb and not _RAWE(_nCfjQKO.reb,_radpNQr) then _dEpUbJJ("REF_REB") end
-  if _nCfjQKO.riraw and not _RAWE(_nCfjQKO.riraw,_rvumnRv) then _dEpUbJJ("REF_RIRAW") end
-  if _nCfjQKO.om2 and not _RAWE(_nCfjQKO.om2,_oFhxQqu) then _dEpUbJJ("REF_OM2") end
-  if _nCfjQKO.roraw and not _RAWE(_nCfjQKO.roraw,_rdSrJBJ) then _dEpUbJJ("REF_RORAW") end
+  if _ngHeZgu.h3 and not _RAWE(_ngHeZgu.h3,_hmDsVVp) then _daVtQEJ("REF_H3") end
+  if _ngHeZgu.m2r and not _RAWE(_ngHeZgu.m2r,_mKOmYyU) then _daVtQEJ("REF_M2R") end
+  if _ngHeZgu.m2a and not _RAWE(_ngHeZgu.m2a,_mxeouIO) then _daVtQEJ("REF_M2A") end
+  if _ngHeZgu.cmp and not _RAWE(_ngHeZgu.cmp,_cETOSMV) then _daVtQEJ("REF_CMP") end
+  if _ngHeZgu.slot and not _RAWE(_ngHeZgu.slot,_grlRepM) then _daVtQEJ("REF_SLOT") end
+  if _ngHeZgu.reb and not _RAWE(_ngHeZgu.reb,_rETduVS) then _daVtQEJ("REF_REB") end
+  if _ngHeZgu.riraw and not _RAWE(_ngHeZgu.riraw,_rIszJzY) then _daVtQEJ("REF_RIRAW") end
+  if _ngHeZgu.om2 and not _RAWE(_ngHeZgu.om2,_oUDsBFF) then _daVtQEJ("REF_OM2") end
+  if _ngHeZgu.roraw and not _RAWE(_ngHeZgu.roraw,_rMcrRlJ) then _daVtQEJ("REF_RORAW") end
 end
-local _aAbudDz
-_aAbudDz=function()
+local _aVSngZk
+_aVSngZk=function()
   _AD_step=_AD_step+1
   if _AD_step%2~=0 then return end
-  if not _RAWE(_nktiLZG.pca,pcall) then _dEpUbJJ("T_PCAHK") end
-  if _AD_step%16<2 then _check_env_strong() _check_vm_struct() _check_refs() if _fXccovA~=_ftWtcIk then _dEpUbJJ("T_SH") end if _self_check then _self_check() end
+  if not _RAWE(_nvsRONj.pca,pcall) then _daVtQEJ("T_PCAHK") end
+  if _AD_step%16<2 then _check_env_strong() _check_vm_struct() _check_refs() if _fbKHnjw~=_fUbDkgx then _daVtQEJ("T_SH") end if _self_check then _self_check() end
   else
-    if not _RAWE(_nktiLZG.sb,string.byte) then _dEpUbJJ("T_SB") end
-    if not _RAWE(_nktiLZG.ss,string.sub) then _dEpUbJJ("T_SS") end
-    if not _RAWE(_nktiLZG.sc,string.char) then _dEpUbJJ("T_SC") end
-    if not _RAWE(_nktiLZG.ty,type) then _dEpUbJJ("T_TY") end
-    if not _RAWE(_nktiLZG.tc,tostring) then _dEpUbJJ("T_TC") end
-    if not _RAWE(_nktiLZG.er,error) then _dEpUbJJ("T_ER") end
-    if not _RAWE(_nktiLZG.sel,select) then _dEpUbJJ("T_SEL") end
-    if not _RAWE(_nktiLZG.rawg,rawget) then _dEpUbJJ("T_RAWG") end
-    if not _RAWE(_nktiLZG.smt,setmetatable) then _dEpUbJJ("T_SMT") end
-    if _nktiLZG.getin and type(debug)=="table" and debug.getinfo~=_nktiLZG.getin then _dEpUbJJ("T_GI") end
-    if _nktiLZG.hf and type(hookfunction)=="function" and hookfunction~=_nktiLZG.hf then _dEpUbJJ("T_HF") end
-    if _nktiLZG.gethk and type(debug)=="table" then local ok, hk = _nktiLZG.pca(debug.gethook) if ok and hk~=nil then _dEpUbJJ("T_HOOK") end end
+    if not _RAWE(_nvsRONj.sb,string.byte) then _daVtQEJ("T_SB") end
+    if not _RAWE(_nvsRONj.ss,string.sub) then _daVtQEJ("T_SS") end
+    if not _RAWE(_nvsRONj.sc,string.char) then _daVtQEJ("T_SC") end
+    if not _RAWE(_nvsRONj.ty,type) then _daVtQEJ("T_TY") end
+    if not _RAWE(_nvsRONj.tc,tostring) then _daVtQEJ("T_TC") end
+    if not _RAWE(_nvsRONj.er,error) then _daVtQEJ("T_ER") end
+    if not _RAWE(_nvsRONj.sel,select) then _daVtQEJ("T_SEL") end
+    if not _RAWE(_nvsRONj.rawg,rawget) then _daVtQEJ("T_RAWG") end
+    if not _RAWE(_nvsRONj.smt,setmetatable) then _daVtQEJ("T_SMT") end
+    if _nvsRONj.getin and type(debug)=="table" and debug.getinfo~=_nvsRONj.getin then _daVtQEJ("T_GI") end
+    if _nvsRONj.hf and type(hookfunction)=="function" and hookfunction~=_nvsRONj.hf then _daVtQEJ("T_HF") end
+    if _nvsRONj.gethk and type(debug)=="table" then local ok, hk = _nvsRONj.pca(debug.gethook) if ok and hk~=nil then _daVtQEJ("T_HOOK") end end
   end
-  if _AD_step%128==0 then local newT = _FLOOR(_T_LIMIT*(85+_xsmix(_lCfHIhP,_now()%100000)%31)/100) if newT>=30 then _T_LIMIT_ACT=newT end end
-  if _AD_step%64==0 then local tNow=_now() if _AD_CLOCKBACK and tNow < _AD_lastT - 2 then _dEpUbJJ("T_CLOCKBACK") end _AD_lastT=tNow end
+  if _AD_step%128==0 then local newT = _FLOOR(_T_LIMIT*(85+_xsmix(_lyuDwyB,_now()%100000)%31)/100) if newT>=30 then _T_LIMIT_ACT=newT end end
+  if _AD_step%64==0 then local tNow=_now() if _AD_CLOCKBACK and tNow < _AD_lastT - 2 then _daVtQEJ("T_CLOCKBACK") end _AD_lastT=tNow end
 end
-local _ANTIFMT=function() local ok1,e1=pcall(function() error("a") end) local ok2,e2=pcall(function() error("b") end) if not ok1 and not ok2 then if type(e1)~="string" or type(e2)~="string" then _dEpUbJJ("ANTIFMT_T") end if e1==e2 then _dEpUbJJ("ANTIFMT_EQ") end end end
+local _ANTIFMT=function() local ok1,e1=pcall(function() error("a") end) local ok2,e2=pcall(function() error("b") end) if not ok1 and not ok2 then if type(e1)~="string" or type(e2)~="string" then _daVtQEJ("ANTIFMT_T") end if e1==e2 then _daVtQEJ("ANTIFMT_EQ") end end end
 _ANTIFMT()
-pcall(function() if type(debug)=="table" and type(debug.getinfo)=="function" then local _i=debug.getinfo(1) if type(_i)~="table" then _dEpUbJJ("DEBUG_INFO") end end end)
-_xkyJuKC={}
-do local _sb_seed=_FLOOR((k2*17)%2147483647) if _sb_seed<1 then _sb_seed=1 end for i=1,256 do _xkyJuKC[i]=i-1 end local s=_sb_seed local _h0=_hf(_GUARD_TAG) for i=256,2,-1 do s=_FLOOR((s*16807+_h0+i*131)%2147483647) local j=s%i+1 _xkyJuKC[i],_xkyJuKC[j]=_xkyJuKC[j],_xkyJuKC[i] end end
-local function _ks(seed,cnt) local s=_FLOOR(seed)%2147483647 if s<1 then s=1 end local o={} for i=1,cnt do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lCfHIhP elseif _ii==1 then _lc=_lfXwUFU else _lc=_lPLfdOY end s=_xsmix(_lc,s) o[i]=s end return o end
-local function _gk(idx,varIdx,salt,useEff) local _k2 if useEff==2 then _k2=_FLOOR(k2_eff or 0) elseif useEff and _HALF>0 and idx>_HALF then _k2=_FLOOR(k2_eff or 0) else _k2=_FLOOR(k2 or 0) end local seed=_FLOOR((_k2+idx*1000003+varIdx*7919+salt*104729)%2147483647) if seed<1 then seed=1 end local _si=_FLOOR(seed%256)+1 local b0=_xkyJuKC[_si] local b1=_xkyJuKC[_FLOOR(seed/256)%256+1] local b2=_xkyJuKC[_FLOOR(seed/65536)%256+1] local b3=_xkyJuKC[_FLOOR(seed/16777216)%256+1] local mixed=_FLOOR((b0*16777216+b1*65536+b2*256+b3)%2147483647) if mixed>0 then seed=mixed end local st=_ks(seed,50) local k1,k2a,pk={},{},{} for i=1,16 do k1[i]=(st[i]%255)+1 k2a[i]=(st[16+i]%255)+1 pk[i]=(st[32+i]%255)+1 end return k1,k2a,pk,(st[49]%7)+1,(st[50]%255)+1 end
-local _xalwaWW={}
-do for i=0,255 do _xalwaWW[_xkyJuKC[i+1]+1]=i end end
-local function _aes_lite_dec(bytes,key) for round=8,1,-1 do for i=1,#bytes do bytes[i]=_xalwaWW[bytes[i]+1] or 0 end for c=0,_FLOOR(#bytes/4)-1 do local a,b,d,e=bytes[c*4+1],bytes[c*4+2],bytes[c*4+3],bytes[c*4+4] bytes[c*4+1]=(_mkdTsuY[1][1]*a+_mkdTsuY[1][2]*b+_mkdTsuY[1][3]*d+_mkdTsuY[1][4]*e)%256 bytes[c*4+2]=(_mkdTsuY[2][1]*a+_mkdTsuY[2][2]*b+_mkdTsuY[2][3]*d+_mkdTsuY[2][4]*e)%256 bytes[c*4+3]=(_mkdTsuY[3][1]*a+_mkdTsuY[3][2]*b+_mkdTsuY[3][3]*d+_mkdTsuY[3][4]*e)%256 bytes[c*4+4]=(_mkdTsuY[4][1]*a+_mkdTsuY[4][2]*b+_mkdTsuY[4][3]*d+_mkdTsuY[4][4]*e)%256 end for i=1,#bytes do bytes[i]=(bytes[i]+key[(round-1)*16+((i-1)%16)+1])%256 end end return bytes end
+pcall(function() if type(debug)=="table" and type(debug.getinfo)=="function" then local _i=debug.getinfo(1) if type(_i)~="table" then _daVtQEJ("DEBUG_INFO") end end end)
+_xymJNcz={}
+do local _sb_seed=_FLOOR((k2*17)%2147483647) if _sb_seed<1 then _sb_seed=1 end for i=1,256 do _xymJNcz[i]=i-1 end local s=_sb_seed local _h0=_hf(_GUARD_TAG) for i=256,2,-1 do s=_FLOOR((s*16807+_h0+i*131)%2147483647) local j=s%i+1 _xymJNcz[i],_xymJNcz[j]=_xymJNcz[j],_xymJNcz[i] end end
+local function _ks(seed,cnt) local s=_FLOOR(seed)%2147483647 if s<1 then s=1 end local o={} for i=1,cnt do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lyuDwyB elseif _ii==1 then _lc=_lUUnStP else _lc=_lWDjvLs end s=_xsmix(_lc,s) o[i]=s end return o end
+local function _gk(idx,varIdx,salt,useEff) local _k2 if useEff==2 then _k2=_FLOOR(k2_eff or 0) elseif useEff and _HALF>0 and idx>_HALF then _k2=_FLOOR(k2_eff or 0) else _k2=_FLOOR(k2 or 0) end local seed=_FLOOR((_k2+idx*1000003+varIdx*7919+salt*104729)%2147483647) if seed<1 then seed=1 end local _si=_FLOOR(seed%256)+1 local b0=_xymJNcz[_si] local b1=_xymJNcz[_FLOOR(seed/256)%256+1] local b2=_xymJNcz[_FLOOR(seed/65536)%256+1] local b3=_xymJNcz[_FLOOR(seed/16777216)%256+1] local mixed=_FLOOR((b0*16777216+b1*65536+b2*256+b3)%2147483647) if mixed>0 then seed=mixed end local st=_ks(seed,50) local k1,k2a,pk={},{},{} for i=1,16 do k1[i]=(st[i]%255)+1 k2a[i]=(st[16+i]%255)+1 pk[i]=(st[32+i]%255)+1 end return k1,k2a,pk,(st[49]%7)+1,(st[50]%255)+1 end
+local _xXjHjiw={}
+do for i=0,255 do _xXjHjiw[_xymJNcz[i+1]+1]=i end end
+local function _aes_lite_dec(bytes,key) for round=8,1,-1 do for i=1,#bytes do bytes[i]=_xXjHjiw[bytes[i]+1] or 0 end for c=0,_FLOOR(#bytes/4)-1 do local a,b,d,e=bytes[c*4+1],bytes[c*4+2],bytes[c*4+3],bytes[c*4+4] bytes[c*4+1]=(_mRoBWnr[1][1]*a+_mRoBWnr[1][2]*b+_mRoBWnr[1][3]*d+_mRoBWnr[1][4]*e)%256 bytes[c*4+2]=(_mRoBWnr[2][1]*a+_mRoBWnr[2][2]*b+_mRoBWnr[2][3]*d+_mRoBWnr[2][4]*e)%256 bytes[c*4+3]=(_mRoBWnr[3][1]*a+_mRoBWnr[3][2]*b+_mRoBWnr[3][3]*d+_mRoBWnr[3][4]*e)%256 bytes[c*4+4]=(_mRoBWnr[4][1]*a+_mRoBWnr[4][2]*b+_mRoBWnr[4][3]*d+_mRoBWnr[4][4]*e)%256 end for i=1,#bytes do bytes[i]=(bytes[i]+key[(round-1)*16+((i-1)%16)+1])%256 end end return bytes end
 local function _decHex(hex,k1,k2a,pk,rot,kk)
   if type(hex)~="string" or #hex<2 then return "" end
   local n=_FLOOR(#hex/2) local bytes={}
@@ -327,7 +327,7 @@ local function _lcgKey(offset)
   local h0=_hf(_GUARD_TAG)
   local key={}
   local base=(k2+offset*999983)%2147483647 if base<1 then base=base+2147483647 end
-  for i=0,127 do local v=(base*(i+1)*31+h0*17+i*7919)%2147483647 if v<0 then v=v+2147483647 end local b=_xkyJuKC[v%256+1] key[i+1]=(b+(v%256)+i*17)%256 end
+  for i=0,127 do local v=(base*(i+1)*31+h0*17+i*7919)%2147483647 if v<0 then v=v+2147483647 end local b=_xymJNcz[v%256+1] key[i+1]=(b+(v%256)+i*17)%256 end
   return key
 end
 local function _lcgDec(hex,offset)
@@ -336,35 +336,35 @@ local function _lcgDec(hex,offset)
   bytes=_aes_lite_dec(bytes,key) local r="" for j=1,#bytes do r=r..string.char(bytes[j]) end return r
 end
 
-_lCfHIhP=tonumber(_lcgDec("ba8ef5c549",0)) or (16807+(k2%997)*2)
-_lfXwUFU=tonumber(_lcgDec("b27f873122",1)) or (48271+(k2%997)*2)
-_lPLfdOY=tonumber(_lcgDec("52ece226ba",2)) or (69621+(k2%997)*2)
-if _lCfHIhP<1 or _lfXwUFU<1 or _lPLfdOY<1 then _dEpUbJJ("LCG_INVALID") end
+_lyuDwyB=tonumber(_lcgDec("ca25a24fb6",0)) or (16807+(k2%997)*2)
+_lUUnStP=tonumber(_lcgDec("3fa51720f5",1)) or (48271+(k2%997)*2)
+_lWDjvLs=tonumber(_lcgDec("fa34a7c84c",2)) or (69621+(k2%997)*2)
+if _lyuDwyB<1 or _lUUnStP<1 or _lWDjvLs<1 then _daVtQEJ("LCG_INVALID") end
 local function _proto_k(idx) local seed=_FLOOR((k2 or 0)+idx*3000017+23)%2147483647 if seed<1 then seed=1 end local st=_ks(seed,2) return (st[1]%255)+1,(st[2]%26)+3 end
-_pTusjeE={}
-do for i=1,32 do _pTusjeE[i]=i end local s=_FLOOR((k2*31+7)%2147483647) if s<1 then s=1 end local _l1=16807+((k2%997)*2) for i=32,2,-1 do s=_xsmix(_l1,s) local j=s%i+1 _pTusjeE[i],_pTusjeE[j]=_pTusjeE[j],_pTusjeE[i] end end
+_pbqWQkQ={}
+do for i=1,32 do _pbqWQkQ[i]=i end local s=_FLOOR((k2*31+7)%2147483647) if s<1 then s=1 end local _l1=16807+((k2%997)*2) for i=32,2,-1 do s=_xsmix(_l1,s) local j=s%i+1 _pbqWQkQ[i],_pbqWQkQ[j]=_pbqWQkQ[j],_pbqWQkQ[i] end end
 local _protoSBOX={} local _protoH1={} local _protoH={} local _protoInv={}
-local function _getPSBOX(idx) local s=_protoSBOX[idx] if s then return s end local seed=_FLOOR((k2 or 0)+idx*13337)%2147483647 if seed<1 then seed=1 end local sb={} for i=0,255 do sb[i]=i end local st=seed for i=255,1,-1 do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lCfHIhP elseif _ii==1 then _lc=_lfXwUFU else _lc=_lPLfdOY end st=_xsmix(_lc,st) local j=st%(i+1) sb[i],sb[j]=sb[j],sb[i] end _protoSBOX[idx]=sb return sb end
-local function _getPH(idx,lv) local ph=_protoH[idx] if ph and ph[lv] then return ph[lv] end local sb=_getPSBOX(idx) local seed=_FLOOR((k2 or 0)+idx*77777+lv*99991)%2147483647 if seed<1 then seed=1 end local arr={} for i=0,255 do arr[i]=i end local st=seed for i=255,1,-1 do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lCfHIhP elseif _ii==1 then _lc=_lfXwUFU else _lc=_lPLfdOY end st=_xsmix(_lc,st) local j=st%(i+1) arr[i],arr[j]=arr[j],arr[i] end local res={} for i=0,255 do res[i]=sb[arr[i]] end if not ph then ph={} _protoH[idx]=ph end ph[lv]=res return res end
+local function _getPSBOX(idx) local s=_protoSBOX[idx] if s then return s end local seed=_FLOOR((k2 or 0)+idx*13337)%2147483647 if seed<1 then seed=1 end local sb={} for i=0,255 do sb[i]=i end local st=seed for i=255,1,-1 do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lyuDwyB elseif _ii==1 then _lc=_lUUnStP else _lc=_lWDjvLs end st=_xsmix(_lc,st) local j=st%(i+1) sb[i],sb[j]=sb[j],sb[i] end _protoSBOX[idx]=sb return sb end
+local function _getPH(idx,lv) local ph=_protoH[idx] if ph and ph[lv] then return ph[lv] end local sb=_getPSBOX(idx) local seed=_FLOOR((k2 or 0)+idx*77777+lv*99991)%2147483647 if seed<1 then seed=1 end local arr={} for i=0,255 do arr[i]=i end local st=seed for i=255,1,-1 do local _ii=(i-1)%3 local _lc if _ii==0 then _lc=_lyuDwyB elseif _ii==1 then _lc=_lUUnStP else _lc=_lWDjvLs end st=_xsmix(_lc,st) local j=st%(i+1) arr[i],arr[j]=arr[j],arr[i] end local res={} for i=0,255 do res[i]=sb[arr[i]] end if not ph then ph={} _protoH[idx]=ph end ph[lv]=res return res end
 local function _getPI(idx,lv) local pi=_protoInv[idx] if pi and pi[lv] then return pi[lv] end local h=_getPH(idx,lv) local inv={} for i=0,255 do inv[h[i]]=i end if not pi then pi={} _protoInv[idx]=pi end pi[lv]=inv return inv end
 local function _getPH1_seg(idx,si,seed) local key=idx*1000+si local h=_protoH1[key] if h then return h end local sb=_getPSBOX(idx) local _seed=(k2+idx*7000003+seed)%2147483647 if _seed<1 then _seed=1 end local st=_ks(_seed,128*3+100) local h1={} local used={} for op=1,128 do local k2v local tries=0 repeat local base=(op-1)*3+tries k2v=st[(base%#st)+1]%256 if k2v==0 then k2v=1 end k2v=sb[k2v] tries=tries+1 if tries>500 then break end until not used[k2v] used[k2v]=true local target if op<=32 then target=op elseif op>=65 and op<=107 then target=op-32 else target=op end h1[k2v]=target end _protoH1[key]=h1 return h1 end
 local function _seg_of_pos(pos,sizes) local acc=0 for si=1,#sizes do acc=acc+sizes[si] if pos<=acc then return si end end return #sizes end
-CONST={{"h","43e8829e"},{"h","7b4113e89655a2cd18b0"},{"h","a9aca178c8ccab"},{"h","972d36e4573c4c"},{"h","2f1a1918e811f5"},{"h","04fe32ef81ce5e"},{"h","5d47cf93542cf4"},{"h","858d0f2200b1e9"},{"h","e21714912e2e2d"},{"h","0a4a2faada1e86"}}
-local _kQBXdFm={}
-local _kTXYatn={}
-local function _cemWwLF(i) if _RAWE(_nktiLZG.sb,string.byte)==false then _dEpUbJJ("C_HK_SB") end if _RAWE(_nktiLZG.ty,type)==false then _dEpUbJJ("C_HK_TY") end if type(i)~="number" or i<1 or i>#CONST-8 then return 0 end local c=_kQBXdFm[i] if c~=nil then if _kTXYatn[i]~=_hf(tostring(c)) then _dEpUbJJ("C_TAMPER_"..i) end return c end local e=CONST[i] if type(e)=="table" then if e[1]=="e" then local op=e[3] local v if op==1 then v=e[2]+e[4] elseif op==2 then v=e[2]-e[4] elseif op==3 then v=e[2]*e[4] else v=e[2] end _kQBXdFm[i]=v _kTXYatn[i]=_hf(tostring(v)) local _s=i*7919 return (v+_s)-_s end if e[1]=="b" then local v=(e[2]==1) _kQBXdFm[i]=v _kTXYatn[i]=_hf(tostring(v)) return v end if e[1]=="nd" then local a,b,c2,d,e2=_gk(i,0,5,2) local v=tonumber(_decHex(e[2],a,b,c2,d,e2)) or 0 _kQBXdFm[i]=v _kTXYatn[i]=_hf(tostring(v)) local _s=i*7919 return (v+_s)-_s end if e[1]=="h" then local a,b,c2,d,e2=_gk(i,0,3,2) local r=_decHex(e[2],a,b,c2,d,e2) _kQBXdFm[i]=r _kTXYatn[i]=_hf(r) return r end end _kQBXdFm[i]=e _kTXYatn[i]=_hf(tostring(e)) return e end
-local function _gUVQOwb(a) local k=_cemWwLF(a) if type(k)~="string" then return nil end local v=_nmrMMtS[k] if v~=nil then return v end if _gCIUsXq~=nil then v=_gCIUsXq[k] if v~=nil then return v end end if type(_G)=="table" then v=_G[k] if v~=nil then return v end end if type(_ENV)=="table" then v=_ENV[k] if v~=nil then return v end end if k=="game" then return game end return nil end
-local function _gKmNqhY(a,v) local k=_cemWwLF(a) if _gCIUsXq~=nil then _gCIUsXq[k]=v end end
-STRS={{{"bca5e0dce247f700936d4f0e95f6d80e6a9c21e1ddfc2dd4ffa4e55afe511228486c8c3a2ad03df5","f3b6e9e60ff7f92360990159ae499f73374510271adaf906028971b923e76bdf8a0ff0628362fd53","9a0a14e5e0156fe2e86c0217c5e81b43cf4744fcdd3b77cf4470c1a8adb2c714f176799c17697dba","8b983ff84655bc0e12dc9fc766f62dd996aacb5741a9804e1da79f0d28b58ccb900c36d4d9042a5a"},{"8e4547c7d42a7b151cd529dcb6420d59ec59fb439bf672211992f1111ce7d95bbe9a7d4315ffc9f94cb5","9d48479fe3b3bc5147ed0bc3b6d7610778c67e9fe93b9a1f99d76c287c2574637ade6c6739e09a51a8c2","dddcc86d93208b6fed3103f58c2a6925aa39b86da6bf57f722f73b7e6544a67ab193f195c988577e3bf3","bd1f1795c5fcd44c192568e0ed03f7a09c4d126b09416d5ffbb4489409dbcc41d8694abe2c2e38e49547"},{"12fc3769291581925cd0eb6268c6c95f4f958546e6ad179ab1c34f42cc92775fdd37a2695ad9","6fb477e9f71753e91b4bc127309ebf32e0b39102e3b4a816c6deb398c2a26a0a68d0804f8ed3","9f91f639a898fce39102a8c90aa31ce4140d4fbc3c6a22f80b81d9305386541e414baf392e54","ee1d6502330d444e33ebe8e227bd42ce7cc1febb8e4d4e13d047d14c20bb69493c8e01e60e88"}},{{"6a5d3b301cb000e2","3d4f38c106d8017c","b1d57726b209624c","8fa62d2e66438459"},{"e6a097b4ba84","7095b8790956","c5d72c010cab","1ff9ad31a9a6"}}}
-_kRICyJU={} local _kInCZNW={} local _lastHash=(((_PROBE*7+k2)%4294967296))
+CONST={{"h","bc6a2d74"},{"h","6c095077aaad1aabda66"},{"h","acbb30f3893fe5"},{"h","362384578d611f"},{"h","eadfe9f148b51c"},{"h","ae02c15cd2ea81"},{"h","314fc062ff4d9a"},{"h","2a1d38a242e147"},{"h","6bee43fe4c6ae0"},{"h","9485f7da10c2da"}}
+local _kgZJFCl={}
+local _kifVrsH={}
+local function _cFnvqbA(i) if _RAWE(_nvsRONj.sb,string.byte)==false then _daVtQEJ("C_HK_SB") end if _RAWE(_nvsRONj.ty,type)==false then _daVtQEJ("C_HK_TY") end if type(i)~="number" or i<1 or i>#CONST-8 then return 0 end local c=_kgZJFCl[i] if c~=nil then if _kifVrsH[i]~=_hf(tostring(c)) then _daVtQEJ("C_TAMPER_"..i) end return c end local e=CONST[i] if type(e)=="table" then if e[1]=="e" then local op=e[3] local v if op==1 then v=e[2]+e[4] elseif op==2 then v=e[2]-e[4] elseif op==3 then v=e[2]*e[4] else v=e[2] end _kgZJFCl[i]=v _kifVrsH[i]=_hf(tostring(v)) local _s=i*7919 return (v+_s)-_s end if e[1]=="b" then local v=(e[2]==1) _kgZJFCl[i]=v _kifVrsH[i]=_hf(tostring(v)) return v end if e[1]=="nd" then local a,b,c2,d,e2=_gk(i,0,5,2) local v=tonumber(_decHex(e[2],a,b,c2,d,e2)) or 0 _kgZJFCl[i]=v _kifVrsH[i]=_hf(tostring(v)) local _s=i*7919 return (v+_s)-_s end if e[1]=="h" then local a,b,c2,d,e2=_gk(i,0,3,2) local r=_decHex(e[2],a,b,c2,d,e2) _kgZJFCl[i]=r _kifVrsH[i]=_hf(r) return r end end _kgZJFCl[i]=e _kifVrsH[i]=_hf(tostring(e)) return e end
+local function _gjVHvXw(a) local k=_cFnvqbA(a) if type(k)~="string" then return nil end local v=_nKsumSt[k] if v~=nil then return v end if _gXGetqL~=nil then v=_gXGetqL[k] if v~=nil then return v end end if type(_G)=="table" then v=_G[k] if v~=nil then return v end end if type(_ENV)=="table" then v=_ENV[k] if v~=nil then return v end end if k=="game" then return game end return nil end
+local function _gKvTBpB(a,v) local k=_cFnvqbA(a) if _gXGetqL~=nil then _gXGetqL[k]=v end end
+STRS={{{"104f34c35704e85228d5c391ca07fe60562c6aab0f58e309","9d56dd14f8fc94fbd5c7e4837cef162274f48ef8a0206fff","b2796b029d8993c678d260aea1cd4697019ed7ddf0b24b26","aebb5ca82035e5109660b8302ad7228baef64ff66943cb10"},{"c5909aa19abdf7388f4d12e8c00593895bcb671c01369824235b","2d2822e96e21e0682a3b3b250009634d333a22d709cda808556a","939472b90dbb19e7fccbda8896b2db587745b7b90da209d4210d","99e2dc2ea7948c14b48699f1a615d46185e290bf0556f3023731"},{"534f36de47b89785523e8b20cb250c669fb3cb359f389f61","28318e4fb41c48df04818a4a813c6fa34b0d2adac390709a","574a30a247358e2cef0034c115ec1a99089dd5f647b75203","2774b227b2ff50ea96fcc3672e5456d682c0c014b2c6e0dd"},{"fc6c79f429f0a9b319648cda20309003c7c761f46535c139e28a","ac347d0f0c59ff5c0f899ab73d6005231a45700f6f13b79971f6","a6990f029ed68819a4f9e9062bd8b9607291d019557437a9a384","d15699bfab17522f3deb1e3b9e51c5a3ab0bb4f5ba29d007a3bd"},{"39621e48562fffb018067b8038e3d8e790a0243e","4275e3beaadd1aac051137273aabae559e22860f","746a6c58fbde9b23e6e0a7c8819b3630746ad631","1966ffcee86b8102309fa8a5cafa1296a4401d97"}},{{"19cc54a0bbf4","14404c12bafa","45f599baec13","ccd290c453c1"},{"e6d9d81b6611a405","2699716a43f86185","ec1ea4320da02050","54199883ff9d32db"}}}
+_krDUtvp={} local _kMYKNON={} local _lastHash=(((_PROBE*7+k2)%4294967296))
 local _cacheThreshold=96
 local _GC_TICK=0
-local function _fykHPlG(i,fi) local row=STRS[i] if not row or not row[fi] then return "" end local _sc2=_xsmix(_sc+fi*31,_lastHash+i*17+fi*7)%65536 local _v2=_FLOOR(_sc2%#row[fi])+1 local e=row[fi][_v2] if not e then return "" end return _decDouble(e,i,(fi-1)*4+(_v2-1),1,3,true) end
-local function _fyHUbNa(i) if _RAWE(_nktiLZG.sb,string.byte)==false then _dEpUbJJ("S_HK_SB") end if _RAWE(_nktiLZG.ty,type)==false then _dEpUbJJ("S_HK_TY") end if not STRS[i] or #STRS[i]==0 then return "" end local c=nil if _kRICyJU[i] and #_kRICyJU[i]>_cacheThreshold then if _kInCZNW[i]~=_hf(_kRICyJU[i]) then _dEpUbJJ("S_TAMPER_"..i) end c=_kRICyJU[i] end if c then return c end _scnt=_scnt+1 local dk=_FLOOR(i*31+_lastHash*7+_sdv+_scnt*17+_K2R*13)%65536 _sc=_xsmix(_sc+65,_sc+12345+dk)%65536 local r="" for fi=1,#STRS[i] do r=r.._fykHPlG(i,fi) end _lastHash=_hf(r) if #r>_cacheThreshold then _kRICyJU[i]=r _kInCZNW[i]=_hf(r) end _GC_TICK=_GC_TICK+1 if _GC_TICK%32==0 then pcall(collectgarbage,"step") end if _GC_TICK%64==0 then _kRICyJU={} _kInCZNW={} end return r end
-local function _fXccovA(i) if type(i)~="number" or i<1 or i>#STRS then return "" end if _fXccovA~=_ftWtcIk then _dEpUbJJ("S_HOOK") end local r=_fyHUbNa(i) return r end
-_ftWtcIk=_fXccovA
-PROTO={{"S","39efac548258eb8a567afa889adbc0de668b6f8a972e185f02af1173e274068b0c05ac99ad9af7ee7d2ec32293ff93335594d48ac85121eb548090003465eee61781cd86359f","7c9db5225d3a1b64076f61dc251c6d82249c11a57ccacb976ed61f7f917acd22c222091ffbce1be78d140012ad4dcfa31cc48ec263b46417ed891ff6aaeb7ea3b7f011bc8cc46ae7ce0061eafd35ba62dadaaa6932dae5c3208f1f759371024a9676c9b2fa071b47486e007fbc3dcf2a3c1e16c2eeda","80895e8d764bea492d28819a18b178bd92cb2a4b0e0b73a8e133f84b4c0a6a57be7d1ef64be67cb2a2a95966d23a78bd56d9580572931f273365256631c29b439af41e1705df7948bd4e3869367858555c2351f75dc31f220db4326169409bae2ab0d6b8178f732245a580b7c55e","06d3cb5fe33b0f48fc6953d6d7c7a3107f4fb9dad931e9057f750e57749e3571c59b7759b2f9f363328589dca392f010dc71543600b0e92858fe5c7755a1a334f3903edaf18694e4a24664dc41c87e282550b9a25944349504908937333ba334974bf859efb50f48e9339614426e7e28876c54a2",{},{4,9,7,5,2,10,6,3,1,8},1,{5,5},{1872571436,372482425},{},{"9bb41f2f4e684ec4e9107d236980f1dfff0928d046e58cbad801634452ef58997118e3"}}}
-local _up=_nmrMMtS.unpack or (type(table)=="table" and table.unpack) or (type(unpack)=="function" and unpack)
+local function _fXXfSQx(i,fi) local row=STRS[i] if not row or not row[fi] then return "" end local _sc2=_xsmix(_sc+fi*31,_lastHash+i*17+fi*7)%65536 local _v2=_FLOOR(_sc2%#row[fi])+1 local e=row[fi][_v2] if not e then return "" end return _decDouble(e,i,(fi-1)*4+(_v2-1),1,3,true) end
+local function _fFoQxkP(i) if _RAWE(_nvsRONj.sb,string.byte)==false then _daVtQEJ("S_HK_SB") end if _RAWE(_nvsRONj.ty,type)==false then _daVtQEJ("S_HK_TY") end if not STRS[i] or #STRS[i]==0 then return "" end local c=nil if _krDUtvp[i] and #_krDUtvp[i]>_cacheThreshold then if _kMYKNON[i]~=_hf(_krDUtvp[i]) then _daVtQEJ("S_TAMPER_"..i) end c=_krDUtvp[i] end if c then return c end _scnt=_scnt+1 local dk=_FLOOR(i*31+_lastHash*7+_sdv+_scnt*17+_K2R*13)%65536 _sc=_xsmix(_sc+65,_sc+12345+dk)%65536 local r="" for fi=1,#STRS[i] do r=r.._fXXfSQx(i,fi) end _lastHash=_hf(r) if #r>_cacheThreshold then _krDUtvp[i]=r _kMYKNON[i]=_hf(r) end _GC_TICK=_GC_TICK+1 if _GC_TICK%32==0 then pcall(collectgarbage,"step") end if _GC_TICK%64==0 then _krDUtvp={} _kMYKNON={} end return r end
+local function _fbKHnjw(i) if type(i)~="number" or i<1 or i>#STRS then return "" end if _fbKHnjw~=_fUbDkgx then _daVtQEJ("S_HOOK") end local r=_fFoQxkP(i) return r end
+_fUbDkgx=_fbKHnjw
+PROTO={{"S","c8b43eb904f5a69596cdd0dd8b01555b6b4fd6c92e2008955ca8aad6c8f416bf5057fc58fbe93eeec081c4eef68955c6b0e43e5875348c64e281aad6c8f42c2ec8ed","d0bdc7c64abc04068708713b30868a2747244095da1d241dcb084064a3e176d0825c52beca19dfb9d5f8a8283086fa184724c0c3195c5eb108c74fc430b9765ba7ea0470dab2040697337d3a565e8a27bd32c4b9da1d04b1cbc7f612a0041109e66467fc4abcdfb9972b64a3308656804721","2d608b0254be5b06c127346c51eb31f43d38a297eb9cc3cecdbfed6c55e8a0d4330768a2b00fc74f571e8ab47629a7ed3d6e5f30a05fa106322f876c18033acb2d60a297059c5b06621e3899773e05cb886ebdc7eb9c7b4f51554c99706805ee3307a297729ca1651bc34cb4c13f05cb7295fa9a","5d562d9b3ea1cc908f8f8cbc0744598060cc2dcd8c4e30908fa47e0b28187e1b1a56f59b3ea1cc90c17a30806344144fe22df59a97c414bb51c97c577a9d3124cf2d36df06779cdb725095d47a4439a85df3cd788c4e14ea697260d492fcf6423dc8fdf1e3ce8321517a794c9225527c1aed",{},{4,7,1,8,5,9,6,2,10,3},1,{2,8},{613508585,1388129510},{},{"84c6526cc01300db2a0f7613fa58ed8786f8d0cc60ac76865bd9281a0f1458c582"}}}
+local _up=_nKsumSt.unpack or (type(table)=="table" and table.unpack) or (type(unpack)=="function" and unpack)
 local function _getSem(op,seed) local core
 if op==1 then core={{1,0,0,0}} end
 if op==2 then core={{2,-1,0,0}} end
@@ -399,63 +399,63 @@ if op==30 then core={{30,-1,-2,0}} end
 if op==31 then core={{31,-1,-2,0}} end
 if op==32 then core={{32,-1,0,0}} end
 if not core then core={{23,0,0,0}} end return core end
-_plkDauW={} _piFGcNw={} _pqnFNTT={}
+_pqHJWbq={} _pMIjckZ={} _pbMaCyj={}
 local _curMap=1
-_gtcmhRX=function(op) if _curMap==1 then return _plkDauW[op] elseif _curMap==2 then return _piFGcNw[op] else return _pqnFNTT[op] end end
-_radpNQr=function(seed) for op=1,32 do _plkDauW[_pTusjeE[op]]=_getSem(op,seed) _piFGcNw[_pTusjeE[op]]=_getSem(op,seed+1) _pqnFNTT[_pTusjeE[op]]=_getSem(op,seed+2) end for op=33,75 do _plkDauW[op]={{op,0,0,0}} _piFGcNw[op]={{op,0,0,0}} _pqnFNTT[op]={{op,0,0,0}} end end
+_grlRepM=function(op) if _curMap==1 then return _pqHJWbq[op] elseif _curMap==2 then return _pMIjckZ[op] else return _pbMaCyj[op] end end
+_rETduVS=function(seed) for op=1,32 do _pqHJWbq[_pbqWQkQ[op]]=_getSem(op,seed) _pMIjckZ[_pbqWQkQ[op]]=_getSem(op,seed+1) _pbMaCyj[_pbqWQkQ[op]]=_getSem(op,seed+2) end for op=33,75 do _pqHJWbq[op]={{op,0,0,0}} _pMIjckZ[op]={{op,0,0,0}} _pbMaCyj[op]={{op,0,0,0}} end end
 local _ISA_SEED
-do local sA=_FLOOR((k2_eff_rot*31+7)%2147483647) if sA<1 then sA=1 end _ISA_SEED=sA _radpNQr(sA) end
+do local sA=_FLOOR((k2_eff_rot*31+7)%2147483647) if sA<1 then sA=1 end _ISA_SEED=sA _rETduVS(sA) end
 local function _V(x,a,b,c) if type(x)~="number" then return 0 end if x>=0 then return x end if x==-1 then return a or 0 end if x==-2 then return b or 0 end return c or 0 end
 local _AH=(function() local E={pcall=pcall,hf=hookfunction,ncc=newcclosure} local HH=type(E.hf)=="function" local NCC=type(E.ncc)=="function" local HF_SNAP=HH and E.hf or nil local NCC_SNAP=NCC and E.ncc or nil local S={n=0,hk=0} return {tick=function() S.n=S.n+1 end,S=S,HH=HH,NCC=NCC,E=E,HF_SNAP=HF_SNAP,NCC_SNAP=NCC_SNAP} end)()
-_hppeoKP={}
-_hppeoKP[33]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_cemWwLF(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[34]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_fXccovA(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[35]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
-_hppeoKP[36]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=(R3[O+1]~=0) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[37]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=v.lo[R3[O+1]] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[38]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_gUVQOwb(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[39]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=R[R3[O+1]] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[40]=function(v,ins,a,b,c) v.R[ins[2]]=-v.R[ins[2]] end
-_hppeoKP[41]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=not R3[O+1] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[42]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] local _t=R3[O+2] R3[O+3]=R3[O+1]+_t R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil _t=nil v.flag=(v.flag+1)%16 if v.flag==0 then if _RAWE(_nktiLZG.sb,string.byte)==false then _dEpUbJJ("X42a") end if _RAWE(_nktiLZG.pca,pcall)==false then _dEpUbJJ("X42b") end if _RAWE(_nktiLZG.er,error)==false then _dEpUbJJ("X42c") end end end
-_hppeoKP[43]=function(v,ins,a,b,c) local R=v.R local _a=R[ins[2]] local _b=R[ins[3]] R[ins[2]]=_a-_b _a=nil _b=nil end
-_hppeoKP[44]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+2]*R3[O+1] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[45]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]*(1/R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[46]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]%R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[47]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=_FLOOR(R3[O+1]/R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[48]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]^R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[49]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=tostring(R3[O+1])..tostring(R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[50]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=not (R3[O+1]~=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[51]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]~=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[52]=function(v,ins,a,b,c) local R=v.R local _a=R[ins[2]] local _b=R[ins[3]] R[ins[2]]=(_a<_b) _a=nil _b=nil end
-_hppeoKP[53]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=not (R3[O+1]<=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[54]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]<=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[55]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]>=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[56]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1] and R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[57]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1] or R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[58]=function(v,ins,a,b,c) local _x=v.R[ins[2]] v.R[ins[2]]=#_x _x=nil end
-_hppeoKP[59]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[3]] R3[O+2]=_V(ins[4],a,b,c) R3[O+3]=_fXccovA(R3[O+2]) R3[O+4]=R3[O+1][R3[O+3]] R[ins[2]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
-_hppeoKP[60]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R[ins[4]] R3[O+1][R3[O+2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[61]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=_V(ins[3],a,b,c) R3[O+3]=_fXccovA(R3[O+2]) R3[O+4]=R[ins[4]] R3[O+1][R3[O+3]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
-_hppeoKP[62]=function(v,ins,a,b,c) v.R[ins[2]]={} end
-_hppeoKP[63]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+1][#R3[O+1]+1]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
-_hppeoKP[64]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R[ins[4]] R3[O+1][R3[O+2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[65]=function(v,ins,a,b,c) v.ret=v.R[ins[2]] v.R[ins[2]]=nil v.pc=0 end
-_hppeoKP[66]=function(v,ins,a,b,c) local R=v.R local fn=R[ins[2]] local base=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii-1] end R[ins[2]]=fn(_up(ar,1,argc)) end
-_hppeoKP[67]=function(v,ins,a,b,c) local R=v.R local obj=R[ins[2]] local base=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii] end R[base]=obj end
-_hppeoKP[68]=function(v,ins,a,b,c) local R=v.R local base=ins[2] local obj=R[base] local m=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii] end local fn=obj[_fXccovA(m)] R[base]=fn(obj,_up(ar,1,argc)) end
-_hppeoKP[69]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=_V(ins[4],a,b,c) R3[O+3]=_fXccovA(R3[O+2]) R3[O+4]=R3[O+1][R3[O+3]] R[ins[2]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
-_hppeoKP[70]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1][R3[O+2]] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
-_hppeoKP[71]=function(v,ins,a,b,c) v.R[ins[2]]={} end
-_hppeoKP[72]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
-_hppeoKP[73]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
-_hppeoKP[74]=function(v,ins,a,b,c) local R=v.R local t=R[ins[2]] t[#t+1]=R[ins[3]] end
-_hppeoKP[75]=function(v,ins,a,b,c) local R=v.R local t=R[ins[2]] t[R[ins[3]]]=R[ins[4]] end
-_hppeoKP[72]=_hppeoKP[35]
-_hppeoKP[73]=_hppeoKP[35]
-_hppeoKP[71]=_hppeoKP[62]
-_mZahIGB=function(v,ins,a,b,c) if not ins then return end local h=_hppeoKP[ins[1]] if h then h(v,ins,a,b,c) end end
-local _TS=_nmrMMtS.tostring or tostring
+_hmDsVVp={}
+_hmDsVVp[33]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_cFnvqbA(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[34]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_fbKHnjw(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[35]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
+_hmDsVVp[36]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=(R3[O+1]~=0) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[37]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=v.lo[R3[O+1]] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[38]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=_V(ins[3],a,b,c) R3[O+2]=_gjVHvXw(R3[O+1]) R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[39]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=ins[3] R3[O+2]=R[R3[O+1]] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[40]=function(v,ins,a,b,c) v.R[ins[2]]=-v.R[ins[2]] end
+_hmDsVVp[41]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=not R3[O+1] R[ins[2]]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[42]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]+R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil v.flag=(v.flag+1)%16 if v.flag==0 then if _RAWE(_nvsRONj.sb,string.byte)==false then _daVtQEJ("X42a") end if _RAWE(_nvsRONj.pca,pcall)==false then _daVtQEJ("X42b") end if _RAWE(_nvsRONj.er,error)==false then _daVtQEJ("X42c") end end end
+_hmDsVVp[43]=function(v,ins,a,b,c) local R=v.R local _a=R[ins[2]] local _b=R[ins[3]] R[ins[2]]=_a-_b _a=nil _b=nil end
+_hmDsVVp[44]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]*R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[45]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]*(1/R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[46]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]%R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[47]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=_FLOOR(R3[O+1]/R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[48]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1]^R3[O+2] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[49]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=tostring(R3[O+1])..tostring(R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[50]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]==R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[51]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]~=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[52]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]<R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[53]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=not (R3[O+1]<=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[54]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]<=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[55]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1]>=R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[56]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1] and R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[57]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=(R3[O+1] or R3[O+2]) R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[58]=function(v,ins,a,b,c) v.R[ins[2]]=#v.R[ins[2]] end
+_hmDsVVp[59]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[3]] R3[O+2]=_V(ins[4],a,b,c) R3[O+3]=_fbKHnjw(R3[O+2]) R3[O+4]=R3[O+1][R3[O+3]] R[ins[2]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
+_hmDsVVp[60]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R[ins[4]] R3[O+1][R3[O+2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[61]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=_V(ins[3],a,b,c) R3[O+3]=_fbKHnjw(R3[O+2]) R3[O+4]=R[ins[4]] R3[O+1][R3[O+3]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
+_hmDsVVp[62]=function(v,ins,a,b,c) v.R[ins[2]]={} end
+_hmDsVVp[63]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+1][#R3[O+1]+1]=R3[O+2] R3[O+1]=nil R3[O+2]=nil end
+_hmDsVVp[64]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R[ins[4]] R3[O+1][R3[O+2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[65]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] v.ret=R3[O+1] v.pc=0 R3[O+1]=nil end
+_hmDsVVp[66]=function(v,ins,a,b,c) local R=v.R local fn=R[ins[2]] local base=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii-1] end R[ins[2]]=fn(_up(ar,1,argc)) end
+_hmDsVVp[67]=function(v,ins,a,b,c) local R=v.R local obj=R[ins[2]] local base=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii] end R[base]=obj end
+_hmDsVVp[68]=function(v,ins,a,b,c) local R=v.R local base=ins[2] local obj=R[base] local m=ins[3] local argc=ins[4] local ar={} for ii=1,argc do ar[ii]=R[base+ii] end local fn=obj[_fbKHnjw(m)] R[base]=fn(obj,_up(ar,1,argc)) end
+_hmDsVVp[69]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=_V(ins[4],a,b,c) R3[O+3]=_fbKHnjw(R3[O+2]) R3[O+4]=R3[O+1][R3[O+3]] R[ins[2]]=R3[O+4] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil R3[O+4]=nil end
+_hmDsVVp[70]=function(v,ins,a,b,c) local R,R3,O=v.R,v.R3,_R3OFS R3[O+1]=R[ins[2]] R3[O+2]=R[ins[3]] R3[O+3]=R3[O+1][R3[O+2]] R[ins[2]]=R3[O+3] R3[O+1]=nil R3[O+2]=nil R3[O+3]=nil end
+_hmDsVVp[71]=function(v,ins,a,b,c) v.R[ins[2]]={} end
+_hmDsVVp[72]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
+_hmDsVVp[73]=function(v,ins,a,b,c) v.R[ins[2]]=nil end
+_hmDsVVp[74]=function(v,ins,a,b,c) local R=v.R local t=R[ins[2]] t[#t+1]=R[ins[3]] end
+_hmDsVVp[75]=function(v,ins,a,b,c) local R=v.R local t=R[ins[2]] t[R[ins[3]]]=R[ins[4]] end
+_hmDsVVp[72]=_hmDsVVp[35]
+_hmDsVVp[73]=_hmDsVVp[35]
+_hmDsVVp[71]=_hmDsVVp[62]
+_mKOmYyU=function(v,ins,a,b,c) if not ins then return end local h=_hmDsVVp[ins[1]] if h then h(v,ins,a,b,c) end end
+local _TS=_nKsumSt.tostring or tostring
 local _HAS_B32=(type(bit32)=="table") and (type(bit32.bxor)=="function")
 local function _u32(x) local m=x%4294967296 if m<0 then m=m+4294967296 end return m end
 local function _s32(x) if x>=2147483648 then return x-4294967296 end return x end
@@ -467,58 +467,58 @@ local function _band(a,b) if _HAS_B32 then return bit32.band(a,b) end return _ba
 local function _bor(a,b) if _HAS_B32 then return bit32.bor(a,b) end return _bor_slow(a,b) end
 local function _bnot(a) if _HAS_B32 then return bit32.bnot(a) end return 4294967295-_u32(a) end
 local function _isint(x) return type(x)=="number" and x==_FLOOR(x) end
-local function _mba_add(a,b) if _isint(a) and _isint(b) then local au,bu=_u32(a),_u32(b) local xv,av=_bxor(au,bu),_band(au,bu) return _s32((xv+2*av)%4294967296) end return a+b end
+local function _mba_add(a,b) if _isint(a) and _isint(b) then local s=(_u32(a)+_u32(b))%4294967296 return _s32(s) end return a+b end
 local function _mba_sub(a,b) if _isint(a) and _isint(b) then local au,bu=_u32(a),_u32(b) return _s32((au-bu)%4294967296) end return a-b end
 local function _mba_neg(a) if _isint(a) then local au=_u32(a) return _s32((_bnot(au)+1)%4294967296) end return -a end
 local function _mba_eq(a,b) if _isint(a) and _isint(b) then local xv=_bxor(_u32(a),_u32(b)) return xv==0 end return a==b end
 local function _mba_ne(a,b) if _isint(a) and _isint(b) then local xv=_bxor(_u32(a),_u32(b)) return xv~=0 end return a~=b end
-_hKPihIs={[35]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=nil end,[26]=function(v,ins,a,b,c) local p=ins[2] if p<0 then p=_V(p,a,b,c) end v.sp=_mba_add(v.sp,1) v.st[v.sp]=(p~=0) end,[22]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_cemWwLF(_V(ins[2],a,b,c)) end,[25]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_fXccovA(_V(ins[2],a,b,c)) end,[15]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=v.lo[_V(ins[2],a,b,c)] end,[18]=function(v,ins,a,b,c) v.lo[_V(ins[2],a,b,c)]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[2]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_gUVQOwb(_V(ins[2],a,b,c)) end,[4]=function(v,ins,a,b,c) _gKmNqhY(_V(ins[2],a,b,c),v.st[v.sp]) v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[10]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]={} end,[8]=function(v,ins,a,b,c) v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[17]=function(v,ins,a,b,c) v.st[_mba_add(v.sp,1)]=v.st[v.sp] v.sp=_mba_add(v.sp,1) end,[13]=function(v,ins,a,b,c) local t=v.st[v.sp] v.st[v.sp]=v.st[_mba_sub(v.sp,1)] v.st[_mba_sub(v.sp,1)]=t end,[36]=function(v,ins,a,b,c) local ty=_V(ins[2],a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) local rr if ty==1 then rr=aa+bb elseif ty==2 then rr=aa-bb elseif ty==3 then rr=aa*bb elseif ty==4 then rr=aa/bb elseif ty==5 then rr=aa%bb elseif ty==6 then rr=_FLOOR(aa/bb) elseif ty==7 then rr=aa^bb elseif ty==8 then rr=_TS(aa).._TS(bb) elseif ty==9 then rr=(aa==bb) elseif ty==10 then rr=(aa~=bb) elseif ty==11 then rr=(aa<bb) elseif ty==12 then rr=(aa>bb) elseif ty==13 then rr=(aa<=bb) elseif ty==14 then rr=(aa>=bb) elseif ty==15 then rr=(aa and bb) elseif ty==16 then rr=(aa or bb) end v.st[v.sp]=rr end,[28]=function(v,ins,a,b,c) local ty=_V(ins[2],a,b,c) local x=v.st[v.sp] if ty==1 then v.st[v.sp]=-x elseif ty==2 then v.st[v.sp]=not x elseif ty==3 then v.st[v.sp]=#x end end,[29]=function(v,ins,a,b,c) v.st[v.sp]=v.st[v.sp][_fXccovA(_V(ins[2],a,b,c))] end,[33]=function(v,ins,a,b,c) local k=v.st[v.sp] local o=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=o[k] v.sp=_mba_sub(v.sp,1) end,[37]=function(v,ins,a,b,c) local v0=v.st[v.sp] local o=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=nil v.sp=v.sp-2 o[_fXccovA(_V(ins[2],a,b,c))]=v0 end,[21]=function(v,ins,a,b,c) local v0=v.st[v.sp] local k0=v.st[_mba_sub(v.sp,1)] local o=v.st[v.sp-2] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=nil v.st[v.sp-2]=nil o[k0]=v0 v.sp=v.sp-3 end,[16]=function(v,ins,a,b,c) local pk0=_V(ins[2],a,b,c) local cl0=v.lo local s=_mba_add(v.sp,1) v.sp=s v.st[s]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _rPTzIoW(pk0,a0,cl0) end end,[27]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) if ai==0 then ai=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local s=v.sp local fn0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) local ar={} for ii=ai,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=fn0(_up(ar,1,ai)) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[23]=function(v,ins,a,b,c) local si=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local s=v.sp local o0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local fn0=o0[_fXccovA(si)] local rv=fn0(o0,_up(ar,1,bc)) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[19]=function(v,ins,a,b,c) local aa=_V(ins[2] or 0,a,b,c) if aa==0 then v.pc=0 else local s=v.sp v.ret=v.st[_mba_sub(v.sp,aa-1)] v.pc=0 end end,[31]=function(v,ins,a,b,c) v.pc=_mba_add(v.pc,1) end,[12]=function(v,ins,a,b,c) v.pc=_V(ins[2],a,b,c) end,[24]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) local s=v.sp local c0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) if c0 then v.pc=_mba_add(v.pc,1) else v.pc=ai end end,[20]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) local s=v.sp local c0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) if not c0 then v.pc=_mba_add(v.pc,1) else v.pc=ai end end,[39]=function(v,ins,a,b,c) local s=v.sp local val0=v.st[s] v.st[s]=nil local t0=v.st[_mba_sub(s,1)] t0[#t0+1]=val0 v.sp=_mba_sub(s,1) end,[11]=function(v,ins,a,b,c) local s=v.sp local v0=v.st[s] local k0=v.st[_mba_sub(s,1)] local t0=v.st[s-2] v.st[s]=nil v.st[_mba_sub(s,1)]=nil t0[k0]=v0 v.sp=s-2 end,[40]=function(v,ins,a,b,c) v.flag=(_V(ins[2],a,b,c))%16 end,[6]=function(v,ins,a,b,c) local pk0=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=_ragQpHH(pk0,ar,v.lo) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[5]=function(v,ins,a,b,c) local fid0=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=_rBJSzZR(fid0,ar,bc) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[1]=function(v,ins,a,b,c) local fid0=_V(ins[2],a,b,c) local s=_mba_add(v.sp,1) v.sp=s v.st[s]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _rBJSzZR(fid0,a0,n0) end end,[32]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_add(aa,bb) end,[30]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_sub(aa,bb) end,[14]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_bxor(_u32(aa),_u32(bb))) end,[38]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_band(_u32(aa),_u32(bb))) end,[7]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_bor(_u32(aa),_u32(bb))) end,[3]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_eq(aa,bb) end,[34]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_ne(aa,bb) end,[9]=function(v,ins,a,b,c) local aa=v.st[v.sp] v.st[v.sp]=_mba_neg(aa) end}
-_hPPjxFK={35,26,22,25,15,18,2,4,10,8,17,13,36,28,29,33,37,21,16,27,23,19,31,12,24,20,39,11,40,6,5,1,32,30,14,38,7,3,34,9}
-_hZMUMMl={}
-for i=1,40 do _hZMUMMl[i]=_hKPihIs[_hPPjxFK[i]] end
-_mGjIMII=function(v,ins,a,b,c) if not ins then return end local op=ins[1] if op==0 then return end local list=_gtcmhRX(op) if list then for _i=1,#list do local sub=list[_i] local h=_hZMUMMl[sub[1]] if h then h(v,sub,a,b,c) end if v.pc==0 then return end end else local h=_hZMUMMl[op] if h then h(v,ins,a,b,c) end end end
-_oMFVaVq={{3,4,1,5,13,9,6,14,10,15,11,2,0,7,12,8},{13,12,0,15,6,14,10,2,11,3,1,9,5,4,7,8},{14,3,0,13,7,6,12,11,15,2,9,8,4,10,5,1},{14,4,0,9,3,10,11,12,15,7,6,13,2,5,1,8},{15,14,2,13,10,9,8,11,5,4,1,0,12,7,6,3},{8,3,15,5,0,7,10,2,9,14,1,6,11,12,4,13},{15,5,13,6,12,10,1,2,7,14,0,11,9,3,4,8},{12,7,11,6,15,14,10,3,0,2,9,1,5,13,8,4}}
-local function _gBltzht(fid) local gi=((fid-1)%8)+1 local t=_oMFVaVq[gi] if not t then t={} end return t end
+_hKdbxPm={[32]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=nil end,[9]=function(v,ins,a,b,c) local p=ins[2] if p<0 then p=_V(p,a,b,c) end v.sp=_mba_add(v.sp,1) v.st[v.sp]=(p~=0) end,[16]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_cFnvqbA(_V(ins[2],a,b,c)) end,[19]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_fbKHnjw(_V(ins[2],a,b,c)) end,[29]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=v.lo[_V(ins[2],a,b,c)] end,[4]=function(v,ins,a,b,c) v.lo[_V(ins[2],a,b,c)]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[3]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]=_gjVHvXw(_V(ins[2],a,b,c)) end,[30]=function(v,ins,a,b,c) _gKvTBpB(_V(ins[2],a,b,c),v.st[v.sp]) v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[36]=function(v,ins,a,b,c) v.sp=_mba_add(v.sp,1) v.st[v.sp]={} end,[34]=function(v,ins,a,b,c) v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end,[28]=function(v,ins,a,b,c) v.st[_mba_add(v.sp,1)]=v.st[v.sp] v.sp=_mba_add(v.sp,1) end,[7]=function(v,ins,a,b,c) local t=v.st[v.sp] v.st[v.sp]=v.st[_mba_sub(v.sp,1)] v.st[_mba_sub(v.sp,1)]=t end,[37]=function(v,ins,a,b,c) local ty=_V(ins[2],a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) local rr if ty==1 then rr=aa+bb elseif ty==2 then rr=aa-bb elseif ty==3 then rr=aa*bb elseif ty==4 then rr=aa/bb elseif ty==5 then rr=aa%bb elseif ty==6 then rr=_FLOOR(aa/bb) elseif ty==7 then rr=aa^bb elseif ty==8 then rr=_TS(aa).._TS(bb) elseif ty==9 then rr=(aa==bb) elseif ty==10 then rr=(aa~=bb) elseif ty==11 then rr=(aa<bb) elseif ty==12 then rr=(aa>bb) elseif ty==13 then rr=(aa<=bb) elseif ty==14 then rr=(aa>=bb) elseif ty==15 then rr=(aa and bb) elseif ty==16 then rr=(aa or bb) end v.st[v.sp]=rr end,[1]=function(v,ins,a,b,c) local ty=_V(ins[2],a,b,c) local x=v.st[v.sp] if ty==1 then v.st[v.sp]=-x elseif ty==2 then v.st[v.sp]=not x elseif ty==3 then v.st[v.sp]=#x end end,[18]=function(v,ins,a,b,c) v.st[v.sp]=v.st[v.sp][_fbKHnjw(_V(ins[2],a,b,c))] end,[14]=function(v,ins,a,b,c) local k=v.st[v.sp] local o=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=o[k] v.sp=_mba_sub(v.sp,1) end,[10]=function(v,ins,a,b,c) local v0=v.st[v.sp] local o=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=nil v.sp=v.sp-2 o[_fbKHnjw(_V(ins[2],a,b,c))]=v0 end,[2]=function(v,ins,a,b,c) local v0=v.st[v.sp] local k0=v.st[_mba_sub(v.sp,1)] local o=v.st[v.sp-2] v.st[v.sp]=nil v.st[_mba_sub(v.sp,1)]=nil v.st[v.sp-2]=nil o[k0]=v0 v.sp=v.sp-3 end,[12]=function(v,ins,a,b,c) local pk0=_V(ins[2],a,b,c) local cl0=v.lo local s=_mba_add(v.sp,1) v.sp=s v.st[s]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _rATiOMW(pk0,a0,cl0) end end,[23]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) if ai==0 then ai=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local s=v.sp local fn0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) local ar={} for ii=ai,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=fn0(_up(ar,1,ai)) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[11]=function(v,ins,a,b,c) local si=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local s=v.sp local o0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local fn0=o0[_fbKHnjw(si)] local rv=fn0(o0,_up(ar,1,bc)) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[20]=function(v,ins,a,b,c) local aa=_V(ins[2] or 0,a,b,c) if aa==0 then v.pc=0 else local s=v.sp v.ret=v.st[_mba_sub(v.sp,aa-1)] v.pc=0 end end,[15]=function(v,ins,a,b,c) v.pc=_mba_add(v.pc,1) end,[40]=function(v,ins,a,b,c) v.pc=_V(ins[2],a,b,c) end,[22]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) local s=v.sp local c0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) if c0 then v.pc=_mba_add(v.pc,1) else v.pc=ai end end,[8]=function(v,ins,a,b,c) local ai=_V(ins[2],a,b,c) local s=v.sp local c0=v.st[s] v.st[s]=nil v.sp=_mba_sub(s,1) if not c0 then v.pc=_mba_add(v.pc,1) else v.pc=ai end end,[21]=function(v,ins,a,b,c) local s=v.sp local val0=v.st[s] v.st[s]=nil local t0=v.st[_mba_sub(s,1)] t0[#t0+1]=val0 v.sp=_mba_sub(s,1) end,[17]=function(v,ins,a,b,c) local s=v.sp local v0=v.st[s] local k0=v.st[_mba_sub(s,1)] local t0=v.st[s-2] v.st[s]=nil v.st[_mba_sub(s,1)]=nil t0[k0]=v0 v.sp=s-2 end,[5]=function(v,ins,a,b,c) v.flag=(_V(ins[2],a,b,c))%16 end,[27]=function(v,ins,a,b,c) local pk0=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=_rJBIrjk(pk0,ar,v.lo) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[35]=function(v,ins,a,b,c) local fid0=_V(ins[2],a,b,c) local bc=_V(ins[3],a,b,c) if bc==0 then bc=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local ar={} for ii=bc,1,-1 do ar[ii]=v.st[v.sp] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) end local rv=_ronDGRu(fid0,ar,bc) v.sp=_mba_add(v.sp,1) v.st[v.sp]=rv end,[31]=function(v,ins,a,b,c) local fid0=_V(ins[2],a,b,c) local s=_mba_add(v.sp,1) v.sp=s v.st[s]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _ronDGRu(fid0,a0,n0) end end,[13]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_add(aa,bb) end,[26]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_sub(aa,bb) end,[38]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_bxor(_u32(aa),_u32(bb))) end,[6]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_band(_u32(aa),_u32(bb))) end,[24]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_s32(_bor(_u32(aa),_u32(bb))) end,[33]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_eq(aa,bb) end,[25]=function(v,ins,a,b,c) local bb=v.st[v.sp] local aa=v.st[_mba_sub(v.sp,1)] v.st[v.sp]=nil v.sp=_mba_sub(v.sp,1) v.st[v.sp]=_mba_ne(aa,bb) end,[39]=function(v,ins,a,b,c) local aa=v.st[v.sp] v.st[v.sp]=_mba_neg(aa) end}
+_hIFYksi={32,9,16,19,29,4,3,30,36,34,28,7,37,1,18,14,10,2,12,23,11,20,15,40,22,8,21,17,5,27,35,31,13,26,38,6,24,33,25,39}
+_hYMmuLm={}
+for i=1,40 do _hYMmuLm[i]=_hKdbxPm[_hIFYksi[i]] end
+_mxeouIO=function(v,ins,a,b,c) if not ins then return end local op=ins[1] if op==0 then return end local list=_grlRepM(op) if list then for _i=1,#list do local sub=list[_i] local h=_hYMmuLm[sub[1]] if h then h(v,sub,a,b,c) end if v.pc==0 then return end end else local h=_hYMmuLm[op] if h then h(v,ins,a,b,c) end end end
+_oKEzMxZ={{5,3,14,4,11,7,0,13,1,6,12,9,8,15,10,2},{9,7,0,8,13,1,5,6,14,3,2,4,15,11,12,10},{8,9,6,13,14,10,12,7,0,2,1,4,11,5,3,15},{8,2,3,4,14,1,0,10,11,5,7,6,15,9,12,13},{2,4,5,9,11,15,3,1,13,0,8,6,12,14,10,7},{15,10,9,1,0,3,2,4,6,13,7,5,8,12,11,14},{2,3,9,15,6,5,1,7,0,11,14,13,10,4,8,12},{15,5,4,10,6,7,14,9,0,13,12,2,1,8,11,3}}
+local function _gBcPXzy(fid) local gi=((fid-1)%8)+1 local t=_oKEzMxZ[gi] if not t then t={} end return t end
 local _RUNTIME_READY=false
-local function _decProto(idx,which) local p=PROTO[idx] if not p or not p[1] then _dEpUbJJ("PROTO_MISS_"..idx) end local hex=p[which+1] if type(hex)~="string" then return hex end return _decDouble(hex,idx,(which-1)*2,11,13,2) end
+local function _decProto(idx,which) local p=PROTO[idx] if not p or not p[1] then _daVtQEJ("PROTO_MISS_"..idx) end local hex=p[which+1] if type(hex)~="string" then return hex end return _decDouble(hex,idx,(which-1)*2,11,13,2) end
 local function _parseCFF(s,fid) local blocks={} local entry=nil for blk_str in string.gmatch(s,"([^;]+)") do local bid_str,rest=string.match(blk_str,"^(%d+):(.+)$") if bid_str then local next_raw=0 local code_str,next_str=string.match(rest,"(.+)|(%d+)") if not code_str then code_str=rest next_raw=0 else next_raw=tonumber(next_str) or 0 end local code={} for ins_str in string.gmatch(code_str,"([^,]+)") do local op,a,b=string.match(ins_str,"(%d+):(%d+):(%d+)") if op then code[#code+1]={tonumber(op),tonumber(a),tonumber(b)} end end local bid=tonumber(bid_str) local next_id=0 if next_raw>0 then next_id=(next_raw-1-((bid*31+fid*7)%256)+256)%256 end blocks[bid]={code=code,next=next_id} if not entry then entry=bid end end end return blocks,entry end
 local _RS_NEXT=4
 local _R3_NEXT=32
-local _maybe_reshuffle=function(steps) _curMap=((steps+_AH.S.n)%3)+1 if _AH.S.n>=_RS_NEXT then _RS_NEXT=_AH.S.n+4 local s=_FLOOR((k2_eff_rot+_AH.S.n*7919)%2147483647) if s<1 then s=1 end _radpNQr(s) end if _AH.S.n>=_R3_NEXT then _R3_NEXT=_AH.S.n+32 _R3OFS=(_FLOOR(k2_eff_rot+_AH.S.n*131)%8)*5 end end
-_rvumnRv=function(idx,args,parent) _AH.tick() _aAbudDz() _RUNTIME_READY=true if _AH.S.n%4==0 then _ISA_SEED=_FLOOR((_ISA_SEED+_AH.S.n*7919+idx*131)%2147483647) if _ISA_SEED<1 then _ISA_SEED=1 end _radpNQr(_ISA_SEED) end local p=PROTO[idx] if not p or not p[1] then _dEpUbJJ("PROTO_MISS_"..idx) end local cc=_cNrxqPX(idx) local c=cc.code local params=cc.params local ord=cc.ord local isaKind=cc.isaKind if not params or not ord then return end local v={pc=1,st={},lo={},ret=nil,flag=0,f=0,R={},R3={}} setmetatable(v.lo,{__index=parent or {}}) for i=1,#params do v.lo[params[i]]=args[i] end local brk=false local steps=0 local t0=_now()
+local _maybe_reshuffle=function(steps) _curMap=((steps+_AH.S.n)%3)+1 if _AH.S.n>=_RS_NEXT then _RS_NEXT=_AH.S.n+4 local s=_FLOOR((k2_eff_rot+_AH.S.n*7919)%2147483647) if s<1 then s=1 end _rETduVS(s) end if _AH.S.n>=_R3_NEXT then _R3_NEXT=_AH.S.n+32 _R3OFS=(_FLOOR(k2_eff_rot+_AH.S.n*131)%8)*5 end end
+_rIszJzY=function(idx,args,parent) _AH.tick() _aVSngZk() _RUNTIME_READY=true if _AH.S.n%4==0 then _ISA_SEED=_FLOOR((_ISA_SEED+_AH.S.n*7919+idx*131)%2147483647) if _ISA_SEED<1 then _ISA_SEED=1 end _rETduVS(_ISA_SEED) end local p=PROTO[idx] if not p or not p[1] then _daVtQEJ("PROTO_MISS_"..idx) end local cc=_cETOSMV(idx) local c=cc.code local params=cc.params local ord=cc.ord local isaKind=cc.isaKind if not params or not ord then return end local v={pc=1,st={},lo={},ret=nil,flag=0,f=0,R={},R3={}} setmetatable(v.lo,{__index=parent or {}}) for i=1,#params do v.lo[params[i]]=args[i] end local brk=false local steps=0 local t0=_now()
 while not brk do steps=steps+1 _maybe_reshuffle(steps) if _INTEGRITY_FAILED then brk=true break end
-if steps%64==0 then _aAbudDz() if _now()-t0>_T_LIMIT_ACT then _TIMEOUT_HIT=true _dEpUbJJ("TIMEOUT") brk=true break end end
-if steps>_STEP_HARD_LIMIT then _TIMEOUT_HIT=true _dEpUbJJ("STEP_LIMIT") brk=true break end local oi=ord[v.pc] if oi==nil then brk=true break end local ins=c[oi] if not ins then brk=true break end
-if type(ins[1])~="number" or ins[1]<1 or ins[1]>75 then _dEpUbJJ("VM_OP_RANGE") end
-if steps%8==0 then if v.pc<1 or v.pc>#ord+1 then _dEpUbJJ("VM_PC_RANGE") end end
-if isaKind==1 then _mZahIGB(v,ins,ins[2],ins[3],ins[4]) if v.pc~=0 then v.pc=v.pc+1 end else local _oldpc=v.pc _mGjIMII(v,ins,ins[2],ins[3],ins[4]) if v.pc==_oldpc then v.pc=_mba_add(v.pc,1) end end if v.pc==0 then brk=true end end return v.ret end
-_ragQpHH=_rvumnRv
-if _AH.NCC then local ok,fn=_AH.E.pcall(_AH.E.ncc,_rvumnRv) if ok and type(fn)=="function" then _ragQpHH=fn end end
-_rPTzIoW=_ragQpHH
-_cNrxqPX=function(idx) _aAbudDz() if not _RUNTIME_READY then return {} end local c=_cCymltk[idx] if c then if type(c.code)~="table" or #c.code~=#c.ord then _dEpUbJJ("CC_CORRUPT") end for _ci=1,#c.code do local _ins=c.code[_ci] if type(_ins)~="table" or type(_ins[1])~="number" or _ins[1]<1 or _ins[1]>75 then _dEpUbJJ("CC_INS_".._ci) end end return c end local p=PROTO[idx] if not p or not p[1] then _dEpUbJJ("PROTO_MISS_"..idx) end local aS=_decProto(idx,1) local bS=_decProto(idx,2) local cS=_decProto(idx,3) local dS=_decProto(idx,4) local params=p[6] local ord=p[7] local isaKind=p[8] or 0 local segSizes=p[9] or {#ord} local segSeeds=p[10] or {0} local pof,pk=_proto_k(idx) local ih2=_getPI(idx,2) local ih3=_getPI(idx,3) local ih4=_getPI(idx,4) local ih5=_getPI(idx,5) local segH1={} for si=1,#segSeeds do segH1[si]=_getPH1_seg(idx,si,segSeeds[si]) end
-local function _split(s) if not s then return {} end local t={} local i=1 local n=#s while i<=n do local j=string.find(s,",",i,true) if not j then t[#t+1]=tonumber(string.sub(s,i)) break end t[#t+1]=tonumber(string.sub(s,i,j-1)) i=j+1 end return t end local A=_split(aS) local B=_split(bS) local C=_split(cS) local D=_split(dS) aS=nil bS=nil cS=nil dS=nil local n=#A c={} for i=1,n do local i0=i-1 local sA=(i0*7919+k2)%256 local sB=(i0*13337+k2)%65536 local sC=(i0*17771+k2)%65536 local sD=(i0*23333+k2)%65536 local A0=(A[i]-sA)%256 local B0=(B[i]-sB)%65536 local C0=(C[i]-sC)%65536 local D0=(D[i]-sD)%65536 local eo=(A0-i0*13)%256 if eo<0 then eo=eo+256 end local ea=(B0-i0*17-23)%65536 if ea<0 then ea=ea+65536 end local eb=(C0-i0*29-41)%65536 if eb<0 then eb=eb+65536 end local ec=(D0-i0*31-7)%65536 if ec<0 then ec=ec+65536 end local fn=(eo-pof-i*pk)%256 if fn<0 then fn=fn+256 end local hk=ih2[ih3[ih4[ih5[fn]]]] local si=_seg_of_pos(i,segSizes) local pid=segH1[si][hk] if type(pid)~="number" or pid<1 or pid>75 then _dEpUbJJ("PID_RANGE") end c[i]={pid,ea,eb,ec} end A=nil B=nil C=nil D=nil local _seen={} for _oi=1,#ord do local _oc=ord[_oi] if type(_oc)~="number" or _oc<1 or _oc>#c or _seen[_oc] then _dEpUbJJ("ORD_BAD_".._oi) end _seen[_oc]=true end if #c<1 then _dEpUbJJ("CODE_EMPTY") end _cCymltk[idx]={code=c,params=params,ord=ord,isaKind=isaKind} return _cCymltk[idx] end
-_oTunbAD={{"7b445aa4d45be1b2f551abf2bc126f6ba5e1daa3a3c2e17977136a8b16a1968414b7b8605492e1b2e3c7b7739052e68d7ae7","026617d08704922a3d82bff3ba66129acd15ad505da898bd8eff29bc47245dd5ff8a24a795bf922a37a640c00f206afd0802",0,0,236}}
-local _oIZvehw={} local _opzAaMx={}
+if steps%64==0 then _aVSngZk() if _now()-t0>_T_LIMIT_ACT then _TIMEOUT_HIT=true _daVtQEJ("TIMEOUT") brk=true break end end
+if steps>_STEP_HARD_LIMIT then _TIMEOUT_HIT=true _daVtQEJ("STEP_LIMIT") brk=true break end local oi=ord[v.pc] if oi==nil then brk=true break end local ins=c[oi] if not ins then brk=true break end
+if type(ins[1])~="number" or ins[1]<1 or ins[1]>75 then _daVtQEJ("VM_OP_RANGE") end
+if steps%8==0 then if v.pc<1 or v.pc>#ord+1 then _daVtQEJ("VM_PC_RANGE") end end
+if isaKind==1 then _mKOmYyU(v,ins,ins[2],ins[3],ins[4]) if v.pc~=0 then v.pc=v.pc+1 end else local _oldpc=v.pc _mxeouIO(v,ins,ins[2],ins[3],ins[4]) if v.pc==_oldpc then v.pc=_mba_add(v.pc,1) end end if v.pc==0 then brk=true end end return v.ret end
+_rJBIrjk=_rIszJzY
+if _AH.NCC then local ok,fn=_AH.E.pcall(_AH.E.ncc,_rIszJzY) if ok and type(fn)=="function" then _rJBIrjk=fn end end
+_rATiOMW=_rJBIrjk
+_cETOSMV=function(idx) _aVSngZk() if not _RUNTIME_READY then return {} end local c=_cfNKvoN[idx] if c then if type(c.code)~="table" or #c.code~=#c.ord then _daVtQEJ("CC_CORRUPT") end for _ci=1,#c.code do local _ins=c.code[_ci] if type(_ins)~="table" or type(_ins[1])~="number" or _ins[1]<1 or _ins[1]>75 then _daVtQEJ("CC_INS_".._ci) end end return c end local p=PROTO[idx] if not p or not p[1] then _daVtQEJ("PROTO_MISS_"..idx) end local aS=_decProto(idx,1) local bS=_decProto(idx,2) local cS=_decProto(idx,3) local dS=_decProto(idx,4) local params=p[6] local ord=p[7] local isaKind=p[8] or 0 local segSizes=p[9] or {#ord} local segSeeds=p[10] or {0} local pof,pk=_proto_k(idx) local ih2=_getPI(idx,2) local ih3=_getPI(idx,3) local ih4=_getPI(idx,4) local ih5=_getPI(idx,5) local segH1={} for si=1,#segSeeds do segH1[si]=_getPH1_seg(idx,si,segSeeds[si]) end
+local function _split(s) if not s then return {} end local t={} local i=1 local n=#s while i<=n do local j=string.find(s,",",i,true) if not j then t[#t+1]=tonumber(string.sub(s,i)) break end t[#t+1]=tonumber(string.sub(s,i,j-1)) i=j+1 end return t end local A=_split(aS) local B=_split(bS) local C=_split(cS) local D=_split(dS) aS=nil bS=nil cS=nil dS=nil local n=#A c={} for i=1,n do local i0=i-1 local sA=(i0*7919+k2)%256 local sB=(i0*13337+k2)%65536 local sC=(i0*17771+k2)%65536 local sD=(i0*23333+k2)%65536 local A0=(A[i]-sA)%256 local B0=(B[i]-sB)%65536 local C0=(C[i]-sC)%65536 local D0=(D[i]-sD)%65536 local eo=(A0-i0*13)%256 if eo<0 then eo=eo+256 end local ea=(B0-i0*17-23)%65536 if ea<0 then ea=ea+65536 end local eb=(C0-i0*29-41)%65536 if eb<0 then eb=eb+65536 end local ec=(D0-i0*31-7)%65536 if ec<0 then ec=ec+65536 end local fn=(eo-pof-i*pk)%256 if fn<0 then fn=fn+256 end local hk=ih2[ih3[ih4[ih5[fn]]]] local si=_seg_of_pos(i,segSizes) local pid=segH1[si][hk] if type(pid)~="number" or pid<1 or pid>75 then _daVtQEJ("PID_RANGE") end c[i]={pid,ea,eb,ec} end A=nil B=nil C=nil D=nil local _seen={} for _oi=1,#ord do local _oc=ord[_oi] if type(_oc)~="number" or _oc<1 or _oc>#c or _seen[_oc] then _daVtQEJ("ORD_BAD_".._oi) end _seen[_oc]=true end if #c<1 then _daVtQEJ("CODE_EMPTY") end _cfNKvoN[idx]={code=c,params=params,ord=ord,isaKind=isaKind} return _cfNKvoN[idx] end
+_okHFvRe={{"71a70fcee1b7d4c84025f22855ba4656b6590fe3df39ff649bc83c4f9e796764be71d909e1b7d4c84025f8730f5e","957ae39252768d1192ba9d4b2d47d8f62933b744ae3ea8eff7be1358cbaf299be539ae2852768d1192bacc9742b7",0,0,250}}
+local _oItwYrn={} local _oLhRMhU={}
 local function _ofcHash(c) local h=5381 h=(h*33+(c.entry or 0))%4294967296 local n=0 for _k,_v in pairs(c.blocks or {}) do n=n+1 local _c=_v.code or {} h=(h*33+#_c)%4294967296 if _c[1] then h=(h*33+(_c[1][1] or 0))%4294967296 h=(h*33+(_c[1][2] or 0))%4294967296 end if _v.next then h=(h*33+_v.next)%4294967296 end end h=(h*33+n)%4294967296 return h end
-local function _gFltscV(fid) if _oIZvehw[fid] then if _opzAaMx[fid]~=_ofcHash(_oIZvehw[fid]) then _dEpUbJJ("OFC_TAMPER_"..fid) end return _oIZvehw[fid] end local e=_oTunbAD[fid] if not e or not e[1] then _dEpUbJJ("OFC_MISS_"..fid) end local blocks,parsed_entry for _pi=1,2 do local _cipher,_sv,_ss,_s1 if _pi==1 then _cipher=e[1] _sv=0 _ss=19 _s1=17 else _cipher=e[2] or e[1] _sv=2 _ss=29 _s1=23 end local _s=_decDouble(_cipher,fid,_sv,_s1,_ss,2) if type(_s)=="string" and #_s>=1 then blocks,parsed_entry=_parseCFF(_s,fid) _s=nil if blocks and parsed_entry then break end end end if not blocks or not parsed_entry then _dEpUbJJ("OFC_PARSE_"..fid) end local entry=e[5] or parsed_entry if not blocks[entry] then entry=parsed_entry end if not entry then _dEpUbJJ("OFC_ENTRY_"..fid) end for _bid,_blk in pairs(blocks) do if type(_blk)~="table" or type(_blk.code)~="table" then _dEpUbJJ("OFC_BLK_"..fid) end if _blk.next>0 and not blocks[_blk.next] then _dEpUbJJ("OFC_NEXT_"..fid) end end local r={blocks=blocks,entry=entry,localCount=e[3],paramCount=e[4]} _oIZvehw[fid]=r _opzAaMx[fid]=_ofcHash(r) return r end
-_oFhxQqu=function(OL,OS,blocks,entry,fid) _AH.tick() _aAbudDz() if not blocks or not entry then return end local OPI=_gBltzht(fid) local state=entry local steps=0 local sp=0 local sf=0 local t0=_now()
+local function _gYZPBDm(fid) if _oItwYrn[fid] then if _oLhRMhU[fid]~=_ofcHash(_oItwYrn[fid]) then _daVtQEJ("OFC_TAMPER_"..fid) end return _oItwYrn[fid] end local e=_okHFvRe[fid] if not e or not e[1] then _daVtQEJ("OFC_MISS_"..fid) end local blocks,parsed_entry for _pi=1,2 do local _cipher,_sv,_ss,_s1 if _pi==1 then _cipher=e[1] _sv=0 _ss=19 _s1=17 else _cipher=e[2] or e[1] _sv=2 _ss=29 _s1=23 end local _s=_decDouble(_cipher,fid,_sv,_s1,_ss,2) if type(_s)=="string" and #_s>=1 then blocks,parsed_entry=_parseCFF(_s,fid) _s=nil if blocks and parsed_entry then break end end end if not blocks or not parsed_entry then _daVtQEJ("OFC_PARSE_"..fid) end local entry=e[5] or parsed_entry if not blocks[entry] then entry=parsed_entry end if not entry then _daVtQEJ("OFC_ENTRY_"..fid) end for _bid,_blk in pairs(blocks) do if type(_blk)~="table" or type(_blk.code)~="table" then _daVtQEJ("OFC_BLK_"..fid) end if _blk.next>0 and not blocks[_blk.next] then _daVtQEJ("OFC_NEXT_"..fid) end end local r={blocks=blocks,entry=entry,localCount=e[3],paramCount=e[4]} _oItwYrn[fid]=r _oLhRMhU[fid]=_ofcHash(r) return r end
+_oUDsBFF=function(OL,OS,blocks,entry,fid) _AH.tick() _aVSngZk() if not blocks or not entry then return end local OPI=_gBcPXzy(fid) local state=entry local steps=0 local sp=0 local sf=0 local t0=_now()
 while state>0 do local blk=blocks[state] if not blk then return end local code=blk.code local OPC=1 local jump_to=nil
 while OPC<=#code do steps=steps+1 _maybe_reshuffle(steps) if _INTEGRITY_FAILED then return end
-if steps%64==0 then _aAbudDz() if _now()-t0>_T_LIMIT_ACT then _TIMEOUT_HIT=true _dEpUbJJ("TIMEOUT_O") return end end
-if steps>_STEP_HARD_LIMIT then _TIMEOUT_HIT=true _dEpUbJJ("STEP_LIMIT_O") return end local ins=code[OPC] local op0=ins[1] local op=OPI[(op0%16)+1] or op0 if op==0 then return elseif op==1 then sp=_mba_add(sp,1) OS[sp]=OL[ins[2]] elseif op==2 then OL[ins[2]]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) elseif op==3 then sp=_mba_add(sp,1) OS[sp]=_cemWwLF(ins[2]) elseif op==4 then sp=_mba_add(sp,1) OS[sp]=nil elseif op==5 then local argc=ins[3] or 0 local args={} for ii=argc,1,-1 do args[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end sp=_mba_add(sp,1) OS[sp]=_ragQpHH(ins[2],args,OL) elseif op==6 then local argc=ins[3] or 0 local args={} for ii=argc,1,-1 do args[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end sp=_mba_add(sp,1) OS[sp]=_rIQSNXb(ins[2],args,argc) elseif op==7 then local fid0=ins[2] sp=_mba_add(sp,1) OS[sp]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _rBJSzZR(fid0,a0,n0) end elseif op==8 then jump_to=ins[2] break elseif op==9 then local v0=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) if not v0 then jump_to=ins[2] end break elseif op==10 then local v0=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) if v0 then jump_to=ins[2] end break elseif op==11 then OS[sp]=nil sp=_mba_sub(sp,1) elseif op==12 then sp=_mba_add(sp,1) OS[sp]=OS[_mba_sub(sp,1)] elseif op==13 then local a,b=OS[_mba_sub(sp,1)],OS[sp] OS[_mba_sub(sp,1)],OS[sp]=b,a elseif op==14 then local n0=ins[2] if n0==0 then return nil elseif n0==1 then local rv=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) return rv else local r={} for ii=n0,1,-1 do r[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end return r end elseif op==15 then sp=_mba_add(sp,1) OS[sp]=_gUVQOwb(ins[2]) end OPC=_mba_add(OPC,1) end
+if steps%64==0 then _aVSngZk() if _now()-t0>_T_LIMIT_ACT then _TIMEOUT_HIT=true _daVtQEJ("TIMEOUT_O") return end end
+if steps>_STEP_HARD_LIMIT then _TIMEOUT_HIT=true _daVtQEJ("STEP_LIMIT_O") return end local ins=code[OPC] local op0=ins[1] local op=OPI[(op0%16)+1] or op0 if op==0 then return elseif op==1 then sp=_mba_add(sp,1) OS[sp]=OL[ins[2]] elseif op==2 then OL[ins[2]]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) elseif op==3 then sp=_mba_add(sp,1) OS[sp]=_cFnvqbA(ins[2]) elseif op==4 then sp=_mba_add(sp,1) OS[sp]=nil elseif op==5 then local argc=ins[3] or 0 local args={} for ii=argc,1,-1 do args[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end sp=_mba_add(sp,1) OS[sp]=_rJBIrjk(ins[2],args,OL) elseif op==6 then local argc=ins[3] or 0 local args={} for ii=argc,1,-1 do args[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end sp=_mba_add(sp,1) OS[sp]=_rstmUNG(ins[2],args,argc) elseif op==7 then local fid0=ins[2] sp=_mba_add(sp,1) OS[sp]=function(...) local n0=select("#",...) local a0={} for kk=1,n0 do a0[kk]=(select(kk,...)) end return _ronDGRu(fid0,a0,n0) end elseif op==8 then jump_to=ins[2] break elseif op==9 then local v0=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) if not v0 then jump_to=ins[2] end break elseif op==10 then local v0=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) if v0 then jump_to=ins[2] end break elseif op==11 then OS[sp]=nil sp=_mba_sub(sp,1) elseif op==12 then sp=_mba_add(sp,1) OS[sp]=OS[_mba_sub(sp,1)] elseif op==13 then local a,b=OS[_mba_sub(sp,1)],OS[sp] OS[_mba_sub(sp,1)],OS[sp]=b,a elseif op==14 then local n0=ins[2] if n0==0 then return nil elseif n0==1 then local rv=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) return rv else local r={} for ii=n0,1,-1 do r[ii]=OS[sp] OS[sp]=nil sp=_mba_sub(sp,1) end return r end elseif op==15 then sp=_mba_add(sp,1) OS[sp]=_gjVHvXw(ins[2]) end OPC=_mba_add(OPC,1) end
 local _real_next=jump_to or blk.next
 state=_real_next end end
-_rdSrJBJ=function(fid,args,argc) if _INTEGRITY_FAILED then _dEpUbJJ("RO_AFTER_FAIL") end local fn=_gFltscV(fid) if not fn then return end if not fn.blocks then return end local OL={} local n0=argc or fn.paramCount for i=1,n0 do OL[i]=args[i] end local OS={} return _oFhxQqu(OL,OS,fn.blocks,fn.entry,fid) end
-_rIQSNXb=function(...) return _rdSrJBJ(...) end _rBJSzZR=_rIQSNXb
-_nCfjQKO.h3=_hppeoKP _nCfjQKO.m2r=_mZahIGB _nCfjQKO.m2a=_mGjIMII _nCfjQKO.cmp=_cNrxqPX _nCfjQKO.slot=_gtcmhRX _nCfjQKO.reb=_radpNQr _nCfjQKO.riraw=_rvumnRv _nCfjQKO.om2=_oFhxQqu _nCfjQKO.roraw=_rdSrJBJ _nCfjQKO.rof=_rBJSzZR
-local function _self_hash() local h=5381 for i=1,#CONST do local e=CONST[i] if type(e)=="table" and type(e[1])=="string" and type(e[2])=="string" then for j=1,#e[2] do h=(h*33+string.byte(e[2],j))%4294967296 end end end for i=1,#PROTO do local p=PROTO[i] if type(p)=="table" then for k=2,5 do if type(p[k])=="string" then for j=1,#p[k] do h=(h*33+string.byte(p[k],j))%4294967296 end end end if type(p[7])=="table" then for j=1,#p[7] do h=(h*33+p[7][j])%4294967296 end end end end for i=1,#STRS do local row=STRS[i] if type(row)=="table" then for k=1,#row do local frag=row[k] if type(frag)=="table" then for m=1,#frag do if type(frag[m])=="string" then h=(h*33+#frag[m])%4294967296 for j=1,#frag[m] do h=(h*33+string.byte(frag[m],j))%4294967296 end end end end end end end for i=1,#_oTunbAD do local e=_oTunbAD[i] if type(e)=="table" then for k=1,2 do if type(e[k])=="string" then for j=1,#e[k] do h=(h*33+string.byte(e[k],j))%4294967296 end end end end end return h end
+_rMcrRlJ=function(fid,args,argc) if _INTEGRITY_FAILED then _daVtQEJ("RO_AFTER_FAIL") end local fn=_gYZPBDm(fid) if not fn then return end if not fn.blocks then return end local OL={} local n0=argc or fn.paramCount for i=1,n0 do OL[i]=args[i] end local OS={} return _oUDsBFF(OL,OS,fn.blocks,fn.entry,fid) end
+_rstmUNG=function(...) return _rMcrRlJ(...) end _ronDGRu=_rstmUNG
+_ngHeZgu.h3=_hmDsVVp _ngHeZgu.m2r=_mKOmYyU _ngHeZgu.m2a=_mxeouIO _ngHeZgu.cmp=_cETOSMV _ngHeZgu.slot=_grlRepM _ngHeZgu.reb=_rETduVS _ngHeZgu.riraw=_rIszJzY _ngHeZgu.om2=_oUDsBFF _ngHeZgu.roraw=_rMcrRlJ _ngHeZgu.rof=_ronDGRu
+local function _self_hash() local h=5381 for i=1,#CONST do local e=CONST[i] if type(e)=="table" and type(e[1])=="string" and type(e[2])=="string" then for j=1,#e[2] do h=(h*33+string.byte(e[2],j))%4294967296 end end end for i=1,#PROTO do local p=PROTO[i] if type(p)=="table" then for k=2,5 do if type(p[k])=="string" then for j=1,#p[k] do h=(h*33+string.byte(p[k],j))%4294967296 end end end if type(p[7])=="table" then for j=1,#p[7] do h=(h*33+p[7][j])%4294967296 end end end end for i=1,#STRS do local row=STRS[i] if type(row)=="table" then for k=1,#row do local frag=row[k] if type(frag)=="table" then for m=1,#frag do if type(frag[m])=="string" then h=(h*33+#frag[m])%4294967296 for j=1,#frag[m] do h=(h*33+string.byte(frag[m],j))%4294967296 end end end end end end end for i=1,#_okHFvRe do local e=_okHFvRe[i] if type(e)=="table" then for k=1,2 do if type(e[k])=="string" then for j=1,#e[k] do h=(h*33+string.byte(e[k],j))%4294967296 end end end end end return h end
 local _SELF_H=_self_hash()
-_self_check=function() if _self_hash()~=_SELF_H then _dEpUbJJ("SELF_HASH") end end
+_self_check=function() if _self_hash()~=_SELF_H then _daVtQEJ("SELF_HASH") end end
 _self_check()
 _check_env_strong()
 _check_vm_struct()
 _check_refs()
-local _R_inner=function(idx,args) _TIMEOUT_HIT=false local br=(k2_eff_rot+_AH.S.n*131)%5 if br==0 then pcall(_cemWwLF,1) elseif br==1 then pcall(_fXccovA,1) end return _rIQSNXb(idx or 1,args or {}) end
+local _R_inner=function(idx,args) _TIMEOUT_HIT=false local br=(k2_eff_rot+_AH.S.n*131)%5 if br==0 then pcall(_cFnvqbA,1) elseif br==1 then pcall(_fbKHnjw,1) end return _rstmUNG(idx or 1,args or {}) end
 local _OM0=function(...) return _R_inner(...) end
 local R=_OM0
 pcall(R,1,{})
