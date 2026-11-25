@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>听歌</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,Segoe UI,sans-serif;background:#fafafa;color:#222}
+  .w{max-width:640px;margin:0 auto;padding:16px}
+  h1{font-size:18px;margin:8px 0 12px}
+  .row{display:flex;gap:8px}
+  input,button{padding:10px;border-radius:8px;border:1px solid #ddd;font-size:15px}
+  input{flex:1;min-width:0}
+  button{background:#222;color:#fff;border:0;cursor:pointer}
+  .item{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
+  .item b{font-weight:600}
+  .item span{color:#888;margin-left:6px;font-size:13px}
+  #bar{position:sticky;bottom:0;background:#fff;padding:10px;border-top:1px solid #eee;display:none}
+  audio{width:100%}
+  .cur{font-size:13px;color:#555;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>听歌</h1>
+  <div class="row">
+    <input id="kw" placeholder="搜歌名 / 歌手，回车搜索">
+    <button onclick="go()">搜</button>
+  </div>
+  <div id="list"></div>
+  <div id="bar">
+    <div class="cur" id="cur"></div>
+    <audio id="au" controls autoplay></audio>
+  </div>
+</div>
+<script>
+  // ↓↓ 只改这一行：换成你自己的 Worker 地址（结尾不要带 /）
+  const API = 'https://kg-api.你的账号.workers.dev';
+
+  const $ = s => document.querySelector(s);
+  $('#kw').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+
+  async function go() {
+    const kw = $('#kw').value.trim();
+    if (!kw) return;
+    $('#list').innerHTML = '<div class="item">搜索中…</div>';
+    try {
+      const r = await fetch(API + '/api/search?kw=' + encodeURIComponent(kw)).then(r => r.json());
+      const L = r.list || [];
+      $('#list').innerHTML = L.length
+        ? L.map(x => `<div class="item" onclick='play(${JSON.stringify(x)})'><b>${x.name}</b><span>${x.singer}</span></div>`).join('')
+        : '没搜到';
+    } catch (e) {
+      $('#list').innerHTML = '<div class="item">接口连不上，检查 API 地址</div>';
+    }
+  }
+
+  async function play(x) {
+    $('#bar').style.display = 'block';
+    $('#cur').textContent = x.name + ' - ' + x.singer;
+    const q = await fetch(API + '/api/url?hash=' + encodeURIComponent(x.id)).then(r => r.json()).catch(() => ({}));
+    if (q && q.data && q.data.url) $('#au').src = q.data.url;
+    else $('#cur').textContent = '取链失败：' + x.name;
+  }
+</script>
+</body>
+</html>
